@@ -52,7 +52,7 @@ export function DashboardSidebar() {
     }, [billDialogOpen, prescriptionDialogOpen]);
 
     return (
-        <aside className="w-64 min-h-screen bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 p-6 flex flex-col gap-8 fixed left-0 top-0 z-50">
+        <aside className="w-64 min-h-screen bg-slate-900 border-r border-slate-800 p-6 flex flex-col gap-8 fixed left-0 top-0 z-50">
 
             <div className="flex flex-col gap-8 flex-1">
                 <nav className="flex flex-col gap-2">
@@ -61,15 +61,15 @@ export function DashboardSidebar() {
                         return (
                             <Link key={route.href} href={route.href}>
                                 <Button
-                                    variant={isActive ? "secondary" : "ghost"}
+                                    variant="ghost"
                                     className={cn(
-                                        "w-full justify-start gap-3 transition-all duration-200 h-11 rounded-xl",
+                                        "w-full justify-start gap-3 transition-all duration-200 h-10 rounded-md group",
                                         isActive
-                                            ? "bg-indigo-50 dark:bg-indigo-900/20 text-indigo-600 dark:text-indigo-400 font-semibold shadow-sm shadow-indigo-100/50 dark:shadow-none"
-                                            : "text-slate-600 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-indigo-50/50 dark:hover:bg-indigo-900/10"
+                                            ? "bg-indigo-600 text-white font-medium shadow-lg shadow-indigo-900/20 hover:bg-indigo-500"
+                                            : "text-slate-400 hover:text-white hover:bg-slate-800"
                                     )}
                                 >
-                                    <route.icon className={cn("w-4 h-4", isActive ? "text-indigo-600 dark:text-indigo-400" : "")} />
+                                    <route.icon className={cn("w-4 h-4 transition-colors", isActive ? "text-indigo-200 group-hover:text-white" : "text-slate-400 group-hover:text-white")} />
                                     {route.label}
                                 </Button>
                             </Link>
@@ -80,15 +80,15 @@ export function DashboardSidebar() {
                 <div className="flex flex-col gap-2 mt-auto">
                     <Link href="/dashboard/settings">
                         <Button
-                            variant={pathname === "/dashboard/settings" ? "secondary" : "ghost"}
+                            variant="ghost"
                             className={cn(
-                                "w-full justify-start gap-3 transition-all duration-200 h-11 rounded-xl",
+                                "w-full justify-start gap-3 transition-all duration-200 h-10 rounded-md group",
                                 pathname === "/dashboard/settings"
-                                    ? "bg-indigo-50 dark:bg-indigo-900/20 text-indigo-600 dark:text-indigo-400 font-semibold shadow-sm shadow-indigo-100/50 dark:shadow-none"
-                                    : "text-slate-600 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-indigo-50/50 dark:hover:bg-indigo-900/10"
+                                    ? "bg-indigo-600 text-white font-medium shadow-lg shadow-indigo-900/20 hover:bg-indigo-500"
+                                    : "text-slate-400 hover:text-white hover:bg-slate-800"
                             )}
                         >
-                            <Settings className={cn("w-4 h-4", pathname === "/dashboard/settings" ? "text-indigo-600 dark:text-indigo-400" : "")} />
+                            <Settings className={cn("w-4 h-4 transition-colors", pathname === "/dashboard/settings" ? "text-indigo-200 group-hover:text-white" : "text-slate-400 group-hover:text-white")} />
                             Settings
                         </Button>
                     </Link>
