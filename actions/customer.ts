@@ -138,3 +138,23 @@ export async function getPrescriptionHistory(customerId: string) {
         orderBy: [desc(prescription.createdAt)],
     });
 }
+
+export async function getAllCustomers() {
+    const session = await auth.api.getSession({
+        headers: await headers(),
+    });
+
+    if (!session) throw new Error("Unauthorized");
+
+    const userStore = await getStore(session.user.id);
+
+    return await db.query.customer.findMany({
+        where: eq(customer.storeId, userStore.id),
+        orderBy: (customer, { asc }) => [asc(customer.name)],
+        columns: {
+            id: true,
+            name: true,
+            phone: true,
+        }
+    });
+}

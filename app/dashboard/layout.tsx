@@ -36,7 +36,7 @@ export default async function DashboardLayout({
                 <DashboardSidebar />
 
                 <div className="flex-1 ml-64">
-                    <header className="h-20 flex justify-between items-center px-8 border-b border-slate-200 dark:border-slate-800 bg-white/50 dark:bg-slate-900/50 backdrop-blur-md sticky top-0 z-10">
+                    <header className="h-16 flex justify-between items-center px-8 border-b border-slate-200 dark:border-slate-800 bg-white/50 dark:bg-slate-900/50 backdrop-blur-md sticky top-0 z-10">
                         <div>
                             <h2 className="text-sm font-medium text-slate-500">{store.name}</h2>
                         </div>
@@ -51,7 +51,7 @@ export default async function DashboardLayout({
                             <SignOutButton />
                         </div>
                     </header>
-                    <main className="p-8">
+                    <main className="p-6">
                         {children}
                     </main>
                 </div>

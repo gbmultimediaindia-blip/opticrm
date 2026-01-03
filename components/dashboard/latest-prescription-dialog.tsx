@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { format } from "date-fns";
 import { Eye, Calendar, Info, Ruler } from "lucide-react";
 
@@ -16,20 +16,20 @@ export function LatestPrescriptionDialog({ open, onOpenChange, prescription, cus
     if (!prescription) return null;
 
     return (
-        <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent className="max-w-2xl p-0 overflow-hidden border-none shadow-2xl">
-                <div className="p-8 bg-slate-50/80 dark:bg-slate-900/80 border-b border-slate-100 dark:border-slate-800">
-                    <DialogHeader>
+        <Sheet open={open} onOpenChange={onOpenChange}>
+            <SheetContent className="sm:max-w-2xl p-0 overflow-hidden border-none shadow-2xl flex flex-col">
+                <div className="p-8 bg-slate-50/80 dark:bg-slate-900/80 border-b border-slate-100 dark:border-slate-800 mt-6">
+                    <SheetHeader>
                         <div className="flex items-center justify-between">
                             <div className="flex items-center gap-4">
                                 <div className="w-12 h-12 rounded-2xl bg-indigo-600 flex items-center justify-center text-white shadow-lg shadow-indigo-200 dark:shadow-none">
                                     <Eye className="w-6 h-6" />
                                 </div>
                                 <div>
-                                    <DialogTitle className="text-2xl font-bold text-slate-900 dark:text-white">Prescription Detail</DialogTitle>
-                                    <DialogDescription className="text-slate-500">
+                                    <SheetTitle className="text-2xl font-bold text-slate-900 dark:text-white">Prescription Detail</SheetTitle>
+                                    <SheetDescription className="text-slate-500">
                                         Clinical record for <span className="font-semibold text-indigo-600">{customerName}</span>
-                                    </DialogDescription>
+                                    </SheetDescription>
                                 </div>
                             </div>
                             <div className="text-right">
@@ -41,7 +41,7 @@ export function LatestPrescriptionDialog({ open, onOpenChange, prescription, cus
                                 </div>
                             </div>
                         </div>
-                    </DialogHeader>
+                    </SheetHeader>
                 </div>
 
                 <div className="p-8 space-y-8 bg-white dark:bg-slate-950">
@@ -50,7 +50,7 @@ export function LatestPrescriptionDialog({ open, onOpenChange, prescription, cus
                         <div className="space-y-6">
                             <div className="flex items-center gap-2 border-b border-emerald-100 dark:border-emerald-900/30 pb-2">
                                 <div className="w-2 h-6 bg-emerald-500 rounded-full" />
-                                <h3 className="text-sm font-bold text-slate-900 dark:text-white uppercase tracking-widest">Right Eye (OD)</h3>
+                                <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Right Eye (OD)</h3>
                             </div>
                             <div className="grid grid-cols-2 gap-6">
                                 <DetailMetric label="Sphere (SPH)" value={prescription.rightSphere} highlight />
@@ -67,7 +67,7 @@ export function LatestPrescriptionDialog({ open, onOpenChange, prescription, cus
                         <div className="space-y-6 pl-4">
                             <div className="flex items-center gap-2 border-b border-amber-100 dark:border-amber-900/30 pb-2">
                                 <div className="w-2 h-6 bg-amber-500 rounded-full" />
-                                <h3 className="text-sm font-bold text-slate-900 dark:text-white uppercase tracking-widest">Left Eye (OS)</h3>
+                                <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Left Eye (OS)</h3>
                             </div>
                             <div className="grid grid-cols-2 gap-6">
                                 <DetailMetric label="Sphere (SPH)" value={prescription.leftSphere} highlight />
@@ -97,8 +97,8 @@ export function LatestPrescriptionDialog({ open, onOpenChange, prescription, cus
                         </div>
                     </div>
                 </div>
-            </DialogContent>
-        </Dialog>
+            </SheetContent>
+        </Sheet>
     );
 }
 
