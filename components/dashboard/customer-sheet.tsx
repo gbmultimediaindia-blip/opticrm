@@ -158,7 +158,7 @@ export function CustomerSheet({ open, onOpenChange, customer }: CustomerSheetPro
                         </div>
 
                         <div className="space-y-2">
-                            <Label className="text-[10px] font-black text-slate-400 uppercase">Residential Address (Optional)</Label>
+                            <Label className="text-[10px] font-black text-slate-400 uppercase">Address (Optional)</Label>
                             <Input
                                 value={formData.address}
                                 onChange={(e) => setFormData({ ...formData, address: e.target.value })}
@@ -171,7 +171,7 @@ export function CustomerSheet({ open, onOpenChange, customer }: CustomerSheetPro
                     {!customer && (
                         <div className="pt-6 border-t border-slate-100 dark:border-slate-800 space-y-4">
                             <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
-                                <Eye className="w-3.5 h-3.5 text-indigo-400" /> Initial Rx (Optional)
+                                <Eye className="w-3.5 h-3.5 text-indigo-400" /> Prescription (Optional)
                             </h3>
                             <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-800 space-y-6">
                                 <div className="grid grid-cols-2 gap-8 relative">
