@@ -49,7 +49,7 @@ export default function SignUpPage() {
                         Enter your information to get started with OptiCRM
                     </CardDescription>
                 </CardHeader>
-                <form onSubmit={handleSignUp}>
+                <form onSubmit={handleSignUp} className="flex flex-col gap-6">
                     <CardContent className="grid gap-4">
                         <div className="grid gap-2">
                             <Label htmlFor="name" className="text-slate-700">Full Name</Label>

@@ -45,7 +45,7 @@ export default function OnboardingPage() {
                         Let's set up your business workspace
                     </CardDescription>
                 </CardHeader>
-                <form onSubmit={handleSubmit}>
+                <form onSubmit={handleSubmit} className="flex flex-col gap-6">
                     <CardContent className="grid gap-6">
                         <div className="grid gap-2">
                             <Label htmlFor="name" className="text-slate-700">Store Name</Label>

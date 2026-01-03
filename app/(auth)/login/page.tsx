@@ -47,7 +47,7 @@ export default function LoginPage() {
             Enter your credentials to access your store
           </CardDescription>
         </CardHeader>
-        <form onSubmit={handleLogin}>
+        <form onSubmit={handleLogin} className="flex flex-col gap-6">
           <CardContent className="grid gap-4">
             <div className="grid gap-2">
               <Label htmlFor="email" className="text-slate-700">Email</Label>

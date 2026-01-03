@@ -56,3 +56,36 @@ export const store = pgTable("store", {
     createdAt: timestamp("created_at").notNull().defaultNow(),
     updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
+
+export const customer = pgTable("customer", {
+    id: uuid("id").primaryKey().defaultRandom(),
+    name: text("name").notNull(),
+    email: text("email").notNull(),
+    phone: text("phone").notNull(),
+    address: text("address").notNull(),
+    storeId: uuid("store_id").notNull().references(() => store.id, { onDelete: "cascade" }),
+    createdAt: timestamp("created_at").notNull().defaultNow(),
+    updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
+export const eyesight = pgTable("eyesight", {
+    id: uuid("id").primaryKey().defaultRandom(),
+    customerId: uuid("customer_id").notNull().references(() => customer.id, { onDelete: "cascade" }),
+
+    // Right Eye (OD)
+    rightSphere: text("right_sphere"),
+    rightCylinder: text("right_cylinder"),
+    rightAxis: text("right_axis"),
+    rightAdd: text("right_add"),
+
+    // Left Eye (OS)
+    leftSphere: text("left_sphere"),
+    leftCylinder: text("left_cylinder"),
+    leftAxis: text("left_axis"),
+    leftAdd: text("left_add"),
+
+    pd: text("pd"), // Pupillary Distance
+    notes: text("notes"),
+    createdAt: timestamp("created_at").notNull().defaultNow(),
+    updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
