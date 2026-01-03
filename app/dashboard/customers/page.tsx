@@ -25,6 +25,12 @@ export default async function CustomersPage() {
 
     const customers = await db.query.customer.findMany({
         where: eq(customerTable.storeId, store.id),
+        with: {
+            prescriptions: {
+                orderBy: (prescription, { desc }) => [desc(prescription.createdAt)],
+                limit: 1,
+            }
+        },
         orderBy: (customer, { desc }) => [desc(customer.createdAt)],
     });
 

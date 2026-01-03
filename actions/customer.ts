@@ -1,7 +1,7 @@
 "use server";
 
 import { db } from "@/lib/db";
-import { customer, store, eyesight } from "@/db/schema";
+import { customer, store, prescription } from "@/db/schema";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { eq, and, desc } from "drizzle-orm";
@@ -15,12 +15,17 @@ async function getStore(userId: string) {
     return userStore;
 }
 
+const formatPrescriptionValue = (val: string | undefined | null) => {
+    if (!val || val.trim() === "") return "0.00";
+    return val;
+};
+
 export async function createCustomer(formData: {
     name: string;
-    email: string;
+    email?: string;
     phone: string;
-    address: string;
-    eyesight?: {
+    address?: string;
+    prescription?: {
         rightSphere?: string;
         rightCylinder?: string;
         rightAxis?: string;
@@ -41,16 +46,25 @@ export async function createCustomer(formData: {
 
     const userStore = await getStore(session.user.id);
 
-    const { eyesight: eyesightData, ...customerData } = formData;
+    const { prescription: prescriptionData, ...customerData } = formData;
 
     const [newCustomer] = await db.insert(customer).values({
         ...customerData,
         storeId: userStore.id,
     }).returning();
 
-    if (eyesightData && Object.values(eyesightData).some(v => v !== "")) {
-        await db.insert(eyesight).values({
-            ...eyesightData,
+    if (prescriptionData) {
+        await db.insert(prescription).values({
+            rightSphere: formatPrescriptionValue(prescriptionData.rightSphere),
+            rightCylinder: formatPrescriptionValue(prescriptionData.rightCylinder),
+            rightAxis: formatPrescriptionValue(prescriptionData.rightAxis),
+            rightAdd: formatPrescriptionValue(prescriptionData.rightAdd),
+            leftSphere: formatPrescriptionValue(prescriptionData.leftSphere),
+            leftCylinder: formatPrescriptionValue(prescriptionData.leftCylinder),
+            leftAxis: formatPrescriptionValue(prescriptionData.leftAxis),
+            leftAdd: formatPrescriptionValue(prescriptionData.leftAdd),
+            pd: formatPrescriptionValue(prescriptionData.pd),
+            notes: prescriptionData.notes || "",
             customerId: newCustomer.id,
         });
     }
@@ -60,9 +74,9 @@ export async function createCustomer(formData: {
 
 export async function updateCustomer(id: string, formData: {
     name: string;
-    email: string;
+    email?: string;
     phone: string;
-    address: string;
+    address?: string;
 }) {
     const session = await auth.api.getSession({
         headers: await headers(),
@@ -94,24 +108,33 @@ export async function deleteCustomer(id: string) {
     revalidatePath("/dashboard/customers");
 }
 
-export async function createEyesight(customerId: string, data: any) {
+export async function createPrescription(customerId: string, data: any) {
     const session = await auth.api.getSession({
         headers: await headers(),
     });
 
     if (!session) throw new Error("Unauthorized");
 
-    await db.insert(eyesight).values({
-        ...data,
+    await db.insert(prescription).values({
+        rightSphere: formatPrescriptionValue(data.rightSphere),
+        rightCylinder: formatPrescriptionValue(data.rightCylinder),
+        rightAxis: formatPrescriptionValue(data.rightAxis),
+        rightAdd: formatPrescriptionValue(data.rightAdd),
+        leftSphere: formatPrescriptionValue(data.leftSphere),
+        leftCylinder: formatPrescriptionValue(data.leftCylinder),
+        leftAxis: formatPrescriptionValue(data.leftAxis),
+        leftAdd: formatPrescriptionValue(data.leftAdd),
+        pd: formatPrescriptionValue(data.pd),
+        notes: data.notes || "",
         customerId,
     });
 
     revalidatePath("/dashboard/customers");
 }
 
-export async function getEyesightHistory(customerId: string) {
-    return await db.query.eyesight.findMany({
-        where: eq(eyesight.customerId, customerId),
-        orderBy: [desc(eyesight.createdAt)],
+export async function getPrescriptionHistory(customerId: string) {
+    return await db.query.prescription.findMany({
+        where: eq(prescription.customerId, customerId),
+        orderBy: [desc(prescription.createdAt)],
     });
 }

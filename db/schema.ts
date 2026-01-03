@@ -60,15 +60,15 @@ export const store = pgTable("store", {
 export const customer = pgTable("customer", {
     id: uuid("id").primaryKey().defaultRandom(),
     name: text("name").notNull(),
-    email: text("email").notNull(),
+    email: text("email"),
     phone: text("phone").notNull(),
-    address: text("address").notNull(),
+    address: text("address"),
     storeId: uuid("store_id").notNull().references(() => store.id, { onDelete: "cascade" }),
     createdAt: timestamp("created_at").notNull().defaultNow(),
     updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
 
-export const eyesight = pgTable("eyesight", {
+export const prescription = pgTable("prescription", {
     id: uuid("id").primaryKey().defaultRandom(),
     customerId: uuid("customer_id").notNull().references(() => customer.id, { onDelete: "cascade" }),
 
@@ -89,3 +89,15 @@ export const eyesight = pgTable("eyesight", {
     createdAt: timestamp("created_at").notNull().defaultNow(),
     updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
+import { relations } from "drizzle-orm";
+
+export const customerRelations = relations(customer, ({ many }) => ({
+    prescriptions: many(prescription),
+}));
+
+export const prescriptionRelations = relations(prescription, ({ one }) => ({
+    customer: one(customer, {
+        fields: [prescription.customerId],
+        references: [customer.id],
+    }),
+}));

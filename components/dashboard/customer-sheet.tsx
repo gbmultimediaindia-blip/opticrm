@@ -21,7 +21,7 @@ export function CustomerSheet({ open, onOpenChange, customer }: CustomerSheetPro
         email: "",
         phone: "",
         address: "",
-        eyesight: {
+        prescription: {
             rightSphere: "",
             rightCylinder: "",
             rightAxis: "",
@@ -41,7 +41,7 @@ export function CustomerSheet({ open, onOpenChange, customer }: CustomerSheetPro
                 email: customer.email,
                 phone: customer.phone,
                 address: customer.address,
-                eyesight: {
+                prescription: {
                     rightSphere: "",
                     rightCylinder: "",
                     rightAxis: "",
@@ -59,7 +59,7 @@ export function CustomerSheet({ open, onOpenChange, customer }: CustomerSheetPro
                 email: "",
                 phone: "",
                 address: "",
-                eyesight: {
+                prescription: {
                     rightSphere: "",
                     rightCylinder: "",
                     rightAxis: "",
@@ -125,9 +125,8 @@ export function CustomerSheet({ open, onOpenChange, customer }: CustomerSheetPro
                                     type="email"
                                     value={formData.email}
                                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                                    placeholder="john@example.com"
+                                    placeholder="john@example.com (Optional)"
                                     className="h-11 border-slate-200 dark:border-slate-800 focus:ring-indigo-500"
-                                    required
                                 />
                             </div>
                             <div className="space-y-2">
@@ -147,9 +146,8 @@ export function CustomerSheet({ open, onOpenChange, customer }: CustomerSheetPro
                                     id="address"
                                     value={formData.address}
                                     onChange={(e) => setFormData({ ...formData, address: e.target.value })}
-                                    placeholder="123 Main St, City, Country"
+                                    placeholder="123 Main St, City, Country (Optional)"
                                     className="h-11 border-slate-200 dark:border-slate-800 focus:ring-indigo-500"
-                                    required
                                 />
                             </div>
                         </div>
@@ -162,26 +160,26 @@ export function CustomerSheet({ open, onOpenChange, customer }: CustomerSheetPro
                                         <div className="space-y-4">
                                             <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">Right Eye (OD)</p>
                                             <div className="grid grid-cols-2 gap-2">
-                                                <Input placeholder="SPH" value={formData.eyesight.rightSphere} onChange={(e) => setFormData(prev => ({ ...prev, eyesight: { ...prev.eyesight, rightSphere: e.target.value } }))} />
-                                                <Input placeholder="CYL" value={formData.eyesight.rightCylinder} onChange={(e) => setFormData(prev => ({ ...prev, eyesight: { ...prev.eyesight, rightCylinder: e.target.value } }))} />
-                                                <Input placeholder="AXIS" value={formData.eyesight.rightAxis} onChange={(e) => setFormData(prev => ({ ...prev, eyesight: { ...prev.eyesight, rightAxis: e.target.value } }))} />
-                                                <Input placeholder="ADD" value={formData.eyesight.rightAdd} onChange={(e) => setFormData(prev => ({ ...prev, eyesight: { ...prev.eyesight, rightAdd: e.target.value } }))} />
+                                                <Input placeholder="0.00" value={formData.prescription.rightSphere} onChange={(e) => setFormData(prev => ({ ...prev, prescription: { ...prev.prescription, rightSphere: e.target.value } }))} />
+                                                <Input placeholder="0.00" value={formData.prescription.rightCylinder} onChange={(e) => setFormData(prev => ({ ...prev, prescription: { ...prev.prescription, rightCylinder: e.target.value } }))} />
+                                                <Input placeholder="0" value={formData.prescription.rightAxis} onChange={(e) => setFormData(prev => ({ ...prev, prescription: { ...prev.prescription, rightAxis: e.target.value } }))} />
+                                                <Input placeholder="0.00" value={formData.prescription.rightAdd} onChange={(e) => setFormData(prev => ({ ...prev, prescription: { ...prev.prescription, rightAdd: e.target.value } }))} />
                                             </div>
                                         </div>
                                         <div className="space-y-4">
                                             <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">Left Eye (OS)</p>
                                             <div className="grid grid-cols-2 gap-2">
-                                                <Input placeholder="SPH" value={formData.eyesight.leftSphere} onChange={(e) => setFormData(prev => ({ ...prev, eyesight: { ...prev.eyesight, leftSphere: e.target.value } }))} />
-                                                <Input placeholder="CYL" value={formData.eyesight.leftCylinder} onChange={(e) => setFormData(prev => ({ ...prev, eyesight: { ...prev.eyesight, leftCylinder: e.target.value } }))} />
-                                                <Input placeholder="AXIS" value={formData.eyesight.leftAxis} onChange={(e) => setFormData(prev => ({ ...prev, eyesight: { ...prev.eyesight, leftAxis: e.target.value } }))} />
-                                                <Input placeholder="ADD" value={formData.eyesight.leftAdd} onChange={(e) => setFormData(prev => ({ ...prev, eyesight: { ...prev.eyesight, leftAdd: e.target.value } }))} />
+                                                <Input placeholder="0.00" value={formData.prescription.leftSphere} onChange={(e) => setFormData(prev => ({ ...prev, prescription: { ...prev.prescription, leftSphere: e.target.value } }))} />
+                                                <Input placeholder="0.00" value={formData.prescription.leftCylinder} onChange={(e) => setFormData(prev => ({ ...prev, prescription: { ...prev.prescription, leftCylinder: e.target.value } }))} />
+                                                <Input placeholder="0" value={formData.prescription.leftAxis} onChange={(e) => setFormData(prev => ({ ...prev, prescription: { ...prev.prescription, leftAxis: e.target.value } }))} />
+                                                <Input placeholder="0.00" value={formData.prescription.leftAdd} onChange={(e) => setFormData(prev => ({ ...prev, prescription: { ...prev.prescription, leftAdd: e.target.value } }))} />
                                             </div>
                                         </div>
                                     </div>
                                     <div className="grid grid-cols-2 gap-4">
                                         <div className="space-y-2">
                                             <Label className="text-xs text-slate-500">PD (Pupillary Distance)</Label>
-                                            <Input placeholder="e.g. 64" value={formData.eyesight.pd} onChange={(e) => setFormData(prev => ({ ...prev, eyesight: { ...prev.eyesight, pd: e.target.value } }))} />
+                                            <Input placeholder="e.g. 64" value={formData.prescription.pd} onChange={(e) => setFormData(prev => ({ ...prev, prescription: { ...prev.prescription, pd: e.target.value } }))} />
                                         </div>
                                     </div>
                                 </div>
