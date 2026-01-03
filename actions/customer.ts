@@ -7,13 +7,7 @@ import { headers } from "next/headers";
 import { eq, and, desc } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 
-async function getStore(userId: string) {
-    const userStore = await db.query.store.findFirst({
-        where: eq(store.ownerId, userId),
-    });
-    if (!userStore) throw new Error("Store not found");
-    return userStore;
-}
+import { getStore } from "@/actions/store";
 
 const formatPrescriptionValue = (val: string | undefined | null) => {
     if (!val || val.trim() === "") return "0.00";
@@ -44,7 +38,8 @@ export async function createCustomer(formData: {
 
     if (!session) throw new Error("Unauthorized");
 
-    const userStore = await getStore(session.user.id);
+    const userStore = await getStore();
+    if (!userStore) throw new Error("Store not found");
 
     const { prescription: prescriptionData, ...customerData } = formData;
 
@@ -84,7 +79,8 @@ export async function updateCustomer(id: string, formData: {
 
     if (!session) throw new Error("Unauthorized");
 
-    const userStore = await getStore(session.user.id);
+    const userStore = await getStore();
+    if (!userStore) throw new Error("Store not found");
 
     await db.update(customer)
         .set(formData)
@@ -100,7 +96,8 @@ export async function deleteCustomer(id: string) {
 
     if (!session) throw new Error("Unauthorized");
 
-    const userStore = await getStore(session.user.id);
+    const userStore = await getStore();
+    if (!userStore) throw new Error("Store not found");
 
     await db.delete(customer)
         .where(and(eq(customer.id, id), eq(customer.storeId, userStore.id)));
@@ -146,7 +143,8 @@ export async function getAllCustomers() {
 
     if (!session) throw new Error("Unauthorized");
 
-    const userStore = await getStore(session.user.id);
+    const userStore = await getStore();
+    if (!userStore) throw new Error("Store not found");
 
     return await db.query.customer.findMany({
         where: eq(customer.storeId, userStore.id),

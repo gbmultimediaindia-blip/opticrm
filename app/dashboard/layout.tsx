@@ -9,6 +9,10 @@ import { LayoutDashboard, Users, Box, Receipt } from "lucide-react";
 import { SignOutButton } from "@/components/auth/sign-out-button";
 import { DashboardSidebar } from "@/components/dashboard/sidebar";
 
+import { getAllStores, getStore } from "@/actions/store";
+
+import { StoreSwitcher } from "@/components/dashboard/store-switcher";
+
 export default async function DashboardLayout({
     children,
 }: {
@@ -22,9 +26,8 @@ export default async function DashboardLayout({
         redirect("/login");
     }
 
-    const store = await db.query.store.findFirst({
-        where: eq(storeTable.ownerId, session.user.id),
-    });
+    const store = await getStore();
+    const allStores = await getAllStores();
 
     if (!store) {
         redirect("/onboarding");
@@ -37,8 +40,18 @@ export default async function DashboardLayout({
 
                 <div className="flex-1 ml-64">
                     <header className="h-16 flex justify-between items-center px-8 border-b border-slate-200 dark:border-slate-800 bg-white/50 dark:bg-slate-900/50 backdrop-blur-md sticky top-0 z-10">
-                        <div>
-                            <h2 className="text-sm font-medium text-slate-500">{store.name}</h2>
+                        <div className="flex items-center gap-4">
+                            <div className="flex items-center gap-2">
+                                <div className="w-8 h-8 rounded-full bg-slate-900 dark:bg-white text-white dark:text-slate-900 flex items-center justify-center">
+                                    <span className="font-bold text-lg">O</span>
+                                </div>
+                                <span className="text-xl font-bold tracking-tight text-slate-900 dark:text-white">OptiCRM</span>
+                            </div>
+                            <div className="h-6 w-px bg-slate-200 dark:bg-slate-800" />
+                            <StoreSwitcher
+                                stores={JSON.parse(JSON.stringify(allStores))}
+                                activeStore={JSON.parse(JSON.stringify(store))}
+                            />
                         </div>
                         <div className="flex items-center gap-4">
                             <div className="text-right">

@@ -6,6 +6,7 @@ import { store as storeTable, customer as customerTable } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { BillList } from "@/components/dashboard/bill-list";
 import { getBills } from "@/actions/billing";
+import { getStore } from "@/actions/store";
 
 export default async function BillingPage() {
     const session = await auth.api.getSession({
@@ -16,9 +17,7 @@ export default async function BillingPage() {
         redirect("/login");
     }
 
-    const store = await db.query.store.findFirst({
-        where: eq(storeTable.ownerId, session.user.id),
-    });
+    const store = await getStore();
 
     if (!store) {
         redirect("/onboarding");

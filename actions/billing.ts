@@ -7,13 +7,7 @@ import { headers } from "next/headers";
 import { eq, and, desc } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 
-async function getStore(userId: string) {
-    const userStore = await db.query.store.findFirst({
-        where: eq(store.ownerId, userId),
-    });
-    if (!userStore) throw new Error("Store not found");
-    return userStore;
-}
+import { getStore } from "@/actions/store";
 
 export async function createBill(data: {
     customerId: string;
@@ -28,7 +22,8 @@ export async function createBill(data: {
 
     if (!session) throw new Error("Unauthorized");
 
-    const userStore = await getStore(session.user.id);
+    const userStore = await getStore();
+    if (!userStore) throw new Error("Store not found");
 
     const [newBill] = await db.insert(bill).values({
         ...data,
@@ -46,7 +41,8 @@ export async function getBills() {
 
     if (!session) throw new Error("Unauthorized");
 
-    const userStore = await getStore(session.user.id);
+    const userStore = await getStore();
+    if (!userStore) throw new Error("Store not found");
 
     return await db.query.bill.findMany({
         where: eq(bill.storeId, userStore.id),
@@ -93,7 +89,8 @@ export async function createBillWithCustomer(data: {
 
     if (!session) throw new Error("Unauthorized");
 
-    const userStore = await getStore(session.user.id);
+    const userStore = await getStore();
+    if (!userStore) throw new Error("Store not found");
 
     return await db.transaction(async (tx) => {
         // 1. Create Customer
@@ -140,7 +137,8 @@ export async function deleteBill(id: string) {
 
     if (!session) throw new Error("Unauthorized");
 
-    const userStore = await getStore(session.user.id);
+    const userStore = await getStore();
+    if (!userStore) throw new Error("Store not found");
 
     await db.delete(bill)
         .where(and(eq(bill.id, id), eq(bill.storeId, userStore.id)));
@@ -155,7 +153,8 @@ export async function getBill(id: string) {
 
     if (!session) throw new Error("Unauthorized");
 
-    const userStore = await getStore(session.user.id);
+    const userStore = await getStore();
+    if (!userStore) throw new Error("Store not found");
 
     const result = await db.query.bill.findFirst({
         where: and(eq(bill.id, id), eq(bill.storeId, userStore.id)),

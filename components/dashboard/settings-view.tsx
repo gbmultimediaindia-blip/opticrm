@@ -6,10 +6,22 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
-import { updateStore } from "@/actions/store";
+import { updateStore, deleteStore } from "@/actions/store";
+import { useRouter } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
-import { Store, Lock, KeyRound } from "lucide-react";
+import { Store, Lock, KeyRound, Trash2, AlertTriangle } from "lucide-react";
 
 interface SettingsViewProps {
     store: any;
@@ -18,6 +30,21 @@ interface SettingsViewProps {
 
 export function SettingsView({ store, user }: SettingsViewProps) {
     const [loading, setLoading] = useState(false);
+    const router = useRouter();
+
+    const handleDeleteStore = async () => {
+        setLoading(true);
+        try {
+            await deleteStore(store.id);
+            toast.success("Store deleted successfully");
+            router.refresh();
+            router.push("/dashboard");
+        } catch (error: any) {
+            toast.error(error.message || "Failed to delete store");
+        } finally {
+            setLoading(false);
+        }
+    };
 
     // Store Form State
     const handleStoreUpdate = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -139,6 +166,52 @@ export function SettingsView({ store, user }: SettingsViewProps) {
                                 </CardFooter>
                             </form>
                         </Card>
+
+                        <div className="pt-6">
+                            <h3 className="text-lg font-medium text-red-600 dark:text-red-400 flex items-center gap-2">
+                                <AlertTriangle className="w-5 h-5" />
+                                Danger Zone
+                            </h3>
+                            <p className="text-sm text-slate-500 mt-1 mb-4">
+                                Irreversible actions for your store.
+                            </p>
+                            <Card className="border-red-100 dark:border-red-900/20 shadow-sm bg-red-50/30 dark:bg-red-900/10">
+                                <CardHeader>
+                                    <div className="flex items-center justify-between">
+                                        <div className="space-y-1">
+                                            <CardTitle className="text-base text-red-700 dark:text-red-400">Delete Store</CardTitle>
+                                            <CardDescription className="text-red-600/80 dark:text-red-400/70">
+                                                Permanently delete this store and all its data. This action cannot be undone.
+                                            </CardDescription>
+                                        </div>
+                                    </div>
+                                </CardHeader>
+                                <CardFooter className="border-t border-red-100 dark:border-red-900/20 p-4 bg-red-100/20 dark:bg-red-900/20">
+                                    <AlertDialog>
+                                        <AlertDialogTrigger asChild>
+                                            <Button variant="destructive" className="ml-auto bg-red-600 hover:bg-red-700 text-white shadow-lg shadow-red-200 dark:shadow-none">
+                                                <Trash2 className="w-4 h-4 mr-2" />
+                                                Delete Store
+                                            </Button>
+                                        </AlertDialogTrigger>
+                                        <AlertDialogContent>
+                                            <AlertDialogHeader>
+                                                <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                                                <AlertDialogDescription>
+                                                    This action cannot be undone. This will permanently delete <strong>{store?.name}</strong> and remove all associated data including products, customers, and bills.
+                                                </AlertDialogDescription>
+                                            </AlertDialogHeader>
+                                            <AlertDialogFooter>
+                                                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                                <AlertDialogAction onClick={handleDeleteStore} className="bg-red-600 hover:bg-red-700 text-white">
+                                                    Yes, delete store
+                                                </AlertDialogAction>
+                                            </AlertDialogFooter>
+                                        </AlertDialogContent>
+                                    </AlertDialog>
+                                </CardFooter>
+                            </Card>
+                        </div>
                     </div>
                 )}
 

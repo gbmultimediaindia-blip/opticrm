@@ -52,20 +52,10 @@ export function DashboardSidebar() {
     }, [billDialogOpen, prescriptionDialogOpen]);
 
     return (
-        <aside className="w-64 min-h-screen bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 p-6 flex flex-col gap-8 fixed left-0 top-0">
-            <div className="flex items-center gap-2.5 px-2">
-                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-600 to-violet-600 flex items-center justify-center shadow-lg shadow-indigo-200 dark:shadow-none text-white">
-                    <Eye className="w-6 h-6" />
-                </div>
-                <div>
-                    <span className="block text-xl font-black text-slate-900 dark:text-white tracking-tighter leading-none">Opti CRM</span>
-                    <span className="block text-[10px] font-bold text-slate-400 tracking-widest text-center uppercase">All In One</span>
-                </div>
-            </div>
+        <aside className="w-64 min-h-screen bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 p-6 flex flex-col gap-8 fixed left-0 top-0 z-50">
 
             <div className="flex flex-col gap-8 flex-1">
                 <nav className="flex flex-col gap-2">
-                    <div className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-4 mb-2">Main Menu</div>
                     {routes.map((route) => {
                         const isActive = route.active(pathname);
                         return (

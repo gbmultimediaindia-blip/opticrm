@@ -5,6 +5,7 @@ import { db } from "@/lib/db";
 import { customer as customerTable, store as storeTable } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { CustomerList } from "@/components/dashboard/customer-list";
+import { getStore } from "@/actions/store";
 
 export default async function CustomersPage() {
     const session = await auth.api.getSession({
@@ -15,9 +16,7 @@ export default async function CustomersPage() {
         redirect("/login");
     }
 
-    const store = await db.query.store.findFirst({
-        where: eq(storeTable.ownerId, session.user.id),
-    });
+    const store = await getStore();
 
     if (!store) {
         redirect("/onboarding");

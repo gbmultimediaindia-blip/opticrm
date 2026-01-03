@@ -7,13 +7,7 @@ import { headers } from "next/headers";
 import { eq, and, desc } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 
-async function getStore(userId: string) {
-    const userStore = await db.query.store.findFirst({
-        where: eq(store.ownerId, userId),
-    });
-    if (!userStore) throw new Error("Store not found");
-    return userStore;
-}
+import { getStore } from "@/actions/store";
 
 export async function createProduct(data: {
     name: string;
@@ -28,7 +22,8 @@ export async function createProduct(data: {
 
     if (!session) throw new Error("Unauthorized");
 
-    const userStore = await getStore(session.user.id);
+    const userStore = await getStore();
+    if (!userStore) throw new Error("Store not found");
 
     await db.insert(product).values({
         ...data,
@@ -45,7 +40,8 @@ export async function getProducts() {
 
     if (!session) throw new Error("Unauthorized");
 
-    const userStore = await getStore(session.user.id);
+    const userStore = await getStore();
+    if (!userStore) throw new Error("Store not found");
 
     return await db.query.product.findMany({
         where: eq(product.storeId, userStore.id),
@@ -60,7 +56,8 @@ export async function deleteProduct(id: string) {
 
     if (!session) throw new Error("Unauthorized");
 
-    const userStore = await getStore(session.user.id);
+    const userStore = await getStore();
+    if (!userStore) throw new Error("Store not found");
 
     await db.delete(product)
         .where(and(eq(product.id, id), eq(product.storeId, userStore.id)));
@@ -81,7 +78,8 @@ export async function updateProduct(id: string, data: {
 
     if (!session) throw new Error("Unauthorized");
 
-    const userStore = await getStore(session.user.id);
+    const userStore = await getStore();
+    if (!userStore) throw new Error("Store not found");
 
     await db.update(product)
         .set(data)

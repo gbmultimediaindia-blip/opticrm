@@ -9,6 +9,8 @@ import { Button } from "@/components/ui/button";
 import { LayoutDashboard, Users, Box, Receipt } from "lucide-react";
 import { SignOutButton } from "@/components/auth/sign-out-button";
 
+import { getStore } from "@/actions/store";
+
 export default async function DashboardPage() {
     const session = await auth.api.getSession({
         headers: await headers(),
@@ -18,9 +20,7 @@ export default async function DashboardPage() {
         redirect("/login");
     }
 
-    const store = await db.query.store.findFirst({
-        where: eq(storeTable.ownerId, session.user.id),
-    });
+    const store = await getStore();
 
     if (!store) {
         redirect("/onboarding");
