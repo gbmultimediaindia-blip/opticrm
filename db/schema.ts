@@ -89,15 +89,39 @@ export const prescription = pgTable("prescription", {
     createdAt: timestamp("created_at").notNull().defaultNow(),
     updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
+export const bill = pgTable("bill", {
+    id: uuid("id").primaryKey().defaultRandom(),
+    customerId: uuid("customer_id").notNull().references(() => customer.id, { onDelete: "cascade" }),
+    storeId: uuid("store_id").notNull().references(() => store.id, { onDelete: "cascade" }),
+    totalAmount: text("total_amount").notNull(),
+    advanceAmount: text("advance_amount").notNull().default("0"),
+    dueAmount: text("due_amount").notNull().default("0"),
+    notes: text("notes"),
+    createdAt: timestamp("created_at").notNull().defaultNow(),
+    updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
 import { relations } from "drizzle-orm";
 
 export const customerRelations = relations(customer, ({ many }) => ({
     prescriptions: many(prescription),
+    bills: many(bill),
 }));
 
 export const prescriptionRelations = relations(prescription, ({ one }) => ({
     customer: one(customer, {
         fields: [prescription.customerId],
         references: [customer.id],
+    }),
+}));
+
+export const billRelations = relations(bill, ({ one }) => ({
+    customer: one(customer, {
+        fields: [bill.customerId],
+        references: [customer.id],
+    }),
+    store: one(store, {
+        fields: [bill.storeId],
+        references: [store.id],
     }),
 }));
