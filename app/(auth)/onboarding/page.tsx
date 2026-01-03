@@ -28,6 +28,7 @@ export default function OnboardingPage() {
         try {
             await createStore(data);
             toast.success("Store created successfully!");
+            router.push("/dashboard");
         } catch (error: any) {
             toast.error(error.message || "Failed to create store");
         } finally {

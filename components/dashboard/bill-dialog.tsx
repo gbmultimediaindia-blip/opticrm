@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { createBill, createBillWithCustomer } from "@/actions/billing";
-import { Receipt, IndianRupee, User, Info, UserPlus, Eye, X } from "lucide-react";
+import { Receipt, IndianRupee, User, Info, UserPlus, Eye, X, Printer } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface BillDialogProps {
@@ -61,12 +61,9 @@ export function BillDialog({ open, onOpenChange, customers }: BillDialogProps) {
         setLoading(true);
 
         try {
-            if (mode === "existing") {
-                if (!billData.customerId) throw new Error("Please select a customer");
-                await createBill(billData);
-            } else {
-                if (!customerData.name || !customerData.phone) throw new Error("Name and Phone are required for new customer");
-                await createBillWithCustomer({
+            const billId = mode === "existing"
+                ? await createBill(billData)
+                : await createBillWithCustomer({
                     customer: {
                         name: customerData.name,
                         email: customerData.email || undefined,
@@ -81,9 +78,14 @@ export function BillDialog({ open, onOpenChange, customers }: BillDialogProps) {
                         notes: billData.notes || undefined,
                     }
                 });
-            }
 
             toast.success("Bill generated successfully");
+
+            // Ask user if they want to print
+            if (window.confirm("Bill generated! Would you like to print the invoice now?")) {
+                window.open(`/print/billing/${billId}`, '_blank');
+            }
+
             onOpenChange(false);
             resetForm();
         } catch (error: any) {

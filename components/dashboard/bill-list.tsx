@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { Plus, Trash2, Receipt, User, Calendar, IndianRupee, MoreHorizontal, FileText, ChevronLeft, ChevronRight } from "lucide-react";
+import { Plus, Trash2, Receipt, User, Calendar, IndianRupee, MoreHorizontal, FileText, ChevronLeft, ChevronRight, Printer } from "lucide-react";
 import { BillDialog } from "./bill-dialog";
 import { DeleteBillDialog } from "./delete-bill-dialog";
 import { format } from "date-fns";
@@ -139,9 +139,12 @@ export function BillList({ bills: initialBills, customers }: BillListProps) {
                                                 </Button>
                                             </DropdownMenuTrigger>
                                             <DropdownMenuContent align="end" className="w-44 p-1 rounded-lg border-slate-200 dark:border-slate-800 shadow-2xl">
-                                                <DropdownMenuItem className="gap-2 rounded-md py-1.5 cursor-pointer">
-                                                    <FileText className="w-3.5 h-3.5 text-indigo-500" />
-                                                    <span className="font-bold text-xs">View Details</span>
+                                                <DropdownMenuItem
+                                                    onClick={() => window.open(`/print/billing/${bill.id}`, '_blank')}
+                                                    className="gap-2 rounded-md py-1.5 cursor-pointer"
+                                                >
+                                                    <Printer className="w-3.5 h-3.5 text-emerald-500" />
+                                                    <span className="font-bold text-xs">Print Invoice</span>
                                                 </DropdownMenuItem>
                                                 <div className="h-px bg-slate-100 dark:bg-slate-800 my-1" />
                                                 <DropdownMenuItem
@@ -213,14 +216,16 @@ export function BillList({ bills: initialBills, customers }: BillListProps) {
                 customers={customers}
             />
 
-            {activeBill && (
-                <DeleteBillDialog
-                    open={deleteDialogOpen}
-                    onOpenChange={setDeleteDialogOpen}
-                    billId={activeBill.id}
-                    invoiceNumber={activeBill.id.substring(0, 8).toUpperCase()}
-                />
-            )}
-        </div>
+            {
+                activeBill && (
+                    <DeleteBillDialog
+                        open={deleteDialogOpen}
+                        onOpenChange={setDeleteDialogOpen}
+                        billId={activeBill.id}
+                        invoiceNumber={activeBill.id.substring(0, 8).toUpperCase()}
+                    />
+                )
+            }
+        </div >
     );
 }

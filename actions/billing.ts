@@ -30,12 +30,13 @@ export async function createBill(data: {
 
     const userStore = await getStore(session.user.id);
 
-    await db.insert(bill).values({
+    const [newBill] = await db.insert(bill).values({
         ...data,
         storeId: userStore.id,
-    });
+    }).returning();
 
     revalidatePath("/dashboard/billing");
+    return newBill.id;
 }
 
 export async function getBills() {
@@ -119,14 +120,16 @@ export async function createBillWithCustomer(data: {
         }
 
         // 3. Create Bill
-        await tx.insert(bill).values({
+        const [newBill] = await tx.insert(bill).values({
             ...data.bill,
             customerId: newCustomer.id,
             storeId: userStore.id,
-        });
+        }).returning();
 
         revalidatePath("/dashboard/billing");
         revalidatePath("/dashboard/customers");
+
+        return newBill.id;
     });
 }
 
@@ -143,4 +146,26 @@ export async function deleteBill(id: string) {
         .where(and(eq(bill.id, id), eq(bill.storeId, userStore.id)));
 
     revalidatePath("/dashboard/billing");
+}
+
+export async function getBill(id: string) {
+    const session = await auth.api.getSession({
+        headers: await headers(),
+    });
+
+    if (!session) throw new Error("Unauthorized");
+
+    const userStore = await getStore(session.user.id);
+
+    const result = await db.query.bill.findFirst({
+        where: and(eq(bill.id, id), eq(bill.storeId, userStore.id)),
+        with: {
+            customer: true,
+            store: true,
+        },
+    });
+
+    if (!result) throw new Error("Bill not found");
+
+    return result;
 }

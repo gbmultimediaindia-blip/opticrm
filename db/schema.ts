@@ -1,6 +1,6 @@
 import { pgTable, text, timestamp, boolean, uuid } from "drizzle-orm/pg-core";
 
-export const user = pgTable("user", {
+export const users = pgTable("users", {
     id: text("id").primaryKey(),
     name: text("name").notNull(),
     email: text("email").notNull().unique(),
@@ -18,14 +18,14 @@ export const session = pgTable("session", {
     updatedAt: timestamp("updatedAt").notNull(),
     ipAddress: text("ipAddress"),
     userAgent: text("userAgent"),
-    userId: text("userId").notNull().references(() => user.id)
+    userId: text("userId").notNull().references(() => users.id)
 });
 
 export const account = pgTable("account", {
     id: text("id").primaryKey(),
     accountId: text("accountId").notNull(),
     providerId: text("providerId").notNull(),
-    userId: text("userId").notNull().references(() => user.id),
+    userId: text("userId").notNull().references(() => users.id),
     accessToken: text("accessToken"),
     refreshToken: text("refreshToken"),
     idToken: text("idToken"),
@@ -52,7 +52,7 @@ export const store = pgTable("store", {
     address: text("address").notNull(),
     email: text("email").notNull(),
     phone: text("phone").notNull(),
-    ownerId: text("owner_id").notNull().references(() => user.id),
+    ownerId: text("owner_id").notNull().references(() => users.id),
     createdAt: timestamp("created_at").notNull().defaultNow(),
     updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
@@ -101,6 +101,18 @@ export const bill = pgTable("bill", {
     updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
 
+export const product = pgTable("product", {
+    id: uuid("id").primaryKey().defaultRandom(),
+    name: text("name").notNull(),
+    category: text("category").notNull(), // 'Frames', 'Lenses', 'Sunglasses', 'Accessories'
+    brand: text("brand"),
+    price: text("price").notNull(),
+    stock: text("stock").notNull().default("0"),
+    storeId: uuid("store_id").notNull().references(() => store.id, { onDelete: "cascade" }),
+    createdAt: timestamp("created_at").notNull().defaultNow(),
+    updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
 import { relations } from "drizzle-orm";
 
 export const customerRelations = relations(customer, ({ many }) => ({
@@ -122,6 +134,19 @@ export const billRelations = relations(bill, ({ one }) => ({
     }),
     store: one(store, {
         fields: [bill.storeId],
+        references: [store.id],
+    }),
+}));
+
+export const storeRelations = relations(store, ({ many }) => ({
+    products: many(product),
+    customers: many(customer),
+    bills: many(bill),
+}));
+
+export const productRelations = relations(product, ({ one }) => ({
+    store: one(store, {
+        fields: [product.storeId],
         references: [store.id],
     }),
 }));
