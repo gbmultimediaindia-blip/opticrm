@@ -10,7 +10,7 @@ export const users = pgTable("users", {
     updatedAt: timestamp("updatedAt").notNull(),
 });
 
-export const session = pgTable("session", {
+export const session = pgTable("sessions", {
     id: text("id").primaryKey(),
     expiresAt: timestamp("expiresAt").notNull(),
     token: text("token").notNull().unique(),
@@ -21,7 +21,7 @@ export const session = pgTable("session", {
     userId: text("userId").notNull().references(() => users.id)
 });
 
-export const account = pgTable("account", {
+export const account = pgTable("accounts", {
     id: text("id").primaryKey(),
     accountId: text("accountId").notNull(),
     providerId: text("providerId").notNull(),
@@ -37,7 +37,7 @@ export const account = pgTable("account", {
     updatedAt: timestamp("updatedAt").notNull()
 });
 
-export const verification = pgTable("verification", {
+export const verification = pgTable("verifications", {
     id: text("id").primaryKey(),
     identifier: text("identifier").notNull(),
     value: text("value").notNull(),
@@ -46,7 +46,7 @@ export const verification = pgTable("verification", {
     updatedAt: timestamp("updatedAt")
 });
 
-export const store = pgTable("store", {
+export const store = pgTable("stores", {
     id: uuid("id").primaryKey().defaultRandom(),
     name: text("name").notNull(),
     address: text("address").notNull(),
@@ -57,7 +57,7 @@ export const store = pgTable("store", {
     updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
 
-export const customer = pgTable("customer", {
+export const customer = pgTable("customers", {
     id: uuid("id").primaryKey().defaultRandom(),
     name: text("name").notNull(),
     email: text("email"),
@@ -68,7 +68,7 @@ export const customer = pgTable("customer", {
     updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
 
-export const prescription = pgTable("prescription", {
+export const prescription = pgTable("prescriptions", {
     id: uuid("id").primaryKey().defaultRandom(),
     customerId: uuid("customer_id").notNull().references(() => customer.id, { onDelete: "cascade" }),
 
@@ -89,7 +89,7 @@ export const prescription = pgTable("prescription", {
     createdAt: timestamp("created_at").notNull().defaultNow(),
     updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
-export const bill = pgTable("bill", {
+export const bill = pgTable("bills", {
     id: uuid("id").primaryKey().defaultRandom(),
     customerId: uuid("customer_id").notNull().references(() => customer.id, { onDelete: "cascade" }),
     storeId: uuid("store_id").notNull().references(() => store.id, { onDelete: "cascade" }),
@@ -101,7 +101,7 @@ export const bill = pgTable("bill", {
     updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
 
-export const product = pgTable("product", {
+export const product = pgTable("products", {
     id: uuid("id").primaryKey().defaultRandom(),
     name: text("name").notNull(),
     category: text("category").notNull(), // 'Frames', 'Lenses', 'Sunglasses', 'Accessories'
