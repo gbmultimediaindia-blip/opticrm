@@ -2,12 +2,10 @@
 
 import { db } from "@/lib/db";
 import { product, store } from "@/db/schema";
-import { auth } from "@/lib/auth";
-import { headers } from "next/headers";
 import { eq, and, desc } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 
-import { getStore } from "@/actions/store";
+import { requireAccess } from "@/lib/permissions";
 
 export async function createProduct(data: {
     name: string;
@@ -16,14 +14,7 @@ export async function createProduct(data: {
     price: string;
     stock: string;
 }) {
-    const session = await auth.api.getSession({
-        headers: await headers(),
-    });
-
-    if (!session) throw new Error("Unauthorized");
-
-    const userStore = await getStore();
-    if (!userStore) throw new Error("Store not found");
+    const { store: userStore } = await requireAccess("write");
 
     await db.insert(product).values({
         ...data,
@@ -34,14 +25,7 @@ export async function createProduct(data: {
 }
 
 export async function getProducts() {
-    const session = await auth.api.getSession({
-        headers: await headers(),
-    });
-
-    if (!session) throw new Error("Unauthorized");
-
-    const userStore = await getStore();
-    if (!userStore) throw new Error("Store not found");
+    const { store: userStore } = await requireAccess("view");
 
     return await db.query.product.findMany({
         where: eq(product.storeId, userStore.id),
@@ -50,14 +34,7 @@ export async function getProducts() {
 }
 
 export async function deleteProduct(id: string) {
-    const session = await auth.api.getSession({
-        headers: await headers(),
-    });
-
-    if (!session) throw new Error("Unauthorized");
-
-    const userStore = await getStore();
-    if (!userStore) throw new Error("Store not found");
+    const { store: userStore } = await requireAccess("write");
 
     await db.delete(product)
         .where(and(eq(product.id, id), eq(product.storeId, userStore.id)));
@@ -72,14 +49,7 @@ export async function updateProduct(id: string, data: {
     price: string;
     stock: string;
 }) {
-    const session = await auth.api.getSession({
-        headers: await headers(),
-    });
-
-    if (!session) throw new Error("Unauthorized");
-
-    const userStore = await getStore();
-    if (!userStore) throw new Error("Store not found");
+    const { store: userStore } = await requireAccess("write");
 
     await db.update(product)
         .set(data)

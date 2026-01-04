@@ -88,13 +88,29 @@ export function BillPrint({ bill, store }: BillPrintProps) {
             <div className="flex justify-end pt-8">
                 <div className="w-72 space-y-4">
                     <div className="flex justify-between items-center text-sm font-medium text-slate-500 px-2">
-                        <span>Total Amount</span>
-                        <span className="font-mono text-slate-900 font-bold tracking-tight">₹{bill.totalAmount}</span>
+                        <span>Subtotal</span>
+                        <span className="font-mono text-slate-900 font-bold tracking-tight">₹{bill.subtotal || bill.totalAmount}</span>
                     </div>
+
+                    {bill.taxType && bill.taxType !== "none" && (
+                        <div className="flex justify-between items-center text-sm font-medium text-slate-500 px-2">
+                            <span>Tax ({bill.taxRate}% {bill.taxType === "included" ? "Incl." : "Excl."})</span>
+                            <span className="font-mono text-slate-900 font-bold tracking-tight">₹{bill.taxAmount}</span>
+                        </div>
+                    )}
+
+                    <div className="h-px bg-slate-100 dark:bg-slate-800" />
+
+                    <div className="flex justify-between items-center text-sm font-medium text-slate-900 px-2">
+                        <span className="font-black uppercase text-[10px] tracking-widest">Total Amount</span>
+                        <span className="font-mono text-slate-900 font-black tracking-tight text-lg">₹{bill.totalAmount}</span>
+                    </div>
+
                     <div className="flex justify-between items-center text-sm font-medium text-emerald-600 px-2">
-                        <span>Paid Amount</span>
+                        <span className="font-black uppercase text-[10px] tracking-widest">Paid Amount</span>
                         <span className="font-mono font-bold tracking-tight">₹{bill.advanceAmount}</span>
                     </div>
+
                     <div className="h-px bg-slate-200 my-4" />
                     <div className="flex justify-between items-center bg-slate-900 text-white p-4 rounded-xl shadow-lg shadow-slate-200">
                         <span className="text-[10px] font-black uppercase tracking-[0.2em] opacity-60">Balance Due</span>

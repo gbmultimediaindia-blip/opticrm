@@ -19,9 +19,10 @@ import { toast } from "sonner";
 interface StoreSwitcherProps {
     stores: any[];
     activeStore: any;
+    isAdmin?: boolean;
 }
 
-export function StoreSwitcher({ stores, activeStore }: StoreSwitcherProps) {
+export function StoreSwitcher({ stores, activeStore, isAdmin }: StoreSwitcherProps) {
     const [open, setOpen] = useState(false);
     const [dialogOpen, setDialogOpen] = useState(false);
     const router = useRouter();
@@ -67,14 +68,18 @@ export function StoreSwitcher({ stores, activeStore }: StoreSwitcherProps) {
                             {activeStore?.id === store.id && <Check className="ml-auto w-4 h-4 text-indigo-600 dark:text-indigo-400" />}
                         </DropdownMenuItem>
                     ))}
-                    <DropdownMenuSeparator className="bg-slate-100 dark:bg-slate-800 my-1" />
-                    <DropdownMenuItem
-                        className="gap-2 px-2 py-2 cursor-pointer text-indigo-600 dark:text-indigo-400 focus:bg-indigo-50 dark:focus:bg-indigo-900/10"
-                        onClick={() => setDialogOpen(true)}
-                    >
-                        <PlusCircle className="w-4 h-4" />
-                        <span className="font-medium text-sm">Create Store</span>
-                    </DropdownMenuItem>
+                    {isAdmin && (
+                        <>
+                            <DropdownMenuSeparator className="bg-slate-100 dark:bg-slate-800 my-1" />
+                            <DropdownMenuItem
+                                className="gap-2 px-2 py-2 cursor-pointer text-indigo-600 dark:text-indigo-400 focus:bg-indigo-50 dark:focus:bg-indigo-900/10"
+                                onClick={() => setDialogOpen(true)}
+                            >
+                                <PlusCircle className="w-4 h-4" />
+                                <span className="font-medium text-sm">Create Store</span>
+                            </DropdownMenuItem>
+                        </>
+                    )}
                 </DropdownMenuContent>
             </DropdownMenu>
 

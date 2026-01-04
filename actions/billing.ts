@@ -2,31 +2,39 @@
 
 import { db } from "@/lib/db";
 import { bill, store, customer, prescription } from "@/db/schema";
-import { auth } from "@/lib/auth";
-import { headers } from "next/headers";
 import { eq, and, desc } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 
-import { getStore } from "@/actions/store";
+import { requireAccess } from "@/lib/permissions";
+
+const formatAmount = (val: string | undefined | null) => {
+    if (!val || val.trim() === "") return "0";
+    return val;
+};
 
 export async function createBill(data: {
     customerId: string;
+    subtotal: string;
+    taxType: string;
+    taxRate: string;
+    taxAmount: string;
     totalAmount: string;
     advanceAmount: string;
     dueAmount: string;
     notes?: string;
 }) {
-    const session = await auth.api.getSession({
-        headers: await headers(),
-    });
-
-    if (!session) throw new Error("Unauthorized");
-
-    const userStore = await getStore();
-    if (!userStore) throw new Error("Store not found");
+    const { store: userStore } = await requireAccess("write");
 
     const [newBill] = await db.insert(bill).values({
-        ...data,
+        customerId: data.customerId,
+        subtotal: formatAmount(data.subtotal),
+        taxType: data.taxType,
+        taxRate: formatAmount(data.taxRate),
+        taxAmount: formatAmount(data.taxAmount),
+        totalAmount: formatAmount(data.totalAmount),
+        advanceAmount: formatAmount(data.advanceAmount),
+        dueAmount: formatAmount(data.dueAmount),
+        notes: data.notes,
         storeId: userStore.id,
     }).returning();
 
@@ -35,14 +43,7 @@ export async function createBill(data: {
 }
 
 export async function getBills() {
-    const session = await auth.api.getSession({
-        headers: await headers(),
-    });
-
-    if (!session) throw new Error("Unauthorized");
-
-    const userStore = await getStore();
-    if (!userStore) throw new Error("Store not found");
+    const { store: userStore } = await requireAccess("view");
 
     return await db.query.bill.findMany({
         where: eq(bill.storeId, userStore.id),
@@ -77,20 +78,17 @@ export async function createBillWithCustomer(data: {
         notes?: string;
     };
     bill: {
+        subtotal: string;
+        taxType: string;
+        taxRate: string;
+        taxAmount: string;
         totalAmount: string;
         advanceAmount: string;
         dueAmount: string;
         notes?: string;
     };
 }) {
-    const session = await auth.api.getSession({
-        headers: await headers(),
-    });
-
-    if (!session) throw new Error("Unauthorized");
-
-    const userStore = await getStore();
-    if (!userStore) throw new Error("Store not found");
+    const { store: userStore } = await requireAccess("write");
 
     return await db.transaction(async (tx) => {
         // 1. Create Customer
@@ -118,8 +116,15 @@ export async function createBillWithCustomer(data: {
 
         // 3. Create Bill
         const [newBill] = await tx.insert(bill).values({
-            ...data.bill,
             customerId: newCustomer.id,
+            subtotal: formatAmount(data.bill.subtotal),
+            taxType: data.bill.taxType,
+            taxRate: formatAmount(data.bill.taxRate),
+            taxAmount: formatAmount(data.bill.taxAmount),
+            totalAmount: formatAmount(data.bill.totalAmount),
+            advanceAmount: formatAmount(data.bill.advanceAmount),
+            dueAmount: formatAmount(data.bill.dueAmount),
+            notes: data.bill.notes || "",
             storeId: userStore.id,
         }).returning();
 
@@ -131,14 +136,7 @@ export async function createBillWithCustomer(data: {
 }
 
 export async function deleteBill(id: string) {
-    const session = await auth.api.getSession({
-        headers: await headers(),
-    });
-
-    if (!session) throw new Error("Unauthorized");
-
-    const userStore = await getStore();
-    if (!userStore) throw new Error("Store not found");
+    const { store: userStore } = await requireAccess("write");
 
     await db.delete(bill)
         .where(and(eq(bill.id, id), eq(bill.storeId, userStore.id)));
@@ -147,14 +145,7 @@ export async function deleteBill(id: string) {
 }
 
 export async function getBill(id: string) {
-    const session = await auth.api.getSession({
-        headers: await headers(),
-    });
-
-    if (!session) throw new Error("Unauthorized");
-
-    const userStore = await getStore();
-    if (!userStore) throw new Error("Store not found");
+    const { store: userStore } = await requireAccess("view");
 
     const result = await db.query.bill.findFirst({
         where: and(eq(bill.id, id), eq(bill.storeId, userStore.id)),

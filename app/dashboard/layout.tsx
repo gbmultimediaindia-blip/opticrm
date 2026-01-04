@@ -54,6 +54,8 @@ export default async function DashboardLayout({
                             <StoreSwitcher
                                 stores={JSON.parse(JSON.stringify(allStores))}
                                 activeStore={JSON.parse(JSON.stringify(store))}
+                                // @ts-ignore
+                                isAdmin={session.user.role === "admin"}
                             />
                         </div>
                         <div className="flex items-center gap-4">

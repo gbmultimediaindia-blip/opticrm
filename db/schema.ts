@@ -8,6 +8,7 @@ export const users = pgTable("users", {
     image: text("image"),
     createdAt: timestamp("createdAt").notNull(),
     updatedAt: timestamp("updatedAt").notNull(),
+    role: text("role").notNull().default("user"), // admin, user
 });
 
 export const session = pgTable("sessions", {
@@ -57,6 +58,15 @@ export const store = pgTable("stores", {
     updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
 
+export const storeMember = pgTable("store_members", {
+    id: uuid("id").primaryKey().defaultRandom(),
+    storeId: uuid("store_id").notNull().references(() => store.id, { onDelete: "cascade" }),
+    userId: text("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+    role: text("role").notNull().default("viewer"), // admin, editor, viewer
+    createdAt: timestamp("created_at").notNull().defaultNow(),
+    updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
 export const customer = pgTable("customers", {
     id: uuid("id").primaryKey().defaultRandom(),
     name: text("name").notNull(),
@@ -93,6 +103,10 @@ export const bill = pgTable("bills", {
     id: uuid("id").primaryKey().defaultRandom(),
     customerId: uuid("customer_id").notNull().references(() => customer.id, { onDelete: "cascade" }),
     storeId: uuid("store_id").notNull().references(() => store.id, { onDelete: "cascade" }),
+    subtotal: text("subtotal").notNull().default("0"),
+    taxType: text("tax_type").notNull().default("none"), // 'included', 'excluded', 'none'
+    taxRate: text("tax_rate").notNull().default("0"),
+    taxAmount: text("tax_amount").notNull().default("0"),
     totalAmount: text("total_amount").notNull(),
     advanceAmount: text("advance_amount").notNull().default("0"),
     dueAmount: text("due_amount").notNull().default("0"),
@@ -142,11 +156,23 @@ export const storeRelations = relations(store, ({ many }) => ({
     products: many(product),
     customers: many(customer),
     bills: many(bill),
+    members: many(storeMember),
 }));
 
 export const productRelations = relations(product, ({ one }) => ({
     store: one(store, {
         fields: [product.storeId],
         references: [store.id],
+    }),
+}));
+
+export const storeMemberRelations = relations(storeMember, ({ one }) => ({
+    store: one(store, {
+        fields: [storeMember.storeId],
+        references: [store.id],
+    }),
+    user: one(users, {
+        fields: [storeMember.userId],
+        references: [users.id],
     }),
 }));

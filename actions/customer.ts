@@ -2,12 +2,10 @@
 
 import { db } from "@/lib/db";
 import { customer, store, prescription } from "@/db/schema";
-import { auth } from "@/lib/auth";
-import { headers } from "next/headers";
 import { eq, and, desc } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 
-import { getStore } from "@/actions/store";
+import { requireAccess } from "@/lib/permissions";
 
 const formatPrescriptionValue = (val: string | undefined | null) => {
     if (!val || val.trim() === "") return "0.00";
@@ -32,14 +30,7 @@ export async function createCustomer(formData: {
         notes?: string;
     }
 }) {
-    const session = await auth.api.getSession({
-        headers: await headers(),
-    });
-
-    if (!session) throw new Error("Unauthorized");
-
-    const userStore = await getStore();
-    if (!userStore) throw new Error("Store not found");
+    const { store: userStore } = await requireAccess("write");
 
     const { prescription: prescriptionData, ...customerData } = formData;
 
@@ -73,14 +64,7 @@ export async function updateCustomer(id: string, formData: {
     phone: string;
     address?: string;
 }) {
-    const session = await auth.api.getSession({
-        headers: await headers(),
-    });
-
-    if (!session) throw new Error("Unauthorized");
-
-    const userStore = await getStore();
-    if (!userStore) throw new Error("Store not found");
+    const { store: userStore } = await requireAccess("write");
 
     await db.update(customer)
         .set(formData)
@@ -90,14 +74,7 @@ export async function updateCustomer(id: string, formData: {
 }
 
 export async function deleteCustomer(id: string) {
-    const session = await auth.api.getSession({
-        headers: await headers(),
-    });
-
-    if (!session) throw new Error("Unauthorized");
-
-    const userStore = await getStore();
-    if (!userStore) throw new Error("Store not found");
+    const { store: userStore } = await requireAccess("write");
 
     await db.delete(customer)
         .where(and(eq(customer.id, id), eq(customer.storeId, userStore.id)));
@@ -106,11 +83,7 @@ export async function deleteCustomer(id: string) {
 }
 
 export async function createPrescription(customerId: string, data: any) {
-    const session = await auth.api.getSession({
-        headers: await headers(),
-    });
-
-    if (!session) throw new Error("Unauthorized");
+    const { store: userStore } = await requireAccess("write");
 
     await db.insert(prescription).values({
         rightSphere: formatPrescriptionValue(data.rightSphere),
@@ -137,14 +110,7 @@ export async function getPrescriptionHistory(customerId: string) {
 }
 
 export async function getAllCustomers() {
-    const session = await auth.api.getSession({
-        headers: await headers(),
-    });
-
-    if (!session) throw new Error("Unauthorized");
-
-    const userStore = await getStore();
-    if (!userStore) throw new Error("Store not found");
+    const { store: userStore } = await requireAccess("view");
 
     return await db.query.customer.findMany({
         where: eq(customer.storeId, userStore.id),

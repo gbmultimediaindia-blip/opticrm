@@ -21,7 +21,8 @@ import { toast } from "sonner";
 import { updateStore, deleteStore } from "@/actions/store";
 import { useRouter } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
-import { Store, Lock, KeyRound, Trash2, AlertTriangle } from "lucide-react";
+import { Store, Users, Lock, KeyRound, Trash2, AlertTriangle } from "lucide-react";
+import { MembersTab } from "./members-tab";
 
 interface SettingsViewProps {
     store: any;
@@ -119,6 +120,14 @@ export function SettingsView({ store, user }: SettingsViewProps) {
                     </Button>
                     <Button
                         variant="ghost"
+                        onClick={() => setActiveTab("members")}
+                        className={`justify-start ${activeTab === "members" ? "bg-slate-100 dark:bg-slate-800" : ""}`}
+                    >
+                        <Users className="w-4 h-4 mr-2" />
+                        Members
+                    </Button>
+                    <Button
+                        variant="ghost"
                         onClick={() => setActiveTab("account")}
                         className={`justify-start ${activeTab === "account" ? "bg-slate-100 dark:bg-slate-800" : ""}`}
                     >
@@ -213,6 +222,10 @@ export function SettingsView({ store, user }: SettingsViewProps) {
                             </Card>
                         </div>
                     </div>
+                )}
+
+                {activeTab === "members" && (
+                    <MembersTab store={store} currentUser={user} />
                 )}
 
                 {activeTab === "account" && (
