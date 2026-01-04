@@ -195,7 +195,7 @@ export function PrescriptionDialog({ open, onOpenChange, customerId: initialCust
                             className="h-11 px-12 bg-indigo-600 hover:bg-indigo-700 text-white font-bold shadow-lg shadow-indigo-100 dark:shadow-none sm:flex-1"
                             disabled={loading}
                         >
-                            {loading ? "Saving Record..." : "Confirm & Save Rx"}
+                            {loading ? "Saving Record..." : "Confirm & Save"}
                         </Button>
                     </SheetFooter>
                 </div>

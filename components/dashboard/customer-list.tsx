@@ -3,8 +3,9 @@
 import { useState } from "react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { Plus, Edit2, Trash2, MoreHorizontal, Eye, History, User, Mail, Phone, Calendar, Maximize2, ChevronLeft, ChevronRight, Search } from "lucide-react";
+import { Plus, Edit2, Trash2, MoreHorizontal, Eye, History, User, Mail, Phone, Calendar, Maximize2, ChevronLeft, ChevronRight, Search, Glasses } from "lucide-react";
 import { Input } from "@/components/ui/input";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { CustomerSheet } from "./customer-sheet";
 import { PrescriptionHistoryDialog } from "./prescription-history-dialog";
 import { InvoiceHistoryDialog } from "./invoice-history-dialog";
@@ -134,7 +135,7 @@ export function CustomerList({ customers }: CustomerListProps) {
                         <TableRow className="hover:bg-transparent">
                             <TableHead className="w-[200px] font-black text-slate-400 uppercase text-[10px] tracking-widest py-2.5 px-4 underline-offset-4">Customer</TableHead>
                             <TableHead className="font-black text-slate-400 uppercase text-[10px] tracking-widest py-2.5 px-4">Contact Info</TableHead>
-                            <TableHead className="w-[180px] font-black text-slate-400 uppercase text-[10px] tracking-widest py-2.5 px-4 bg-slate-50/30 dark:bg-slate-900/10">Latest Rec</TableHead>
+                            <TableHead className="w-[180px] font-black text-slate-400 uppercase text-[10px] tracking-widest py-2.5 px-4 bg-slate-50/30 dark:bg-slate-900/10">Vision (Latest)</TableHead>
                             <TableHead className="font-black text-slate-400 uppercase text-[10px] tracking-widest py-2.5 px-4">Old Presc.</TableHead>
                             <TableHead className="font-black text-slate-400 uppercase text-[10px] tracking-widest py-2.5 px-4">Invoices</TableHead>
                             <TableHead className="font-black text-slate-400 uppercase text-[10px] tracking-widest py-2.5 px-4 text-right">Actions</TableHead>
@@ -213,24 +214,36 @@ export function CustomerList({ customers }: CustomerListProps) {
                                                 </div>
                                             </div>
                                         </TableCell>
-                                        <TableCell className="py-3 px-4 bg-slate-50/20 dark:bg-slate-900/5">
+                                        <TableCell className="py-3 px-4">
                                             {latestPrescription ? (
-                                                <div className="flex items-center gap-2">
-                                                    <div className="flex items-center bg-white dark:bg-slate-900 p-1 rounded-md border border-slate-100 dark:border-slate-800 shadow-sm divide-x divide-slate-100 dark:divide-slate-800">
-                                                        <div className="flex items-center gap-1.5 pr-2">
-                                                            <span className="text-[7px] font-black text-emerald-600 w-2">R</span>
-                                                            <div className="flex items-center gap-1.5">
-                                                                <MetricPair label="S" value={latestPrescription.rightSphere} />
-                                                                <MetricPair label="C" value={latestPrescription.rightCylinder} />
-                                                                <MetricPair label="A" value={latestPrescription.rightAxis} />
+                                                <div className="flex items-center gap-3">
+                                                    <div className="flex flex-col gap-1.5">
+                                                        {/* Right Eye */}
+                                                        <div className="flex items-center gap-2">
+                                                            <div className="w-6 h-4 flex items-center justify-center bg-emerald-50 dark:bg-emerald-900/20 rounded text-[8px] font-bold text-emerald-600 border border-emerald-100 dark:border-emerald-800 shrink-0">OD</div>
+                                                            <div className="flex items-center gap-1.5 text-xs font-mono font-bold tracking-tight">
+                                                                <span className="text-slate-900 dark:text-slate-100">{latestPrescription.rightSphere}</span>
+                                                                <span className="text-slate-300 dark:text-slate-700">/</span>
+                                                                <span className="text-slate-900 dark:text-slate-100">{latestPrescription.rightCylinder}</span>
+                                                                <span className="text-slate-300 dark:text-slate-700">×</span>
+                                                                <span className="text-slate-900 dark:text-slate-100">{latestPrescription.rightAxis}°</span>
+                                                                {(latestPrescription.rightAdd && latestPrescription.rightAdd !== "0" && latestPrescription.rightAdd !== "0.00") && (
+                                                                    <span className="ml-1 text-[10px] text-emerald-600 bg-emerald-50 dark:bg-emerald-900/30 px-1 rounded">+{latestPrescription.rightAdd}</span>
+                                                                )}
                                                             </div>
                                                         </div>
-                                                        <div className="flex items-center gap-1.5 pl-2">
-                                                            <span className="text-[7px] font-black text-amber-600 w-2">L</span>
-                                                            <div className="flex items-center gap-1.5">
-                                                                <MetricPair label="S" value={latestPrescription.leftSphere} />
-                                                                <MetricPair label="C" value={latestPrescription.leftCylinder} />
-                                                                <MetricPair label="A" value={latestPrescription.leftAxis} />
+                                                        {/* Left Eye */}
+                                                        <div className="flex items-center gap-2">
+                                                            <div className="w-6 h-4 flex items-center justify-center bg-amber-50 dark:bg-amber-900/20 rounded text-[8px] font-bold text-amber-600 border border-amber-100 dark:border-amber-800 shrink-0">OS</div>
+                                                            <div className="flex items-center gap-1.5 text-xs font-mono font-bold tracking-tight">
+                                                                <span className="text-slate-900 dark:text-slate-100">{latestPrescription.leftSphere}</span>
+                                                                <span className="text-slate-300 dark:text-slate-700">/</span>
+                                                                <span className="text-slate-900 dark:text-slate-100">{latestPrescription.leftCylinder}</span>
+                                                                <span className="text-slate-300 dark:text-slate-700">×</span>
+                                                                <span className="text-slate-900 dark:text-slate-100">{latestPrescription.leftAxis}°</span>
+                                                                {(latestPrescription.leftAdd && latestPrescription.leftAdd !== "0" && latestPrescription.leftAdd !== "0.00") && (
+                                                                    <span className="ml-1 text-[10px] text-amber-600 bg-amber-50 dark:bg-amber-900/30 px-1 rounded">+{latestPrescription.leftAdd}</span>
+                                                                )}
                                                             </div>
                                                         </div>
                                                     </div>
@@ -241,13 +254,15 @@ export function CustomerList({ customers }: CustomerListProps) {
                                                             e.stopPropagation();
                                                             handleViewLatest(customer);
                                                         }}
-                                                        className="h-6 w-6 rounded-md border border-slate-200 dark:border-slate-800 hover:bg-white dark:hover:bg-slate-800 opacity-0 group-hover:opacity-100 flex-none"
+                                                        className="h-8 w-8 rounded-md hover:bg-slate-100 dark:hover:bg-slate-800 opacity-0 group-hover:opacity-100 transition-all flex-none border border-transparent hover:border-slate-200 dark:hover:border-slate-700"
                                                     >
-                                                        <Maximize2 className="w-3 h-3 text-indigo-600" />
+                                                        <Maximize2 className="w-4 h-4 text-slate-500" />
                                                     </Button>
                                                 </div>
                                             ) : (
-                                                <span className="text-[10px] text-slate-400 italic">No record</span>
+                                                <div className="inline-flex items-center px-2 py-0.5 rounded bg-slate-50 dark:bg-slate-900 border border-dashed border-slate-200 dark:border-slate-800">
+                                                    <span className="text-[10px] text-slate-400 font-bold uppercase tracking-tighter">No History</span>
+                                                </div>
                                             )}
                                         </TableCell>
                                         <TableCell className="py-3 px-4">
@@ -277,32 +292,52 @@ export function CustomerList({ customers }: CustomerListProps) {
                                             </Button>
                                         </TableCell>
                                         <TableCell className="py-3 text-right px-4">
-                                            <div className="flex justify-end gap-1 isolate">
+                                            <div className="flex justify-end gap-1.5 isolate">
+                                                <TooltipProvider>
+                                                    <Tooltip>
+                                                        <TooltipTrigger asChild>
+                                                            <Button
+                                                                variant="ghost"
+                                                                size="icon"
+                                                                onClick={(e) => {
+                                                                    e.stopPropagation();
+                                                                    handleAddPrescription(customer);
+                                                                }}
+                                                                className="h-8 w-8 rounded-md border border-slate-200 dark:border-slate-800 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 text-emerald-600 shadow-sm transition-all"
+                                                            >
+                                                                <Glasses className="w-4 h-4" />
+                                                            </Button>
+                                                        </TooltipTrigger>
+                                                        <TooltipContent className="bg-emerald-600 text-white border-none font-bold text-[10px] uppercase tracking-widest px-3 py-1.5">New Prescription</TooltipContent>
+                                                    </Tooltip>
+                                                </TooltipProvider>
+
+                                                <TooltipProvider>
+                                                    <Tooltip>
+                                                        <TooltipTrigger asChild>
+                                                            <Button
+                                                                variant="ghost"
+                                                                size="icon"
+                                                                onClick={(e) => {
+                                                                    e.stopPropagation();
+                                                                    handleCreateInvoice(customer);
+                                                                }}
+                                                                className="h-8 w-8 rounded-md border border-slate-200 dark:border-slate-800 hover:bg-indigo-50 dark:hover:bg-indigo-900/20 text-indigo-600 shadow-sm transition-all"
+                                                            >
+                                                                <Plus className="w-4 h-4" />
+                                                            </Button>
+                                                        </TooltipTrigger>
+                                                        <TooltipContent className="bg-indigo-600 text-white border-none font-bold text-[10px] uppercase tracking-widest px-3 py-1.5">Create Invoice</TooltipContent>
+                                                    </Tooltip>
+                                                </TooltipProvider>
+
                                                 <DropdownMenu>
                                                     <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
-                                                        <Button variant="ghost" size="icon" className="h-8 w-8 rounded-md hover:bg-slate-100 dark:hover:bg-slate-800">
+                                                        <Button variant="ghost" size="icon" className="h-8 w-8 rounded-md hover:bg-slate-100 dark:hover:bg-slate-800 transition-all">
                                                             <MoreHorizontal className="w-4 h-4 text-slate-500" />
                                                         </Button>
                                                     </DropdownMenuTrigger>
                                                     <DropdownMenuContent align="end" className="w-48 p-1.5 rounded-xl border-slate-200 dark:border-slate-800 shadow-2xl">
-                                                        <DropdownMenuItem onClick={() => handleAddPrescription(customer)} className="gap-2.5 rounded-lg py-2">
-                                                            <div className="w-7 h-7 rounded-lg bg-emerald-50 dark:bg-emerald-900/20 flex items-center justify-center text-emerald-600 dark:text-emerald-400">
-                                                                <Eye className="w-3.5 h-3.5" />
-                                                            </div>
-                                                            <div className="flex flex-col">
-                                                                <span className="font-bold text-xs">New Prescription</span>
-                                                                <span className="text-[9px] text-slate-500">Record vision test</span>
-                                                            </div>
-                                                        </DropdownMenuItem>
-                                                        <DropdownMenuItem onClick={(e) => { e.stopPropagation(); handleCreateInvoice(customer); }} className="gap-2.5 rounded-lg py-2">
-                                                            <div className="w-7 h-7 rounded-lg bg-indigo-50 dark:bg-indigo-900/20 flex items-center justify-center text-indigo-600 dark:text-indigo-400">
-                                                                <Receipt className="w-3.5 h-3.5" />
-                                                            </div>
-                                                            <div className="flex flex-col">
-                                                                <span className="font-bold text-xs">Create Invoice</span>
-                                                                <span className="text-[9px] text-slate-500">Generate a new bill</span>
-                                                            </div>
-                                                        </DropdownMenuItem>
                                                         <DropdownMenuItem onClick={() => handleEdit(customer)} className="gap-2.5 rounded-lg py-2">
                                                             <div className="w-7 h-7 rounded-lg bg-blue-50 dark:bg-blue-900/20 flex items-center justify-center text-blue-600 dark:text-blue-400">
                                                                 <Edit2 className="w-3.5 h-3.5" />
