@@ -68,7 +68,7 @@ export function CreateStoreDialog({ open, onOpenChange }: CreateStoreDialogProps
                         </div>
                         <div className="grid gap-2">
                             <Label htmlFor="phone">Phone</Label>
-                            <Input id="phone" name="phone" type="tel" placeholder="+1234567890" required />
+                            <Input id="phone" name="phone" type="tel" placeholder="9876543210" required />
                         </div>
                         <div className="grid gap-2">
                             <Label htmlFor="gstNumber">GST Number (Optional)</Label>

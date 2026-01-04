@@ -1,8 +1,9 @@
 "use client";
 
 import { format } from "date-fns";
+import { useEffect } from "react";
 import { invoice, customer, store } from "@/db/schema";
-import { IndianRupee } from "lucide-react";
+import { IndianRupee, Info } from "lucide-react";
 
 interface InvoicePrintProps {
     invoice: any; // Using any for composite type from query
@@ -10,6 +11,14 @@ interface InvoicePrintProps {
 }
 
 export function InvoicePrint({ invoice, store }: InvoicePrintProps) {
+    useEffect(() => {
+        // Delay slightly to ensure styles are loaded
+        const timer = setTimeout(() => {
+            window.print();
+        }, 500);
+        return () => clearTimeout(timer);
+    }, []);
+
     if (!invoice || !store) return null;
 
     return (
@@ -57,30 +66,71 @@ export function InvoicePrint({ invoice, store }: InvoicePrintProps) {
 
             {/* Items Table */}
             <div className="mb-12">
-                <table className="w-full text-left">
+                <table className="w-full text-left border-collapse">
                     <thead>
-                        <tr className="border-y border-slate-200">
-                            <th className="py-4 font-black text-[10px] uppercase tracking-widest text-slate-400 w-12">#</th>
-                            <th className="py-4 font-black text-[10px] uppercase tracking-widest text-slate-400">DESCRIPTION</th>
-                            <th className="py-4 font-black text-[10px] uppercase tracking-widest text-slate-400 text-right">AMOUNT</th>
+                        <tr className="border-y-2 border-slate-900">
+                            <th className="py-4 font-black text-[10px] uppercase tracking-widest text-slate-900 w-12 text-center">#</th>
+                            <th className="py-4 font-black text-[10px] uppercase tracking-widest text-slate-900 px-4">ITEM DESCRIPTION</th>
+                            <th className="py-4 font-black text-[10px] uppercase tracking-widest text-slate-900 text-center w-24">QTY</th>
+                            <th className="py-4 font-black text-[10px] uppercase tracking-widest text-slate-900 text-right w-32">UNIT PRICE</th>
+                            <th className="py-4 font-black text-[10px] uppercase tracking-widest text-slate-900 text-right w-32">TOTAL</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr className="border-b border-slate-100">
-                            <td className="py-6 font-mono text-xs text-slate-400 align-top">01.</td>
-                            <td className="py-6">
-                                <div className="font-bold text-slate-900 text-sm">Optical Services & Products</div>
-                                {invoice.notes && (
-                                    <p className="text-xs text-slate-500 mt-2 font-medium bg-slate-50 p-3 rounded-lg border border-slate-100">
-                                        Notes: {invoice.notes}
-                                    </p>
-                                )}
+                        {invoice.items && invoice.items.length > 0 ? (
+                            invoice.items.map((item: any, idx: number) => (
+                                <tr key={item.id} className="border-b border-slate-100 group transition-colors hover:bg-slate-50/50">
+                                    <td className="py-5 font-mono text-[11px] text-slate-400 text-center">{String(idx + 1).padStart(2, '0')}</td>
+                                    <td className="py-5 px-4">
+                                        <div className="font-bold text-slate-900 text-[13px] uppercase tracking-tight">{item.product.name}</div>
+                                        <div className="flex items-center gap-2 mt-1">
+                                            <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">{item.product.category}</span>
+                                            {item.product.brand && (
+                                                <>
+                                                    <span className="w-1 h-1 rounded-full bg-slate-200" />
+                                                    <span className="text-[9px] font-bold text-indigo-500 uppercase">{item.product.brand}</span>
+                                                </>
+                                            )}
+                                        </div>
+                                    </td>
+                                    <td className="py-5 text-center font-mono font-bold text-slate-600 text-[13px]">
+                                        {item.quantity}
+                                    </td>
+                                    <td className="py-5 text-right font-mono font-medium text-slate-600 text-[13px]">
+                                        ₹{item.unitPrice}
+                                    </td>
+                                    <td className="py-5 text-right font-mono font-black text-slate-900 text-[13px]">
+                                        ₹{item.totalPrice}
+                                    </td>
+                                </tr>
+                            ))
+                        ) : (
+                            <tr className="border-b border-slate-100">
+                                <td className="py-8 font-mono text-xs text-slate-400 text-center">01</td>
+                                <td className="py-8 px-4">
+                                    <div className="font-bold text-slate-900 text-sm">Optical Services & Products</div>
+                                    <p className="text-[10px] text-slate-400 mt-1 font-medium italic">Standard optical billing items</p>
+                                </td>
+                                <td className="py-8 text-center font-mono font-bold text-slate-600">1</td>
+                                <td className="py-8 text-right font-mono font-medium text-slate-600">₹{invoice.subtotal}</td>
+                                <td className="py-8 text-right font-mono font-black text-slate-900">₹{invoice.subtotal}</td>
+                            </tr>
+                        )}
 
-                            </td>
-                            <td className="py-6 text-right align-top font-mono font-bold text-slate-900">
-                                ₹{invoice.subtotal || invoice.totalAmount}
-                            </td>
-                        </tr>
+                        {invoice.notes && (
+                            <tr>
+                                <td colSpan={5} className="py-6">
+                                    <div className="bg-slate-50/80 rounded-xl p-4 border border-slate-100/50">
+                                        <h5 className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1.5 flex items-center gap-2">
+                                            <Info className="w-3 h-3 text-slate-300" /> Administrative / Sale Notes
+                                        </h5>
+                                        <p className="text-[11px] text-slate-600 font-medium leading-relaxed italic">
+                                            {invoice.notes}
+                                        </p>
+                                    </div>
+                                </td>
+                            </tr>
+                        )}
                     </tbody>
                 </table>
             </div>

@@ -1,4 +1,4 @@
-import { pgTable, text, timestamp, boolean, uuid } from "drizzle-orm/pg-core";
+import { pgTable, text, timestamp, boolean, uuid, index } from "drizzle-orm/pg-core";
 
 export const users = pgTable("users", {
     id: text("id").primaryKey(),
@@ -134,6 +134,22 @@ export const product = pgTable("products", {
     storeId: uuid("store_id").notNull().references(() => store.id, { onDelete: "cascade" }),
     createdAt: timestamp("created_at").notNull().defaultNow(),
     updatedAt: timestamp("updated_at").notNull().defaultNow(),
+}, (table) => [
+    index("product_name_idx").on(table.name),
+    index("product_brand_idx").on(table.brand),
+    index("product_category_idx").on(table.category),
+    index("product_store_id_idx").on(table.storeId),
+]);
+
+export const invoiceItem = pgTable("invoice_items", {
+    id: uuid("id").primaryKey().defaultRandom(),
+    invoiceId: uuid("invoice_id").notNull().references(() => invoice.id, { onDelete: "cascade" }),
+    productId: uuid("product_id").notNull().references(() => product.id, { onDelete: "restrict" }),
+    quantity: text("quantity").notNull().default("1"),
+    unitPrice: text("unit_price").notNull(),
+    totalPrice: text("total_price").notNull(),
+    createdAt: timestamp("created_at").notNull().defaultNow(),
+    updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
 
 import { relations } from "drizzle-orm";
@@ -154,7 +170,7 @@ export const prescriptionRelations = relations(prescription, ({ one }) => ({
     }),
 }));
 
-export const invoiceRelations = relations(invoice, ({ one }) => ({
+export const invoiceRelations = relations(invoice, ({ one, many }) => ({
     customer: one(customer, {
         fields: [invoice.customerId],
         references: [customer.id],
@@ -162,6 +178,18 @@ export const invoiceRelations = relations(invoice, ({ one }) => ({
     store: one(store, {
         fields: [invoice.storeId],
         references: [store.id],
+    }),
+    items: many(invoiceItem),
+}));
+
+export const invoiceItemRelations = relations(invoiceItem, ({ one }) => ({
+    invoice: one(invoice, {
+        fields: [invoiceItem.invoiceId],
+        references: [invoice.id],
+    }),
+    product: one(product, {
+        fields: [invoiceItem.productId],
+        references: [product.id],
     }),
 }));
 
@@ -172,11 +200,12 @@ export const storeRelations = relations(store, ({ many }) => ({
     members: many(storeMember),
 }));
 
-export const productRelations = relations(product, ({ one }) => ({
+export const productRelations = relations(product, ({ one, many }) => ({
     store: one(store, {
         fields: [product.storeId],
         references: [store.id],
     }),
+    invoiceItems: many(invoiceItem),
 }));
 
 export const storeMemberRelations = relations(storeMember, ({ one }) => ({

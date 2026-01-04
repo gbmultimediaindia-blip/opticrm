@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Plus, Trash2, Receipt, User, Calendar, IndianRupee, MoreHorizontal, FileText, ChevronLeft, ChevronRight, Printer, Search, Edit, CheckCircle, Truck, Package, ChevronDown, Clock, X } from "lucide-react";
@@ -25,6 +26,7 @@ interface InvoiceListProps {
 }
 
 export function InvoiceList({ invoices: initialInvoices, customers }: InvoiceListProps) {
+    const router = useRouter();
     const [open, setOpen] = useState(false);
     const [detailDialogOpen, setDetailDialogOpen] = useState(false);
     const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
@@ -57,6 +59,7 @@ export function InvoiceList({ invoices: initialInvoices, customers }: InvoiceLis
         try {
             await completeInvoice(invoice.id);
             toast.success("Invoice marked as payment completed");
+            router.refresh();
         } catch (error) {
             toast.error("Failed to update status");
         }
@@ -66,6 +69,7 @@ export function InvoiceList({ invoices: initialInvoices, customers }: InvoiceLis
         try {
             await toggleDeliveryStatus(invoice.id, newStatus);
             toast.success(`Delivery status updated to ${newStatus}`);
+            router.refresh();
         } catch (error: any) {
             toast.error(error.message || "Failed to update delivery status");
         }

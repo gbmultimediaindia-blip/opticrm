@@ -8,20 +8,21 @@ interface PageProps {
 
 export default async function PrintInvoicePage({ params }: PageProps) {
     const { id } = await params;
+    let invoice;
 
     try {
-        const invoice = await getInvoice(id);
-        return (
-            <div className="min-h-screen bg-white">
-                <InvoicePrint invoice={invoice} store={invoice.store} />
-                <script
-                    dangerouslySetInnerHTML={{
-                        __html: `window.print();`,
-                    }}
-                />
-            </div>
-        );
+        invoice = await getInvoice(id);
     } catch (error) {
         return notFound();
     }
+
+    if (!invoice) {
+        return notFound();
+    }
+
+    return (
+        <div className="min-h-screen bg-white">
+            <InvoicePrint invoice={invoice} store={invoice.store} />
+        </div>
+    );
 }

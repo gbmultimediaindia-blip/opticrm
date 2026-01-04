@@ -23,6 +23,7 @@ export async function createProduct(data: {
     });
 
     revalidatePath("/dashboard/inventory");
+    revalidatePath("/dashboard");
 }
 
 export async function getProducts() {
@@ -41,6 +42,7 @@ export async function deleteProduct(id: string) {
         .where(and(eq(product.id, id), eq(product.storeId, userStore.id)));
 
     revalidatePath("/dashboard/inventory");
+    revalidatePath("/dashboard");
 }
 
 export async function updateProduct(id: string, data: {
@@ -58,4 +60,5 @@ export async function updateProduct(id: string, data: {
         .where(and(eq(product.id, id), eq(product.storeId, userStore.id)));
 
     revalidatePath("/dashboard/inventory");
+    revalidatePath("/dashboard");
 }

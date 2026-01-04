@@ -119,7 +119,39 @@ export function InvoiceDetailDialog({ invoice, open, onOpenChange, onDelete }: I
                         </div>
                     </div>
 
-                    {/* Metadata & Notes */}
+                    {/* Products / Items */}
+                    {invoice.items && invoice.items.length > 0 && (
+                        <div className="space-y-4">
+                            <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
+                                <Receipt className="w-3.5 h-3.5 text-orange-500" /> Itemized Billing
+                            </h3>
+                            <div className="bg-slate-50 dark:bg-slate-900/50 rounded-xl border border-slate-100 dark:border-slate-800 overflow-hidden">
+                                <div className="p-3 border-b border-slate-100 dark:border-slate-800 bg-slate-100/30 dark:bg-slate-800/30 flex items-center justify-between">
+                                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Description</span>
+                                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest text-right">Total</span>
+                                </div>
+                                <div className="divide-y divide-slate-100 dark:divide-slate-800">
+                                    {invoice.items.map((item: any) => (
+                                        <div key={item.id} className="p-3 flex items-center justify-between group transition-colors hover:bg-white dark:hover:bg-slate-900">
+                                            <div className="flex flex-col gap-0.5">
+                                                <span className="text-sm font-bold text-slate-900 dark:text-white capitalize leading-tight">
+                                                    {item.product?.name}
+                                                </span>
+                                                <div className="flex items-center gap-2 text-[10px] text-slate-500 font-medium">
+                                                    <span className="font-mono">₹{item.unitPrice}</span>
+                                                    <span className="text-slate-300">×</span>
+                                                    <span className="font-bold text-slate-800 dark:text-slate-300">{item.quantity} Qty</span>
+                                                </div>
+                                            </div>
+                                            <span className="font-mono font-bold text-slate-900 dark:text-white text-sm">
+                                                ₹{item.totalPrice}
+                                            </span>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
+                    )}
                     <div className="space-y-8">
                         <div className="space-y-4">
                             <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">

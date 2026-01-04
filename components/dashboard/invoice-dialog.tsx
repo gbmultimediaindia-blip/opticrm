@@ -1,13 +1,15 @@
 "use client";
 
 import { useState, useEffect, FormEvent } from "react";
+import { useRouter } from "next/navigation";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetFooter, SheetClose } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { createInvoice, updateInvoice } from "@/actions/invoice";
-import { Receipt, IndianRupee, User, Info, UserPlus, Eye, X, Printer, CheckCircle2, Search, Check, FileText } from "lucide-react";
+import { searchProducts } from "@/actions/product";
+import { Receipt, IndianRupee, User, Info, UserPlus, Eye, X, Printer, CheckCircle2, Search, Check, FileText, ShoppingBag, Plus, Minus, PackageSearch } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { CustomerSheet } from "./customer-sheet";
 import {
@@ -29,15 +31,31 @@ interface InvoiceDialogProps {
     invoiceToEdit?: any;
 }
 
+interface SelectedProduct {
+    id: string;
+    name: string;
+    sellingPrice: string;
+    quantity: number;
+    stock: string;
+}
+
 export function InvoiceDialog({ open, onOpenChange, customers, initialCustomerId, invoiceToEdit }: InvoiceDialogProps) {
+    const router = useRouter();
     const [loading, setLoading] = useState(false);
     const [showSuccessDialog, setShowSuccessDialog] = useState(false);
     const [newInvoiceId, setNewInvoiceId] = useState<string | null>(null);
     const [searchQuery, setSearchQuery] = useState("");
     const [showResults, setShowResults] = useState(false);
+
+    // Product Search State
+    const [productSearchQuery, setProductSearchQuery] = useState("");
+    const [productSearchResults, setProductSearchResults] = useState<any[]>([]);
+    const [isSearchingProducts, setIsSearchingProducts] = useState(false);
+    const [selectedProducts, setSelectedProducts] = useState<SelectedProduct[]>([]);
+
     const [invoiceData, setInvoiceData] = useState({
         customerId: "",
-        subtotal: "",
+        subtotal: "0",
         taxType: "none", // none, included, excluded
         taxRate: "18",
         taxAmount: "0",
@@ -65,6 +83,27 @@ export function InvoiceDialog({ open, onOpenChange, customers, initialCustomerId
     const selectedCustomer = localCustomers.find(c => c.id === invoiceData.customerId);
 
     useEffect(() => {
+        const fetchProductResults = async () => {
+            if (productSearchQuery.trim().length > 1) {
+                setIsSearchingProducts(true);
+                try {
+                    const results = await searchProducts(productSearchQuery);
+                    setProductSearchResults(results);
+                } catch (error) {
+                    console.error("Failed to search products:", error);
+                } finally {
+                    setIsSearchingProducts(false);
+                }
+            } else {
+                setProductSearchResults([]);
+            }
+        };
+
+        const timer = setTimeout(fetchProductResults, 300);
+        return () => clearTimeout(timer);
+    }, [productSearchQuery]);
+
+    useEffect(() => {
         if (open) {
             if (invoiceToEdit) {
                 setInvoiceData({
@@ -81,6 +120,15 @@ export function InvoiceDialog({ open, onOpenChange, customers, initialCustomerId
                     discountValue: invoiceToEdit.discountValue || "0",
                     discountAmount: invoiceToEdit.discountAmount || "0",
                 });
+                if (invoiceToEdit.items) {
+                    setSelectedProducts(invoiceToEdit.items.map((item: any) => ({
+                        id: item.productId,
+                        name: item.product.name,
+                        sellingPrice: item.unitPrice,
+                        quantity: parseInt(item.quantity),
+                        stock: item.product.stock
+                    })));
+                }
             } else {
                 if (initialCustomerId) {
                     setInvoiceData(prev => ({ ...prev, customerId: initialCustomerId }));
@@ -90,6 +138,12 @@ export function InvoiceDialog({ open, onOpenChange, customers, initialCustomerId
             resetForm();
         }
     }, [open, initialCustomerId, invoiceToEdit]);
+
+    // Update subtotal when products change
+    useEffect(() => {
+        const subtotal = selectedProducts.reduce((acc, p) => acc + (parseFloat(p.sellingPrice) * p.quantity), 0);
+        setInvoiceData(prev => ({ ...prev, subtotal: subtotal.toFixed(2) }));
+    }, [selectedProducts]);
 
     useEffect(() => {
         const base = parseFloat(invoiceData.subtotal) || 0;
@@ -161,14 +215,54 @@ export function InvoiceDialog({ open, onOpenChange, customers, initialCustomerId
         }));
     };
 
+    const addProduct = (p: any) => {
+        setSelectedProducts(prev => {
+            const existing = prev.find(item => item.id === p.id);
+            if (existing) {
+                return prev.map(item => item.id === p.id ? { ...item, quantity: item.quantity + 1 } : item);
+            }
+            return [...prev, { id: p.id, name: p.name, sellingPrice: p.sellingPrice, quantity: 1, stock: p.stock }];
+        });
+        setProductSearchQuery("");
+        setProductSearchResults([]);
+    };
+
+    const updateQuantity = (id: string, delta: number) => {
+        setSelectedProducts(prev => prev.map(p => {
+            if (p.id === id) {
+                const newQty = Math.max(1, p.quantity + delta);
+                return { ...p, quantity: newQty };
+            }
+            return p;
+        }));
+    };
+
+    const removeProduct = (id: string) => {
+        setSelectedProducts(prev => prev.filter(p => p.id !== id));
+    };
+
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
+
+        if (selectedProducts.length === 0) {
+            toast.error("Please add at least one product");
+            return;
+        }
+
         setLoading(true);
+
+        const items = selectedProducts.map(p => ({
+            productId: p.id,
+            quantity: p.quantity.toString(),
+            unitPrice: p.sellingPrice,
+            totalPrice: (parseFloat(p.sellingPrice) * p.quantity).toFixed(2)
+        }));
 
         try {
             if (invoiceToEdit) {
-                await updateInvoice(invoiceToEdit.id, invoiceData);
+                await updateInvoice(invoiceToEdit.id, { ...invoiceData, items });
                 toast.success("Invoice updated successfully");
+                router.refresh();
                 onOpenChange(false);
             } else {
                 if (!invoiceData.customerId) {
@@ -176,20 +270,12 @@ export function InvoiceDialog({ open, onOpenChange, customers, initialCustomerId
                     return;
                 }
                 const id = await createInvoice({
-                    customerId: invoiceData.customerId,
-                    subtotal: invoiceData.subtotal,
-                    taxType: invoiceData.taxType,
-                    taxRate: invoiceData.taxRate,
-                    taxAmount: invoiceData.taxAmount,
-                    totalAmount: invoiceData.totalAmount,
-                    advanceAmount: invoiceData.advanceAmount,
-                    dueAmount: invoiceData.dueAmount,
+                    ...invoiceData,
                     notes: invoiceData.notes || undefined,
-                    discountType: invoiceData.discountType,
-                    discountValue: invoiceData.discountValue,
-                    discountAmount: invoiceData.discountAmount,
+                    items
                 });
                 setNewInvoiceId(id);
+                router.refresh();
                 setShowSuccessDialog(true);
                 onOpenChange(false);
             }
@@ -210,7 +296,7 @@ export function InvoiceDialog({ open, onOpenChange, customers, initialCustomerId
     const resetForm = () => {
         setInvoiceData({
             customerId: "",
-            subtotal: "",
+            subtotal: "0",
             taxType: "none",
             taxRate: "18",
             taxAmount: "0",
@@ -222,6 +308,8 @@ export function InvoiceDialog({ open, onOpenChange, customers, initialCustomerId
             discountValue: "0",
             discountAmount: "0",
         });
+        setSelectedProducts([]);
+        setProductSearchQuery("");
     };
 
     return (
@@ -347,6 +435,115 @@ export function InvoiceDialog({ open, onOpenChange, customers, initialCustomerId
                                         </div>
                                     )}
                                 </div>
+
+                                {/* Product Selection Section */}
+                                <div className="space-y-3 pt-4 border-t border-slate-100 dark:border-slate-800">
+                                    <div className="flex items-center justify-between">
+                                        <Label className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
+                                            <ShoppingBag className="w-3.5 h-3.5 text-orange-500" /> Products / Items
+                                        </Label>
+                                    </div>
+
+                                    <div className="relative">
+                                        <div className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">
+                                            {isSearchingProducts ? (
+                                                <div className="w-4 h-4 border-2 border-slate-300 border-t-indigo-600 rounded-full animate-spin" />
+                                            ) : (
+                                                <Search className="w-4 h-4" />
+                                            )}
+                                        </div>
+                                        <Input
+                                            placeholder="Search products by name, brand or category..."
+                                            value={productSearchQuery}
+                                            onChange={(e) => setProductSearchQuery(e.target.value)}
+                                            className="pl-9 h-11 rounded-xl bg-slate-50 dark:bg-slate-900 border-transparent focus:bg-white dark:focus:bg-slate-950 transition-all"
+                                        />
+
+                                        {productSearchResults.length > 0 && (
+                                            <div className="absolute top-full left-0 right-0 mt-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl shadow-2xl z-50 overflow-hidden max-h-[300px] overflow-y-auto animate-in fade-in slide-in-from-top-2">
+                                                <div className="p-1">
+                                                    {productSearchResults.map((p) => (
+                                                        <button
+                                                            key={p.id}
+                                                            type="button"
+                                                            onClick={() => addProduct(p)}
+                                                            className="w-full flex items-center justify-between p-3 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-lg transition-colors text-left group"
+                                                        >
+                                                            <div className="flex flex-col gap-0.5">
+                                                                <span className="font-bold text-sm text-slate-900 dark:text-white">{p.name}</span>
+                                                                <div className="flex items-center gap-2">
+                                                                    <span className="text-[10px] font-medium px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-500 tracking-wide uppercase">{p.category}</span>
+                                                                    <span className="text-[10px] text-slate-400 font-medium">Stock: <span className={cn(parseInt(p.stock) <= 0 ? "text-red-500" : "text-emerald-500")}>{p.stock}</span></span>
+                                                                </div>
+                                                            </div>
+                                                            <div className="flex items-center gap-3">
+                                                                <span className="font-mono font-bold text-indigo-600 dark:text-indigo-400">₹{p.sellingPrice}</span>
+                                                                <div className="w-7 h-7 rounded-full bg-indigo-50 dark:bg-indigo-900/30 flex items-center justify-center text-indigo-600 dark:text-indigo-400 group-hover:bg-indigo-600 group-hover:text-white transition-all">
+                                                                    <Plus className="w-4 h-4" />
+                                                                </div>
+                                                            </div>
+                                                        </button>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        )}
+                                    </div>
+
+                                    {/* Selected Products List */}
+                                    <div className="space-y-2 mt-4">
+                                        {selectedProducts.length > 0 ? (
+                                            <div className="space-y-2">
+                                                {selectedProducts.map((item) => (
+                                                    <div key={item.id} className="flex items-center gap-3 p-3 rounded-xl border border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900/50 shadow-sm animate-in fade-in slide-in-from-left-2 transition-all hover:border-slate-200 dark:hover:border-slate-700">
+                                                        <div className="w-10 h-10 rounded-lg bg-orange-50 dark:bg-orange-900/20 flex items-center justify-center text-orange-600 dark:text-orange-400 shrink-0">
+                                                            <PackageSearch className="w-5 h-5" />
+                                                        </div>
+                                                        <div className="flex-1 min-w-0">
+                                                            <h4 className="text-sm font-bold text-slate-900 dark:text-white truncate capitalize">{item.name}</h4>
+                                                            <p className="text-[10px] font-mono font-bold text-indigo-600/80 dark:text-indigo-400/80 tracking-wide">
+                                                                ₹{item.sellingPrice} × {item.quantity} = ₹{(parseFloat(item.sellingPrice) * item.quantity).toFixed(2)}
+                                                            </p>
+                                                        </div>
+                                                        <div className="flex items-center gap-1.5 bg-slate-50 dark:bg-slate-800 p-1 rounded-lg border border-slate-100 dark:border-slate-700">
+                                                            <button
+                                                                type="button"
+                                                                onClick={() => updateQuantity(item.id, -1)}
+                                                                className="w-6 h-6 rounded-md flex items-center justify-center hover:bg-white dark:hover:bg-slate-700 text-slate-500 transition-all active:scale-95"
+                                                            >
+                                                                <Minus className="w-3.5 h-3.5" />
+                                                            </button>
+                                                            <span className="w-6 text-center text-xs font-black text-slate-700 dark:text-slate-300 font-mono italic">
+                                                                {item.quantity}
+                                                            </span>
+                                                            <button
+                                                                type="button"
+                                                                onClick={() => updateQuantity(item.id, 1)}
+                                                                className="w-6 h-6 rounded-md flex items-center justify-center hover:bg-white dark:hover:bg-slate-700 text-slate-500 transition-all active:scale-95"
+                                                            >
+                                                                <Plus className="w-3.5 h-3.5" />
+                                                            </button>
+                                                        </div>
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => removeProduct(item.id)}
+                                                            className="w-8 h-8 rounded-lg flex items-center justify-center text-slate-300 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-all ml-1"
+                                                        >
+                                                            <X className="w-4 h-4" />
+                                                        </button>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        ) : (
+                                            <div className="flex flex-col items-center justify-center py-12 border-2 border-dashed border-slate-100 dark:border-slate-800 rounded-2xl bg-slate-50/30 dark:bg-slate-900/20 px-8 text-center animate-in zoom-in-95 duration-300">
+                                                <div className="w-12 h-12 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-300 mb-3">
+                                                    <ShoppingBag className="w-6 h-6" />
+                                                </div>
+                                                <h5 className="text-[11px] font-black text-slate-400 uppercase tracking-widest mb-1.5">No items added</h5>
+                                                <p className="text-[10px] text-slate-400/80 leading-relaxed font-medium">Search and select products to start building the invoice.</p>
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
                             </div>
 
                             {/* Transaction Details Grid */}
@@ -356,18 +553,15 @@ export function InvoiceDialog({ open, onOpenChange, customers, initialCustomerId
                                 </h3>
 
                                 <div className="grid grid-cols-2 gap-4">
-                                    {/* Subtotal */}
+                                    {/* Subtotal - Read Only */}
                                     <div className="space-y-2 col-span-2">
-                                        <Label className="text-[10px] font-black text-slate-400 uppercase leading-none">Subtotal Amount</Label>
+                                        <Label className="text-[10px] font-black text-slate-400 uppercase leading-none">Subtotal Amount (Automatically Calculated)</Label>
                                         <div className="relative">
                                             <div className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm font-bold font-mono">₹</div>
                                             <Input
-                                                type="number"
-                                                placeholder="0.00"
                                                 value={invoiceData.subtotal}
-                                                onChange={(e) => setInvoiceData({ ...invoiceData, subtotal: e.target.value })}
-                                                className="h-11 pl-8 font-mono font-bold text-lg text-slate-900 dark:text-white"
-                                                required
+                                                readOnly
+                                                className="h-11 pl-8 font-mono font-bold text-lg text-slate-900 dark:text-white bg-slate-50/50 dark:bg-slate-900/50"
                                             />
                                         </div>
                                     </div>

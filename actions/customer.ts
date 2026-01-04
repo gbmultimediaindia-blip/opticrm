@@ -58,6 +58,7 @@ export async function createCustomer(formData: {
     }
 
     revalidatePath("/dashboard/customers");
+    revalidatePath("/dashboard");
     return newCustomer;
 }
 
@@ -76,6 +77,7 @@ export async function updateCustomer(id: string, formData: {
         .where(and(eq(customer.id, id), eq(customer.storeId, userStore.id)));
 
     revalidatePath("/dashboard/customers");
+    revalidatePath("/dashboard");
 }
 
 export async function deleteCustomer(id: string) {
@@ -85,6 +87,7 @@ export async function deleteCustomer(id: string) {
         .where(and(eq(customer.id, id), eq(customer.storeId, userStore.id)));
 
     revalidatePath("/dashboard/customers");
+    revalidatePath("/dashboard");
 }
 
 export async function createPrescription(customerId: string, data: any) {
@@ -105,6 +108,7 @@ export async function createPrescription(customerId: string, data: any) {
     });
 
     revalidatePath("/dashboard/customers");
+    revalidatePath("/dashboard");
 }
 
 export async function getPrescriptionHistory(customerId: string) {

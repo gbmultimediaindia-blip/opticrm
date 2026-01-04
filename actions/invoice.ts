@@ -1,8 +1,8 @@
 "use server";
 
 import { db } from "@/lib/db";
-import { invoice, store, customer, prescription } from "@/db/schema";
-import { eq, and, desc } from "drizzle-orm";
+import { invoice, store, customer, prescription, invoiceItem, product } from "@/db/schema";
+import { eq, and, desc, sql } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 
 import { requireAccess } from "@/lib/permissions";
@@ -27,29 +27,58 @@ export async function createInvoice(data: {
     discountType?: string;
     discountValue?: string;
     discountAmount?: string;
+    items: {
+        productId: string;
+        quantity: string;
+        unitPrice: string;
+        totalPrice: string;
+    }[];
 }) {
     const { store: userStore } = await requireAccess("write");
 
-    const [newInvoice] = await db.insert(invoice).values({
-        customerId: data.customerId,
-        subtotal: formatAmount(data.subtotal),
-        taxType: data.taxType,
-        taxRate: formatAmount(data.taxRate),
-        taxAmount: formatAmount(data.taxAmount),
-        totalAmount: formatAmount(data.totalAmount),
-        advanceAmount: formatAmount(data.advanceAmount),
-        dueAmount: formatAmount(data.dueAmount),
-        status: parseFloat(formatAmount(data.dueAmount)) <= 0 ? "completed" : "pending",
-        deliveryStatus: data.deliveryStatus || "pending",
-        notes: data.notes,
-        discountType: data.discountType || "fixed",
-        discountValue: formatAmount(data.discountValue),
-        discountAmount: formatAmount(data.discountAmount),
-        storeId: userStore.id,
-    }).returning();
+    return await db.transaction(async (tx) => {
+        // 1. Create Invoice
+        const [newInvoice] = await tx.insert(invoice).values({
+            customerId: data.customerId,
+            subtotal: formatAmount(data.subtotal),
+            taxType: data.taxType,
+            taxRate: formatAmount(data.taxRate),
+            taxAmount: formatAmount(data.taxAmount),
+            totalAmount: formatAmount(data.totalAmount),
+            advanceAmount: formatAmount(data.advanceAmount),
+            dueAmount: formatAmount(data.dueAmount),
+            status: parseFloat(formatAmount(data.dueAmount)) <= 0 ? "completed" : "pending",
+            deliveryStatus: data.deliveryStatus || "pending",
+            notes: data.notes,
+            discountType: data.discountType || "fixed",
+            discountValue: formatAmount(data.discountValue),
+            discountAmount: formatAmount(data.discountAmount),
+            storeId: userStore.id,
+        }).returning();
 
-    revalidatePath("/dashboard/invoices");
-    return newInvoice.id;
+        // 2. Create Invoice Items and Update Stock
+        for (const item of data.items) {
+            await tx.insert(invoiceItem).values({
+                invoiceId: newInvoice.id,
+                productId: item.productId,
+                quantity: item.quantity,
+                unitPrice: item.unitPrice,
+                totalPrice: item.totalPrice,
+            });
+
+            // Debit stock from product table
+            await tx.update(product)
+                .set({
+                    stock: sql`(${product.stock}::integer - ${parseInt(item.quantity)})::text`
+                })
+                .where(and(eq(product.id, item.productId), eq(product.storeId, userStore.id)));
+        }
+
+        revalidatePath("/dashboard/invoices");
+        revalidatePath("/dashboard/inventory");
+        revalidatePath("/dashboard");
+        return newInvoice.id;
+    });
 }
 
 export async function getInvoices() {
@@ -59,10 +88,16 @@ export async function getInvoices() {
         where: eq(invoice.storeId, userStore.id),
         with: {
             customer: true,
+            items: {
+                with: {
+                    product: true
+                }
+            }
         },
         orderBy: [desc(invoice.createdAt)],
     });
 }
+
 const formatPrescriptionValue = (val: string | undefined | null) => {
     if (!val || val.trim() === "") return "0.00";
     return val;
@@ -101,6 +136,12 @@ export async function createInvoiceWithCustomer(data: {
         discountType?: string;
         discountValue?: string;
         discountAmount?: string;
+        items: {
+            productId: string;
+            quantity: string;
+            unitPrice: string;
+            totalPrice: string;
+        }[];
     };
 }) {
     const { store: userStore } = await requireAccess("write");
@@ -148,8 +189,27 @@ export async function createInvoiceWithCustomer(data: {
             storeId: userStore.id,
         }).returning();
 
+        // 4. Create Invoice Items and Update Stock
+        for (const item of data.invoice.items) {
+            await tx.insert(invoiceItem).values({
+                invoiceId: newInvoice.id,
+                productId: item.productId,
+                quantity: item.quantity,
+                unitPrice: item.unitPrice,
+                totalPrice: item.totalPrice,
+            });
+
+            await tx.update(product)
+                .set({
+                    stock: sql`(${product.stock}::integer - ${parseInt(item.quantity)})::text`
+                })
+                .where(and(eq(product.id, item.productId), eq(product.storeId, userStore.id)));
+        }
+
         revalidatePath("/dashboard/invoices");
         revalidatePath("/dashboard/customers");
+        revalidatePath("/dashboard/inventory");
+        revalidatePath("/dashboard");
 
         return newInvoice.id;
     });
@@ -158,10 +218,27 @@ export async function createInvoiceWithCustomer(data: {
 export async function deleteInvoice(id: string) {
     const { store: userStore } = await requireAccess("write");
 
-    await db.delete(invoice)
-        .where(and(eq(invoice.id, id), eq(invoice.storeId, userStore.id)));
+    await db.transaction(async (tx) => {
+        // Find invoice items to restore stock
+        const items = await tx.query.invoiceItem.findMany({
+            where: eq(invoiceItem.invoiceId, id),
+        });
+
+        for (const item of items) {
+            await tx.update(product)
+                .set({
+                    stock: sql`(${product.stock}::integer + ${parseInt(item.quantity)})::text`
+                })
+                .where(and(eq(product.id, item.productId), eq(product.storeId, userStore.id)));
+        }
+
+        await tx.delete(invoice)
+            .where(and(eq(invoice.id, id), eq(invoice.storeId, userStore.id)));
+    });
 
     revalidatePath("/dashboard/invoices");
+    revalidatePath("/dashboard/inventory");
+    revalidatePath("/dashboard");
 }
 
 export async function updateInvoice(id: string, data: {
@@ -179,29 +256,77 @@ export async function updateInvoice(id: string, data: {
     discountType?: string;
     discountValue?: string;
     discountAmount?: string;
+    items?: {
+        productId: string;
+        quantity: string;
+        unitPrice: string;
+        totalPrice: string;
+    }[];
 }) {
     const { store: userStore } = await requireAccess("write");
 
-    await db.update(invoice)
-        .set({
-            customerId: data.customerId,
-            subtotal: formatAmount(data.subtotal),
-            taxType: data.taxType,
-            taxRate: formatAmount(data.taxRate),
-            taxAmount: formatAmount(data.taxAmount),
-            totalAmount: formatAmount(data.totalAmount),
-            advanceAmount: formatAmount(data.advanceAmount),
-            dueAmount: formatAmount(data.dueAmount),
-            status: parseFloat(formatAmount(data.dueAmount)) <= 0 ? "completed" : "pending",
-            deliveryStatus: data.deliveryStatus,
-            notes: data.notes,
-            discountType: data.discountType,
-            discountValue: formatAmount(data.discountValue),
-            discountAmount: formatAmount(data.discountAmount),
-        })
-        .where(and(eq(invoice.id, id), eq(invoice.storeId, userStore.id)));
+    await db.transaction(async (tx) => {
+        // 1. Update Invoice Basic Info
+        await tx.update(invoice)
+            .set({
+                customerId: data.customerId,
+                subtotal: formatAmount(data.subtotal),
+                taxType: data.taxType,
+                taxRate: formatAmount(data.taxRate),
+                taxAmount: formatAmount(data.taxAmount),
+                totalAmount: formatAmount(data.totalAmount),
+                advanceAmount: formatAmount(data.advanceAmount),
+                dueAmount: formatAmount(data.dueAmount),
+                status: parseFloat(formatAmount(data.dueAmount)) <= 0 ? "completed" : "pending",
+                deliveryStatus: data.deliveryStatus,
+                notes: data.notes,
+                discountType: data.discountType,
+                discountValue: formatAmount(data.discountValue),
+                discountAmount: formatAmount(data.discountAmount),
+                updatedAt: new Date(),
+            })
+            .where(and(eq(invoice.id, id), eq(invoice.storeId, userStore.id)));
+
+        // 2. Handle Items if provided
+        if (data.items) {
+            // Restore stock for old items
+            const oldItems = await tx.query.invoiceItem.findMany({
+                where: eq(invoiceItem.invoiceId, id),
+            });
+
+            for (const item of oldItems) {
+                await tx.update(product)
+                    .set({
+                        stock: sql`(${product.stock}::integer + ${parseInt(item.quantity)})::text`
+                    })
+                    .where(and(eq(product.id, item.productId), eq(product.storeId, userStore.id)));
+            }
+
+            // Remove old items
+            await tx.delete(invoiceItem).where(eq(invoiceItem.invoiceId, id));
+
+            // Add new items and debit stock
+            for (const item of data.items) {
+                await tx.insert(invoiceItem).values({
+                    invoiceId: id,
+                    productId: item.productId,
+                    quantity: item.quantity,
+                    unitPrice: item.unitPrice,
+                    totalPrice: item.totalPrice,
+                });
+
+                await tx.update(product)
+                    .set({
+                        stock: sql`(${product.stock}::integer - ${parseInt(item.quantity)})::text`
+                    })
+                    .where(and(eq(product.id, item.productId), eq(product.storeId, userStore.id)));
+            }
+        }
+    });
 
     revalidatePath("/dashboard/invoices");
+    revalidatePath("/dashboard/inventory");
+    revalidatePath("/dashboard");
 }
 
 export async function completeInvoice(id: string) {
@@ -223,6 +348,7 @@ export async function completeInvoice(id: string) {
         .where(and(eq(invoice.id, id), eq(invoice.storeId, userStore.id)));
 
     revalidatePath("/dashboard/invoices");
+    revalidatePath("/dashboard");
 }
 
 export async function toggleDeliveryStatus(id: string, deliveryStatus: string) {
@@ -246,6 +372,7 @@ export async function toggleDeliveryStatus(id: string, deliveryStatus: string) {
         .where(and(eq(invoice.id, id), eq(invoice.storeId, userStore.id)));
 
     revalidatePath("/dashboard/invoices");
+    revalidatePath("/dashboard");
 }
 
 export async function getInvoice(id: string) {
@@ -256,6 +383,11 @@ export async function getInvoice(id: string) {
         with: {
             customer: true,
             store: true,
+            items: {
+                with: {
+                    product: true
+                }
+            }
         },
     });
 
