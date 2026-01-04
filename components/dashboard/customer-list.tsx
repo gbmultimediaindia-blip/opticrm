@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { Plus, Edit2, Trash2, MoreHorizontal, Eye, History, User, Users, Mail, Phone, Calendar, Maximize2, ChevronLeft, ChevronRight, Search, Glasses } from "lucide-react";
+import { Plus, Edit2, Trash2, MoreHorizontal, Eye, History, User, Users, Mail, Phone, Calendar, Maximize2, ChevronLeft, ChevronRight, Search, Glasses, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { CustomerSheet } from "./customer-sheet";
@@ -123,8 +123,16 @@ export function CustomerList({ customers }: CustomerListProps) {
                                 setSearchQuery(e.target.value);
                                 setCurrentPage(1);
                             }}
-                            className="pl-10 h-10 rounded-lg border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 focus-visible:ring-indigo-500/20 focus-visible:border-indigo-500 transition-all text-sm font-medium"
+                            className="pl-10 pr-8 h-10 rounded-lg border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 focus-visible:ring-indigo-500/20 focus-visible:border-indigo-500 transition-all text-sm font-medium"
                         />
+                        {searchQuery && (
+                            <button
+                                onClick={() => setSearchQuery("")}
+                                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors"
+                            >
+                                <X className="w-4 h-4" />
+                            </button>
+                        )}
                     </div>
                     <Button onClick={handleCreate} className="w-full sm:w-auto bg-indigo-600 hover:bg-indigo-700 h-10 px-5 rounded-lg gap-2 font-bold shadow-sm transition-all hover:scale-[1.02] active:scale-[0.98] text-sm text-white">
                         <Plus className="w-4 h-4" /> Add Customer
@@ -156,14 +164,14 @@ export function CustomerList({ customers }: CustomerListProps) {
                     <TableBody>
                         {paginatedCustomers.length === 0 ? (
                             <TableRow>
-                                <TableCell colSpan={5} className="text-center py-12">
+                                <TableCell colSpan={6} className="text-center py-12">
                                     <div className="flex flex-col items-center gap-2">
                                         <div className="w-12 h-12 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-400">
                                             <User className="w-6 h-6" />
                                         </div>
                                         <p className="text-slate-900 dark:text-white font-bold">No customers found</p>
                                         <Button variant="outline" size="sm" onClick={handleCreate} className="mt-1 border-slate-200 dark:border-slate-800 text-xs font-bold">
-                                            Add Your First Customer
+                                            Add Customer
                                         </Button>
                                     </div>
                                 </TableCell>

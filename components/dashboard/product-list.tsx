@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { Plus, Trash2, Edit, MoreHorizontal, Box, Tag, Layers, Search, Package2, ChevronLeft, ChevronRight } from "lucide-react";
+import { Plus, Trash2, Edit, MoreHorizontal, Box, Tag, Layers, Search, Package2, ChevronLeft, ChevronRight, X } from "lucide-react";
 import { ProductSheet } from "./product-sheet";
 import { DeleteProductDialog } from "./delete-product-dialog";
 import { Input } from "@/components/ui/input";
@@ -67,7 +67,7 @@ export function ProductList({ data }: ProductListProps) {
                 <div>
                     <h2 className="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
                         <Box className="w-5 h-5 text-indigo-500" />
-                        Inventory
+                        Products
                     </h2>
                     <p className="text-sm text-slate-500 mt-1">Manage your products, stock levels, and prices.</p>
                 </div>
@@ -75,14 +75,22 @@ export function ProductList({ data }: ProductListProps) {
                     <div className="relative w-full sm:w-72 group">
                         <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-focus-within:text-indigo-500 transition-colors" />
                         <Input
-                            placeholder="Search inventory..."
+                            placeholder="Search products..."
                             value={searchQuery}
                             onChange={(e) => {
                                 setSearchQuery(e.target.value);
                                 setCurrentPage(1);
                             }}
-                            className="pl-10 h-10 rounded-lg border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 focus-visible:ring-indigo-500/20 focus-visible:border-indigo-500 transition-all text-sm font-medium"
+                            className="pl-10 pr-8 h-10 rounded-lg border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 focus-visible:ring-indigo-500/20 focus-visible:border-indigo-500 transition-all text-sm font-medium"
                         />
+                        {searchQuery && (
+                            <button
+                                onClick={() => setSearchQuery("")}
+                                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors"
+                            >
+                                <X className="w-4 h-4" />
+                            </button>
+                        )}
                     </div>
                     <Button onClick={handleAddClick} className="w-full sm:w-auto bg-indigo-600 hover:bg-indigo-700 h-10 px-5 rounded-lg gap-2 font-bold shadow-sm transition-all hover:scale-[1.02] active:scale-[0.98] text-sm text-white">
                         <Plus className="w-4 h-4" />
@@ -104,8 +112,8 @@ export function ProductList({ data }: ProductListProps) {
 
                 <div className="overflow-x-auto">
                     <Table>
-                        <TableHeader>
-                            <TableRow className="hover:bg-transparent border-slate-100 dark:border-slate-800">
+                        <TableHeader className="bg-slate-50/50 dark:bg-slate-800/50 border-b border-slate-200 dark:border-slate-800">
+                            <TableRow className="hover:bg-transparent">
                                 <TableHead className="w-[300px] text-xs font-semibold text-slate-500 py-3 px-4">Product Name</TableHead>
                                 <TableHead className="w-[150px] text-xs font-semibold text-slate-500 py-3 px-4">Category</TableHead>
                                 <TableHead className="w-[150px] text-xs font-semibold text-slate-500 py-3 px-4">Brand</TableHead>
@@ -125,7 +133,7 @@ export function ProductList({ data }: ProductListProps) {
                                             </div>
                                             <div className="max-w-[200px]">
                                                 <p className="text-slate-900 dark:text-white font-bold text-sm">
-                                                    {searchQuery ? "No matches found" : "Your inventory is empty"}
+                                                    {searchQuery ? "No matches found" : "Your product list is empty"}
                                                 </p>
                                                 <p className="text-[11px] text-slate-500 mt-1">
                                                     {searchQuery
@@ -151,7 +159,11 @@ export function ProductList({ data }: ProductListProps) {
                                 </TableRow>
                             ) : (
                                 paginatedData.map((product) => (
-                                    <TableRow key={product.id} className="group hover:bg-slate-50/50 dark:hover:bg-slate-800/50 border-slate-50 dark:border-slate-800">
+                                    <TableRow
+                                        key={product.id}
+                                        className="group hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-all border-slate-200 dark:border-slate-800 cursor-pointer outline-none select-none"
+                                        onClick={() => handleEditClick(product)}
+                                    >
                                         <TableCell className="font-medium text-sm text-slate-900 dark:text-slate-100 py-3 px-4">
                                             {product.name}
                                         </TableCell>
@@ -173,14 +185,17 @@ export function ProductList({ data }: ProductListProps) {
                                         </TableCell>
                                         <TableCell className="py-3 px-4 text-right">
                                             <DropdownMenu>
-                                                <DropdownMenuTrigger asChild>
-                                                    <Button variant="ghost" size="icon" className="h-8 w-8 rounded-md hover:bg-slate-100 dark:hover:bg-slate-800 opacity-0 group-hover:opacity-100 transition-opacity">
+                                                <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
+                                                    <Button variant="ghost" size="icon" className="h-8 w-8 rounded-md hover:bg-slate-100 dark:hover:bg-slate-800">
                                                         <MoreHorizontal className="w-4 h-4 text-slate-500" />
                                                     </Button>
                                                 </DropdownMenuTrigger>
                                                 <DropdownMenuContent align="end" className="w-44 p-1 rounded-lg border-slate-200 dark:border-slate-800 shadow-2xl">
                                                     <DropdownMenuItem
-                                                        onClick={() => handleEditClick(product)}
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            handleEditClick(product);
+                                                        }}
                                                         className="gap-2 rounded-md py-1.5 cursor-pointer"
                                                     >
                                                         <Edit className="w-3.5 h-3.5 text-indigo-500" />
@@ -188,7 +203,10 @@ export function ProductList({ data }: ProductListProps) {
                                                     </DropdownMenuItem>
                                                     <div className="h-px bg-slate-100 dark:bg-slate-800 my-1" />
                                                     <DropdownMenuItem
-                                                        onClick={() => handleDeleteClick(product)}
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            handleDeleteClick(product);
+                                                        }}
                                                         className="gap-2 rounded-md py-1.5 text-red-600 focus:text-red-600 cursor-pointer"
                                                     >
                                                         <Trash2 className="w-3.5 h-3.5" />
@@ -205,11 +223,11 @@ export function ProductList({ data }: ProductListProps) {
                 </div>
 
                 {totalPages > 1 && (
-                    <div className="px-6 py-4 bg-slate-50/30 dark:bg-slate-900/10 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between">
-                        <p className="text-xs text-slate-500 font-bold uppercase tracking-widest">
-                            Showing <span className="text-indigo-600 dark:text-indigo-400">{(currentPage - 1) * ITEMS_PER_PAGE + 1} - {Math.min(currentPage * ITEMS_PER_PAGE, filteredData.length)}</span> of {filteredData.length}
-                        </p>
-                        <div className="flex gap-1.5">
+                    <div className="px-4 py-3 bg-slate-50/50 dark:bg-slate-800/50 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between gap-4">
+                        <div className="text-[11px] font-bold text-slate-500 uppercase tracking-tight">
+                            Showing <span className="text-slate-900 dark:text-white">{(currentPage - 1) * ITEMS_PER_PAGE + 1}</span> to <span className="text-slate-900 dark:text-white">{Math.min(currentPage * ITEMS_PER_PAGE, filteredData.length)}</span> of <span className="text-slate-900 dark:text-white">{filteredData.length}</span> products
+                        </div>
+                        <div className="flex items-center gap-1">
                             <Button
                                 variant="outline"
                                 size="icon"
@@ -220,13 +238,16 @@ export function ProductList({ data }: ProductListProps) {
                                 <ChevronLeft className="w-4 h-4" />
                             </Button>
 
-                            {[...Array(totalPages)].map((_, i) => (
+                            {Array.from({ length: totalPages }).map((_, i) => (
                                 <Button
-                                    key={i + 1}
+                                    key={i}
                                     variant={currentPage === i + 1 ? "default" : "outline"}
-                                    size="sm"
+                                    size="icon"
                                     onClick={() => setCurrentPage(i + 1)}
-                                    className={i + 1 > 5 && totalPages > 8 ? "hidden" : `h-8 w-8 p-0 rounded-md font-bold text-xs ${currentPage === i + 1 ? "bg-indigo-600 hover:bg-indigo-700 shadow-md shadow-indigo-100" : "border-slate-200 dark:border-slate-800"}`}
+                                    className={`h-8 w-8 rounded-md text-xs font-bold transition-all ${currentPage === i + 1
+                                        ? "bg-indigo-600 hover:bg-indigo-700 text-white shadow-sm ring-2 ring-indigo-100 dark:ring-0"
+                                        : "border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400"
+                                        }`}
                                 >
                                     {i + 1}
                                 </Button>

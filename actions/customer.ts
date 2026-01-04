@@ -114,6 +114,20 @@ export async function getPrescriptionHistory(customerId: string) {
     });
 }
 
+export async function getPrescription(id: string) {
+    const result = await db.query.prescription.findFirst({
+        where: eq(prescription.id, id),
+        with: {
+            customer: {
+                with: {
+                    store: true,
+                }
+            }
+        }
+    });
+    return result;
+}
+
 export async function getAllCustomers() {
     const { store: userStore } = await requireAccess("view");
 

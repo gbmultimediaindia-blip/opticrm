@@ -87,7 +87,7 @@ export function ProductSheet({ open, onOpenChange, productToEdit }: ProductSheet
                 toast.success("Product profile updated");
             } else {
                 await createProduct(dataToSubmit);
-                toast.success("New product added to inventory");
+                toast.success("New product added to list");
             }
             onOpenChange(false);
         } catch (error: any) {
@@ -99,24 +99,22 @@ export function ProductSheet({ open, onOpenChange, productToEdit }: ProductSheet
 
     return (
         <Sheet open={open} onOpenChange={onOpenChange}>
-            <SheetContent className="sm:max-w-xl border-l border-slate-200 dark:border-slate-800 p-0 flex flex-col overflow-hidden">
+            <SheetContent className="sm:max-w-xl border-l border-slate-200 dark:border-slate-800 p-0 flex flex-col overflow-hidden [&_[data-slot=sheet-close]]:hidden">
                 {/* Header Section */}
-                <div className="p-6 bg-slate-50/50 dark:bg-slate-900/50 border-b border-slate-100 dark:border-slate-800 shrink-0 relative">
-                    <SheetHeader>
-                        <div className="flex items-center gap-4 mt-4 text-left">
-                            <div className="w-12 h-12 rounded-xl bg-indigo-600 flex items-center justify-center text-white shadow-lg shadow-indigo-100 dark:shadow-none">
-                                {productToEdit ? <Edit2 className="w-6 h-6" /> : <Plus className="w-6 h-6" />}
-                            </div>
-                            <div>
-                                <SheetTitle className="text-2xl font-bold text-slate-900 dark:text-white leading-none">
-                                    {productToEdit ? "Edit Product" : "Add Product"}
-                                </SheetTitle>
-                                <SheetDescription className="text-slate-500 text-xs mt-1 pr-12">
-                                    {productToEdit ? `Updating details for ${productToEdit.name}` : "Categorize and track your inventory stock."}
-                                </SheetDescription>
-                            </div>
+                <div className="h-16 px-6 flex items-center bg-slate-50/50 dark:bg-slate-900/50 border-b border-slate-100 dark:border-slate-800 shrink-0">
+                    <div className="flex items-center gap-3">
+                        <div className="w-9 h-9 rounded-lg bg-indigo-600 flex items-center justify-center text-white shadow-md shadow-indigo-100 dark:shadow-none shrink-0">
+                            {productToEdit ? <Edit2 className="w-4 h-4" /> : <Plus className="w-4 h-4" />}
                         </div>
-                    </SheetHeader>
+                        <div className="space-y-0.5">
+                            <SheetTitle className="text-lg font-bold text-slate-900 dark:text-white leading-none">
+                                {productToEdit ? "Edit Product" : "Add Product"}
+                            </SheetTitle>
+                            <SheetDescription className="text-xs text-slate-500 font-medium">
+                                {productToEdit ? `Updating details for ${productToEdit.name}` : "Categorize and track your products."}
+                            </SheetDescription>
+                        </div>
+                    </div>
                 </div>
 
                 {/* Form Content */}
@@ -178,7 +176,7 @@ export function ProductSheet({ open, onOpenChange, productToEdit }: ProductSheet
                     {/* Financials & Stock */}
                     <div className="space-y-6">
                         <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
-                            <BadgeIndianRupee className="w-3.5 h-3.5 text-indigo-400" /> Financials & Inventory
+                            <BadgeIndianRupee className="w-3.5 h-3.5 text-indigo-400" /> Financials & Stock
                         </h3>
 
                         <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-800 space-y-6">
@@ -242,8 +240,8 @@ export function ProductSheet({ open, onOpenChange, productToEdit }: ProductSheet
                 </form>
 
                 {/* Footer Section */}
-                <div className="p-6 bg-slate-50/50 dark:bg-slate-900/50 border-t border-slate-100 dark:border-slate-800 shrink-0">
-                    <SheetFooter className="gap-3 sm:flex-row flex-col">
+                <div className="h-16 px-6 flex items-center bg-slate-50/50 dark:bg-slate-900/50 border-t border-slate-100 dark:border-slate-800 shrink-0">
+                    <SheetFooter className="mt-0 flex-row w-full justify-end gap-3 items-center">
                         <SheetClose asChild>
                             <Button type="button" variant="ghost" className="h-11 px-8 font-semibold text-slate-500">
                                 Cancel

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetFooter, SheetClose } from "@/components/ui/sheet";
 import { getCustomerInvoices } from "@/actions/invoice";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
@@ -39,21 +39,19 @@ export function InvoiceHistoryDialog({ open, onOpenChange, customerId, customerN
 
     return (
         <Sheet open={open} onOpenChange={onOpenChange}>
-            <SheetContent className="sm:max-w-4xl flex flex-col p-0 border-slate-200 dark:border-slate-800 shadow-2xl">
-                <div className="p-6 border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50 mt-6">
-                    <SheetHeader>
-                        <div className="flex items-center gap-4">
-                            <div className="w-12 h-12 rounded-xl bg-emerald-600 flex items-center justify-center text-white shadow-lg shadow-emerald-200 dark:shadow-none">
-                                <Receipt className="w-6 h-6" />
-                            </div>
-                            <div>
-                                <SheetTitle className="text-2xl font-bold text-slate-900 dark:text-white">Billing History</SheetTitle>
-                                <SheetDescription className="text-slate-500">
-                                    Invoice records for <span className="font-semibold text-emerald-600">{customerName}</span>
-                                </SheetDescription>
-                            </div>
+            <SheetContent className="sm:max-w-4xl flex flex-col p-0 border-slate-200 dark:border-slate-800 shadow-2xl [&_[data-slot=sheet-close]]:hidden">
+                <div className="h-16 px-6 flex items-center bg-slate-50/50 dark:bg-slate-900/50 border-b border-slate-100 dark:border-slate-800 shrink-0">
+                    <div className="flex items-center gap-3">
+                        <div className="w-9 h-9 rounded-lg bg-emerald-600 flex items-center justify-center text-white shadow-md shadow-emerald-200 dark:shadow-none shrink-0">
+                            <Receipt className="w-4 h-4" />
                         </div>
-                    </SheetHeader>
+                        <div className="space-y-0.5">
+                            <SheetTitle className="text-lg font-bold text-slate-900 dark:text-white leading-none">Billing History</SheetTitle>
+                            <SheetDescription className="text-xs text-slate-500 font-medium">
+                                Invoice records for <span className="font-bold text-emerald-600">{customerName}</span>
+                            </SheetDescription>
+                        </div>
+                    </div>
                 </div>
 
                 <div className="flex-1 overflow-y-auto p-6 bg-white dark:bg-slate-950">
@@ -77,16 +75,16 @@ export function InvoiceHistoryDialog({ open, onOpenChange, customerId, customerN
                             <Table>
                                 <TableHeader className="bg-slate-50 dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800">
                                     <TableRow className="hover:bg-transparent">
-                                        <TableHead className="w-[160px] text-xs font-semibold text-slate-500 py-4 px-6">
+                                        <TableHead className="w-[160px] text-[10px] font-black uppercase tracking-widest text-slate-500 py-4 px-6">
                                             <div className="flex items-center gap-2"><Calendar className="w-3.5 h-3.5" /> Date</div>
                                         </TableHead>
-                                        <TableHead className="text-xs font-semibold text-slate-500 py-4 px-6">
+                                        <TableHead className="text-[10px] font-black uppercase tracking-widest text-slate-500 py-4 px-6">
                                             Amount
                                         </TableHead>
-                                        <TableHead className="text-xs font-semibold text-slate-500 py-4 px-6">
+                                        <TableHead className="text-[10px] font-black uppercase tracking-widest text-slate-500 py-4 px-6">
                                             Payment Status
                                         </TableHead>
-                                        <TableHead className="text-xs font-semibold text-slate-500 py-4 px-6 text-right">
+                                        <TableHead className="text-[10px] font-black uppercase tracking-widest text-slate-500 py-4 px-6 text-right">
                                             Actions
                                         </TableHead>
                                     </TableRow>
@@ -171,6 +169,14 @@ export function InvoiceHistoryDialog({ open, onOpenChange, customerId, customerN
                             )}
                         </div>
                     )}
+                </div>
+
+                <div className="h-16 px-6 flex items-center bg-slate-50/50 dark:bg-slate-900/50 border-t border-slate-100 dark:border-slate-800 shrink-0">
+                    <SheetFooter className="mt-0 flex-row w-full justify-end items-center">
+                        <SheetClose asChild>
+                            <Button variant="outline" className="font-bold text-xs px-8">Close</Button>
+                        </SheetClose>
+                    </SheetFooter>
                 </div>
             </SheetContent>
         </Sheet>

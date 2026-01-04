@@ -153,6 +153,7 @@ export async function deleteInvoice(id: string) {
 }
 
 export async function updateInvoice(id: string, data: {
+    customerId?: string;
     subtotal: string;
     taxType: string;
     taxRate: string;
@@ -168,6 +169,7 @@ export async function updateInvoice(id: string, data: {
 
     await db.update(invoice)
         .set({
+            customerId: data.customerId,
             subtotal: formatAmount(data.subtotal),
             taxType: data.taxType,
             taxRate: formatAmount(data.taxRate),

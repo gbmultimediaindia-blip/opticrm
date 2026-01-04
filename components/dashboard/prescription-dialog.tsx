@@ -71,25 +71,23 @@ export function PrescriptionDialog({ open, onOpenChange, customerId: initialCust
 
     return (
         <Sheet open={open} onOpenChange={onOpenChange}>
-            <SheetContent className="sm:max-w-xl border-l border-slate-200 dark:border-slate-800 p-0 flex flex-col overflow-hidden">
-                <div className="p-6 bg-slate-50/50 dark:bg-slate-900/50 border-b border-slate-100 dark:border-slate-800 shrink-0 relative">
-                    <SheetHeader>
-                        <div className="flex items-center gap-4 mt-4 text-left">
-                            <div className="w-12 h-12 rounded-xl bg-indigo-600 flex items-center justify-center text-white shadow-lg shadow-indigo-100 dark:shadow-none">
-                                <FileText className="w-6 h-6" />
-                            </div>
-                            <div>
-                                <SheetTitle className="text-2xl font-bold text-slate-900 dark:text-white leading-none">New Prescription</SheetTitle>
-                                <SheetDescription className="text-slate-500 text-xs mt-1 pr-12">
-                                    {initialCustomerName ? (
-                                        <>Record clinical test results for <span className="font-semibold text-indigo-600">{initialCustomerName}</span></>
-                                    ) : (
-                                        "Record new vision test results for a customer."
-                                    )}
-                                </SheetDescription>
-                            </div>
+            <SheetContent className="sm:max-w-xl border-l border-slate-200 dark:border-slate-800 p-0 flex flex-col overflow-hidden [&_[data-slot=sheet-close]]:hidden">
+                <div className="h-16 px-6 flex items-center bg-slate-50/50 dark:bg-slate-900/50 border-b border-slate-100 dark:border-slate-800 shrink-0">
+                    <div className="flex items-center gap-3">
+                        <div className="w-9 h-9 rounded-lg bg-indigo-600 flex items-center justify-center text-white shadow-md shadow-indigo-100 dark:shadow-none shrink-0">
+                            <FileText className="w-4 h-4" />
                         </div>
-                    </SheetHeader>
+                        <div className="space-y-0.5">
+                            <SheetTitle className="text-lg font-bold text-slate-900 dark:text-white leading-none">New Prescription</SheetTitle>
+                            <SheetDescription className="text-xs text-slate-500 font-medium">
+                                {initialCustomerName ? (
+                                    <>Record clinical test results for <span className="font-semibold text-indigo-600">{initialCustomerName}</span></>
+                                ) : (
+                                    "Record new vision test results for a customer."
+                                )}
+                            </SheetDescription>
+                        </div>
+                    </div>
                 </div>
 
                 <form id="rx-form" onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-6 space-y-8 bg-white dark:bg-slate-950 custom-scrollbar">
@@ -182,8 +180,8 @@ export function PrescriptionDialog({ open, onOpenChange, customerId: initialCust
                     </div>
                 </form>
 
-                <div className="p-6 bg-slate-50/50 dark:bg-slate-900/50 border-t border-slate-100 dark:border-slate-800 shrink-0">
-                    <SheetFooter className="gap-3 sm:flex-row flex-col">
+                <div className="h-16 px-6 flex items-center bg-slate-50/50 dark:bg-slate-900/50 border-t border-slate-100 dark:border-slate-800 shrink-0">
+                    <SheetFooter className="mt-0 flex-row w-full justify-end gap-3 items-center">
                         <SheetClose asChild>
                             <Button type="button" variant="ghost" className="h-11 px-8 font-semibold text-slate-500">
                                 Cancel

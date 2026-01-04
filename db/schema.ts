@@ -135,9 +135,13 @@ export const product = pgTable("products", {
 
 import { relations } from "drizzle-orm";
 
-export const customerRelations = relations(customer, ({ many }) => ({
+export const customerRelations = relations(customer, ({ many, one }) => ({
     prescriptions: many(prescription),
     invoices: many(invoice),
+    store: one(store, {
+        fields: [customer.storeId],
+        references: [store.id],
+    }),
 }));
 
 export const prescriptionRelations = relations(prescription, ({ one }) => ({

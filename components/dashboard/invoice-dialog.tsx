@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { createInvoice, updateInvoice } from "@/actions/invoice";
-import { Receipt, IndianRupee, User, Info, UserPlus, Eye, X, Printer, CheckCircle2, Search, Check } from "lucide-react";
+import { Receipt, IndianRupee, User, Info, UserPlus, Eye, X, Printer, CheckCircle2, Search, Check, FileText } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { CustomerSheet } from "./customer-sheet";
 import {
@@ -145,7 +145,7 @@ export function InvoiceDialog({ open, onOpenChange, customers, initialCustomerId
                 setNewInvoiceId(id);
                 setShowSuccessDialog(true);
                 onOpenChange(false); // Close sheet on creation
-                resetForm();
+
             }
         } catch (error: any) {
             toast.error(error.message || "Failed to save invoice");
@@ -178,25 +178,23 @@ export function InvoiceDialog({ open, onOpenChange, customers, initialCustomerId
     return (
         <>
             <Sheet open={open} onOpenChange={onOpenChange}>
-                <SheetContent className="sm:max-w-xl border-l border-slate-200 dark:border-slate-800 p-0 flex flex-col overflow-hidden">
-                    <div className="p-6 bg-slate-50/50 dark:bg-slate-900/50 border-b border-slate-100 dark:border-slate-800 shrink-0 relative">
-                        <SheetHeader>
-                            <div className="flex items-center gap-4 mt-4 text-left">
-                                <div className="w-12 h-12 rounded-xl bg-indigo-600 flex items-center justify-center text-white shadow-lg shadow-indigo-100 dark:shadow-none">
-                                    <Receipt className="w-6 h-6" />
-                                </div>
-                                <div>
-                                    <SheetTitle className="text-xl font-bold text-slate-900 dark:text-white">
-                                        {invoiceToEdit ? "Update Invoice" : "Create New Invoice"}
-                                    </SheetTitle>
-                                    <SheetDescription className="text-xs text-slate-500">
-                                        {invoiceToEdit
-                                            ? `Updating invoice #${invoiceToEdit.id.substring(0, 8)}`
-                                            : "Generate a new invoice for a customer."}
-                                    </SheetDescription>
-                                </div>
+                <SheetContent className="sm:max-w-xl border-l border-slate-200 dark:border-slate-800 p-0 flex flex-col overflow-hidden [&_[data-slot=sheet-close]]:hidden">
+                    <div className="h-16 px-6 flex items-center bg-slate-50/50 dark:bg-slate-900/50 border-b border-slate-100 dark:border-slate-800 shrink-0">
+                        <div className="flex items-center gap-3">
+                            <div className="w-9 h-9 rounded-lg bg-indigo-600 flex items-center justify-center text-white shadow-md shadow-indigo-100 dark:shadow-none shrink-0">
+                                <FileText className="w-4 h-4" />
                             </div>
-                        </SheetHeader>
+                            <div className="space-y-0.5">
+                                <SheetTitle className="text-lg font-bold text-slate-900 dark:text-white leading-none">
+                                    {invoiceToEdit ? "Update Invoice" : "Create New Invoice"}
+                                </SheetTitle>
+                                <SheetDescription className="text-xs text-slate-500 font-medium">
+                                    {invoiceToEdit
+                                        ? `Updating invoice #${invoiceToEdit.id.substring(0, 8)}`
+                                        : "Generate a new invoice for a customer."}
+                                </SheetDescription>
+                            </div>
+                        </div>
                     </div>
 
                     <div className="flex-1 overflow-y-auto custom-scrollbar bg-white dark:bg-slate-950">
@@ -221,8 +219,20 @@ export function InvoiceDialog({ open, onOpenChange, customers, initialCustomerId
                                                         setShowResults(true);
                                                     }}
                                                     onFocus={() => setShowResults(true)}
-                                                    className="pl-9 h-11 rounded-xl"
+                                                    className="pl-9 pr-8 h-11 rounded-xl"
                                                 />
+                                                {searchQuery && (
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => {
+                                                            setSearchQuery("");
+                                                            setShowResults(false);
+                                                        }}
+                                                        className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors"
+                                                    >
+                                                        <X className="w-4 h-4" />
+                                                    </button>
+                                                )}
 
                                                 {showResults && searchQuery && (
                                                     <div className="absolute top-full left-0 right-0 mt-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl shadow-2xl z-50 overflow-hidden max-h-[300px] overflow-y-auto">
@@ -412,8 +422,8 @@ export function InvoiceDialog({ open, onOpenChange, customers, initialCustomerId
                         </form>
                     </div>
 
-                    <div className="p-6 bg-slate-50/50 dark:bg-slate-900/50 border-t border-slate-100 dark:border-slate-800 shrink-0">
-                        <SheetFooter className="gap-3 sm:flex-row flex-col">
+                    <div className="h-16 px-6 flex items-center bg-slate-50/50 dark:bg-slate-900/50 border-t border-slate-100 dark:border-slate-800 shrink-0">
+                        <SheetFooter className="mt-0 flex-row w-full justify-end gap-3 items-center">
                             <SheetClose asChild>
                                 <Button type="button" variant="ghost" className="h-11 px-8 font-semibold text-slate-500">
                                     Cancel

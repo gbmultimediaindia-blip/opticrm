@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { Plus, Trash2, Receipt, User, Calendar, IndianRupee, MoreHorizontal, FileText, ChevronLeft, ChevronRight, Printer, Search, Edit, CheckCircle, Truck, Package, ChevronDown } from "lucide-react";
+import { Plus, Trash2, Receipt, User, Calendar, IndianRupee, MoreHorizontal, FileText, ChevronLeft, ChevronRight, Printer, Search, Edit, CheckCircle, Truck, Package, ChevronDown, Clock, X } from "lucide-react";
 import { completeInvoice, toggleDeliveryStatus } from "@/actions/invoice";
 import { toast } from "sonner";
 import { InvoiceDialog } from "./invoice-dialog";
@@ -76,7 +76,7 @@ export function InvoiceList({ invoices: initialInvoices, customers }: InvoiceLis
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 -mt-2">
                 <div>
                     <h2 className="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                        <Receipt className="w-5 h-5 text-indigo-500" />
+                        <FileText className="w-5 h-5 text-indigo-500" />
                         Invoices
                     </h2>
                     <p className="text-sm text-slate-500 mt-1">Manage invoices and payment tracking.</p>
@@ -91,8 +91,16 @@ export function InvoiceList({ invoices: initialInvoices, customers }: InvoiceLis
                                 setSearchQuery(e.target.value);
                                 setCurrentPage(1);
                             }}
-                            className="pl-10 h-10 rounded-lg border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 focus-visible:ring-indigo-500/20 focus-visible:border-indigo-500 transition-all text-sm font-medium"
+                            className="pl-10 pr-8 h-10 rounded-lg border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 focus-visible:ring-indigo-500/20 focus-visible:border-indigo-500 transition-all text-sm font-medium"
                         />
+                        {searchQuery && (
+                            <button
+                                onClick={() => setSearchQuery("")}
+                                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors"
+                            >
+                                <X className="w-4 h-4" />
+                            </button>
+                        )}
                     </div>
                     <Button onClick={() => { setActiveInvoice(null); setOpen(true); }} className="w-full sm:w-auto bg-indigo-600 hover:bg-indigo-700 h-10 px-5 rounded-lg gap-2 font-bold shadow-sm transition-all hover:scale-[1.02] active:scale-[0.98] text-sm text-white shrink-0">
                         <Plus className="w-4 h-4" /> Generate Invoice
@@ -103,7 +111,7 @@ export function InvoiceList({ invoices: initialInvoices, customers }: InvoiceLis
             <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
                 <div className="px-5 py-4 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between bg-slate-50/50 dark:bg-slate-900/50">
                     <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
-                        <Receipt className="w-3.5 h-3.5 text-indigo-400" /> Invoice Overview
+                        <FileText className="w-3.5 h-3.5 text-indigo-400" /> Invoice Overview
                     </h3>
                     <div className="px-2.5 py-1 rounded-md bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-[10px] font-bold text-slate-500 flex items-center gap-2">
                         <FileText className="w-3 h-3" />
@@ -115,7 +123,9 @@ export function InvoiceList({ invoices: initialInvoices, customers }: InvoiceLis
                         <TableRow className="hover:bg-transparent">
                             <TableHead className="w-[140px] text-xs font-semibold text-slate-500 py-3 px-4">Invoice ID</TableHead>
                             <TableHead className="text-xs font-semibold text-slate-500 py-3 px-4">Customer</TableHead>
-                            <TableHead className="text-xs font-semibold text-slate-500 py-3 px-4">Payments</TableHead>
+                            <TableHead className="text-xs font-semibold text-slate-500 py-3 px-4">Total</TableHead>
+                            <TableHead className="text-xs font-semibold text-slate-500 py-3 px-4">Paid</TableHead>
+                            <TableHead className="text-xs font-semibold text-slate-500 py-3 px-4">Due</TableHead>
                             <TableHead className="text-xs font-semibold text-slate-500 py-3 px-4">Payment Status</TableHead>
                             <TableHead className="text-xs font-semibold text-slate-500 py-3 px-4">Delivery Status</TableHead>
                             <TableHead className="text-xs font-semibold text-slate-500 py-3 px-4">Date</TableHead>
@@ -125,10 +135,10 @@ export function InvoiceList({ invoices: initialInvoices, customers }: InvoiceLis
                     <TableBody>
                         {paginatedInvoices.length === 0 ? (
                             <TableRow>
-                                <TableCell colSpan={6} className="text-center py-20">
+                                <TableCell colSpan={9} className="text-center py-20">
                                     <div className="flex flex-col items-center gap-3">
                                         <div className="w-14 h-14 rounded-2xl bg-slate-50 dark:bg-slate-800/50 flex items-center justify-center text-slate-300">
-                                            {searchQuery ? <Search className="w-7 h-7" /> : <Receipt className="w-7 h-7" />}
+                                            {searchQuery ? <Search className="w-7 h-7" /> : <FileText className="w-7 h-7" />}
                                         </div>
                                         <div>
                                             <p className="text-slate-900 dark:text-white font-bold">{searchQuery ? "No matches found" : "No invoices yet"}</p>
@@ -174,21 +184,26 @@ export function InvoiceList({ invoices: initialInvoices, customers }: InvoiceLis
                                             </div>
                                         </div>
                                     </TableCell>
-                                    <TableCell className="py-3">
-                                        <div className="flex items-center gap-3">
-                                            <div className="flex flex-col">
-                                                <span className="text-xs font-medium text-slate-500 uppercase">Total</span>
-                                                <span className="text-sm font-medium text-slate-900 dark:text-white tabular-nums">
-                                                    ₹{inv.totalAmount}
-                                                </span>
-                                            </div>
-                                            <div className="flex flex-col border-l border-slate-100 dark:border-slate-800 pl-3">
-                                                <span className="text-xs font-medium text-slate-500 uppercase">Paid</span>
-                                                <span className="text-sm font-medium text-emerald-600 tabular-nums">
-                                                    ₹{inv.advanceAmount}
-                                                </span>
-                                            </div>
-                                        </div>
+                                    <TableCell className="py-3 px-4">
+                                        <span className="text-sm font-medium text-slate-900 dark:text-white tabular-nums">
+                                            ₹{inv.totalAmount}
+                                        </span>
+                                    </TableCell>
+                                    <TableCell className="py-3 px-4">
+                                        <span className="text-sm font-medium text-emerald-600 tabular-nums">
+                                            ₹{inv.advanceAmount}
+                                        </span>
+                                    </TableCell>
+                                    <TableCell className="py-3 px-4">
+                                        {parseFloat(inv.dueAmount) > 0 ? (
+                                            <span className="text-sm font-bold text-red-600 tabular-nums">
+                                                ₹{inv.dueAmount}
+                                            </span>
+                                        ) : (
+                                            <span className="text-[10px] font-black uppercase tracking-wider text-emerald-600 bg-emerald-50 dark:bg-emerald-900/20 px-2 py-1 rounded-md border border-emerald-100 dark:border-emerald-800">
+                                                No Due
+                                            </span>
+                                        )}
                                     </TableCell>
                                     <TableCell className="py-3">
                                         {inv.status === "completed" ? (
@@ -197,16 +212,10 @@ export function InvoiceList({ invoices: initialInvoices, customers }: InvoiceLis
                                                 Completed
                                             </span>
                                         ) : (
-                                            <div className="flex flex-col gap-1 items-start">
-                                                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-amber-50 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 text-xs font-medium border border-amber-200 dark:border-amber-800">
-                                                    Pending
-                                                </span>
-                                                {parseFloat(inv.dueAmount) > 0 && (
-                                                    <span className="text-xs font-medium text-red-600 pl-1">
-                                                        Due: ₹{inv.dueAmount}
-                                                    </span>
-                                                )}
-                                            </div>
+                                            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-amber-50 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 text-xs font-medium border border-amber-200 dark:border-amber-800">
+                                                <Clock className="w-3.5 h-3.5" />
+                                                Pending
+                                            </span>
                                         )}
                                     </TableCell>
                                     <TableCell className="py-3">
@@ -282,7 +291,7 @@ export function InvoiceList({ invoices: initialInvoices, customers }: InvoiceLis
                                                         className="gap-2 rounded-md py-1.5 cursor-pointer text-emerald-600 focus:text-emerald-600"
                                                     >
                                                         <CheckCircle className="w-3.5 h-3.5" />
-                                                        <span className="font-bold text-xs">Mark Payment Completed</span>
+                                                        <span className="font-bold text-xs">Mark as Paid</span>
                                                     </DropdownMenuItem>
                                                 )}
                                                 <DropdownMenuItem

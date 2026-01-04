@@ -45,7 +45,7 @@ export function DeleteProductDialog({ open, onOpenChange, product }: DeleteProdu
                     <AlertDialogDescription>
                         This action cannot be undone. This will permanently delete
                         <span className="font-bold text-slate-900 dark:text-white"> {product?.name} </span>
-                        from your inventory.
+                        from your product list.
                     </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>

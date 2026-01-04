@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { LayoutDashboard, Users, Box, Receipt, Settings } from "lucide-react";
+import { LayoutDashboard, Users, Box, FileText, Settings } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const routes = [
@@ -15,12 +15,12 @@ const routes = [
     },
     {
         label: "Invoices",
-        icon: Receipt,
+        icon: FileText,
         href: "/dashboard/invoices",
         active: (pathname: string) => pathname === "/dashboard/invoices",
     },
     {
-        label: "Inventory",
+        label: "Products",
         icon: Box,
         href: "/dashboard/inventory",
         active: (pathname: string) => pathname === "/dashboard/inventory",
