@@ -24,9 +24,11 @@ interface InvoiceDialogProps {
     open: boolean;
     onOpenChange: (open: boolean) => void;
     customers: any[];
+    initialCustomerId?: string;
+    initialMode?: "new" | "existing";
 }
 
-export function InvoiceDialog({ open, onOpenChange, customers }: InvoiceDialogProps) {
+export function InvoiceDialog({ open, onOpenChange, customers, initialCustomerId, initialMode }: InvoiceDialogProps) {
     const [loading, setLoading] = useState(false);
     const [mode, setMode] = useState<"new" | "existing">("new");
     const [showSuccessDialog, setShowSuccessDialog] = useState(false);
@@ -73,6 +75,18 @@ export function InvoiceDialog({ open, onOpenChange, customers }: InvoiceDialogPr
     );
 
     const selectedCustomer = customers.find(c => c.id === invoiceData.customerId);
+
+    useEffect(() => {
+        if (open) {
+            if (initialMode) setMode(initialMode);
+            if (initialCustomerId) {
+                setInvoiceData(prev => ({ ...prev, customerId: initialCustomerId }));
+                setMode("existing");
+            }
+        } else {
+            resetForm();
+        }
+    }, [open, initialCustomerId, initialMode]);
 
     useEffect(() => {
         const base = parseFloat(invoiceData.subtotal) || 0;

@@ -159,3 +159,12 @@ export async function getInvoice(id: string) {
 
     return result;
 }
+
+export async function getCustomerInvoices(customerId: string) {
+    const { store: userStore } = await requireAccess("view");
+
+    return await db.query.invoice.findMany({
+        where: and(eq(invoice.customerId, customerId), eq(invoice.storeId, userStore.id)),
+        orderBy: [desc(invoice.createdAt)],
+    });
+}
