@@ -143,7 +143,7 @@ export function ProductSheet({ open, onOpenChange, productToEdit }: ProductSheet
                                     value={formData.category}
                                     onValueChange={(v) => setFormData({ ...formData, category: v })}
                                 >
-                                    <SelectTrigger className="h-11 rounded-xl">
+                                    <SelectTrigger className="h-11 rounded-xl border-slate-200 dark:border-slate-800 focus:ring-2 focus:ring-indigo-500">
                                         <SelectValue placeholder="Select category" />
                                     </SelectTrigger>
                                     <SelectContent>

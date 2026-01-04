@@ -139,23 +139,27 @@ export function InvoiceList({ invoices: initialInvoices, customers }: InvoiceLis
                     <TableBody>
                         {paginatedInvoices.length === 0 ? (
                             <TableRow>
-                                <TableCell colSpan={9} className="text-center py-20">
+                                <TableCell colSpan={9} className="h-64 text-center">
                                     <div className="flex flex-col items-center gap-3">
-                                        <div className="w-14 h-14 rounded-2xl bg-slate-50 dark:bg-slate-800/50 flex items-center justify-center text-slate-300">
-                                            {searchQuery ? <Search className="w-7 h-7" /> : <FileText className="w-7 h-7" />}
+                                        <div className="w-16 h-16 rounded-2xl bg-slate-50 dark:bg-slate-800/50 flex items-center justify-center text-slate-300">
+                                            {searchQuery ? <Search className="w-8 h-8" /> : <FileText className="w-8 h-8" />}
                                         </div>
-                                        <div>
-                                            <p className="text-slate-900 dark:text-white font-bold">{searchQuery ? "No matches found" : "No invoices yet"}</p>
-                                            <p className="text-slate-500 text-xs mt-1">
-                                                {searchQuery ? `No invoices matching "${searchQuery}"` : "Generate your first invoice to get started."}
+                                        <div className="max-w-sm px-6">
+                                            <p className="text-slate-900 dark:text-white font-bold text-sm tracking-tight text-center">
+                                                {searchQuery ? "No matches found" : "No invoices registered yet"}
+                                            </p>
+                                            <p className="text-[11px] text-slate-500 mt-1.5 leading-relaxed text-center">
+                                                {searchQuery
+                                                    ? `No results for "${searchQuery}". Try searching by ID or customer name.`
+                                                    : "Track your sales and revenue by generating your first business invoice."}
                                             </p>
                                         </div>
                                         {searchQuery && (
                                             <Button
-                                                variant="outline"
+                                                variant="ghost"
                                                 size="sm"
                                                 onClick={() => setSearchQuery("")}
-                                                className="mt-2 border-slate-200 dark:border-slate-800 text-xs font-bold"
+                                                className="mt-2 text-indigo-600 hover:text-indigo-700 hover:bg-indigo-50 dark:hover:bg-indigo-900/10 text-xs font-bold"
                                             >
                                                 Clear Search
                                             </Button>

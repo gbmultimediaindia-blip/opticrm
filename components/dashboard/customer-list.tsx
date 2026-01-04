@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Plus, Edit2, Trash2, MoreHorizontal, Eye, History, User, Users, Mail, Phone, Calendar, Maximize2, ChevronLeft, ChevronRight, Search, Glasses, X } from "lucide-react";
@@ -28,6 +29,7 @@ interface CustomerListProps {
 }
 
 export function CustomerList({ customers }: CustomerListProps) {
+    const router = useRouter();
     const [sheetOpen, setSheetOpen] = useState(false);
     const [selectedCustomer, setSelectedCustomer] = useState<any>(null);
     const [searchQuery, setSearchQuery] = useState("");
@@ -53,6 +55,7 @@ export function CustomerList({ customers }: CustomerListProps) {
     const [invoiceDialogOpen, setInvoiceDialogOpen] = useState(false);
     const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
     const [activeCustomer, setActiveCustomer] = useState<any>(null);
+
 
     const handleEdit = (customer: any) => {
         setSelectedCustomer(customer);
@@ -155,8 +158,8 @@ export function CustomerList({ customers }: CustomerListProps) {
                         <TableRow className="hover:bg-transparent">
                             <TableHead className="w-[200px] text-xs font-semibold text-slate-500 py-3 px-4">Customer</TableHead>
                             <TableHead className="text-xs font-semibold text-slate-500 py-3 px-4">Contact Info</TableHead>
-                            <TableHead className="w-[180px] text-xs font-semibold text-slate-500 py-3 px-4 bg-slate-50/30 dark:bg-slate-900/10">Latest Vision</TableHead>
-                            <TableHead className="text-xs font-semibold text-slate-500 py-3 px-4">Old Presc.</TableHead>
+                            <TableHead className="w-[180px] text-xs font-semibold text-slate-500 py-3 px-4 bg-slate-50/30 dark:bg-slate-900/10">Latest Prescription</TableHead>
+                            <TableHead className="text-xs font-semibold text-slate-500 py-3 px-4">Old Prescription</TableHead>
                             <TableHead className="text-xs font-semibold text-slate-500 py-3 px-4">Invoices</TableHead>
                             <TableHead className="text-xs font-semibold text-slate-500 py-3 px-4 text-right">Actions</TableHead>
                         </TableRow>
@@ -164,14 +167,33 @@ export function CustomerList({ customers }: CustomerListProps) {
                     <TableBody>
                         {paginatedCustomers.length === 0 ? (
                             <TableRow>
-                                <TableCell colSpan={6} className="text-center py-12">
-                                    <div className="flex flex-col items-center gap-2">
-                                        <div className="w-12 h-12 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-400">
-                                            <User className="w-6 h-6" />
+                                <TableCell colSpan={6} className="h-64 text-center">
+                                    <div className="flex flex-col items-center gap-3">
+                                        <div className="w-16 h-16 rounded-2xl bg-slate-50 dark:bg-slate-800/50 flex items-center justify-center text-slate-300">
+                                            {searchQuery ? <Search className="w-8 h-8" /> : <User className="w-8 h-8" />}
                                         </div>
-                                        <p className="text-slate-900 dark:text-white font-bold">No customers found</p>
-                                        <Button variant="outline" size="sm" onClick={handleCreate} className="mt-1 border-slate-200 dark:border-slate-800 text-xs font-bold">
-                                            Add Customer
+                                        <div className="max-w-sm px-6">
+                                            <p className="text-slate-900 dark:text-white font-bold text-sm tracking-tight text-center">
+                                                {searchQuery ? "No matches found" : "No customers registered yet"}
+                                            </p>
+                                            <p className="text-[11px] text-slate-500 mt-1.5 leading-relaxed text-center">
+                                                {searchQuery
+                                                    ? `No results for "${searchQuery}". Check the spelling or try another name.`
+                                                    : "Grow your business by adding your first customer to the database."}
+                                            </p>
+                                        </div>
+                                        <Button
+                                            variant={searchQuery ? "ghost" : "outline"}
+                                            size="sm"
+                                            onClick={searchQuery ? () => setSearchQuery("") : handleCreate}
+                                            className={cn(
+                                                "mt-2 text-xs font-bold",
+                                                searchQuery
+                                                    ? "text-indigo-600 hover:text-indigo-700 hover:bg-indigo-50 dark:hover:bg-indigo-900/10"
+                                                    : "border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400"
+                                            )}
+                                        >
+                                            {searchQuery ? "Clear Search" : "Add Customer"}
                                         </Button>
                                     </div>
                                 </TableCell>
@@ -204,8 +226,7 @@ export function CustomerList({ customers }: CustomerListProps) {
                                 return (
                                     <TableRow
                                         key={customer.id}
-                                        className="group hover:bg-slate-50/30 dark:hover:bg-slate-800/20 transition-all border-slate-200 dark:border-slate-800 cursor-pointer outline-none select-none"
-                                        onClick={() => handleEdit(customer)}
+                                        className="group hover:bg-slate-50/30 dark:hover:bg-slate-800/20 transition-all border-slate-200 dark:border-slate-800 outline-none"
                                     >
                                         <TableCell className="py-3 px-4 border-r border-slate-100 dark:border-slate-800/50">
                                             <div className="flex items-center gap-3">
@@ -236,48 +257,35 @@ export function CustomerList({ customers }: CustomerListProps) {
                                         </TableCell>
                                         <TableCell className="py-3 px-4">
                                             {latestPrescription ? (
-                                                <div className="flex items-center gap-3">
-                                                    <div className="flex flex-col gap-1.5">
-                                                        {/* Right Eye */}
-                                                        <div className="flex items-center gap-2">
-                                                            <div className="w-6 h-4 flex items-center justify-center bg-emerald-50 dark:bg-emerald-900/20 rounded text-[10px] font-medium text-emerald-600 border border-emerald-100 dark:border-emerald-800 shrink-0">OD</div>
-                                                            <div className="flex items-center gap-1.5 text-xs font-medium tabular-nums tracking-normal">
-                                                                <span className="text-slate-700 dark:text-slate-200">{latestPrescription.rightSphere}</span>
-                                                                <span className="text-slate-300 dark:text-slate-700 text-[10px]">/</span>
-                                                                <span className="text-slate-700 dark:text-slate-200">{latestPrescription.rightCylinder}</span>
-                                                                <span className="text-slate-300 dark:text-slate-700 text-[10px]">×</span>
-                                                                <span className="text-slate-700 dark:text-slate-200">{latestPrescription.rightAxis}°</span>
-                                                                {(latestPrescription.rightAdd && latestPrescription.rightAdd !== "0" && latestPrescription.rightAdd !== "0.00") && (
-                                                                    <span className="ml-1 text-[10px] text-emerald-600 bg-emerald-50 dark:bg-emerald-900/30 px-1 rounded font-medium">+{latestPrescription.rightAdd}</span>
-                                                                )}
-                                                            </div>
-                                                        </div>
-                                                        {/* Left Eye */}
-                                                        <div className="flex items-center gap-2">
-                                                            <div className="w-6 h-4 flex items-center justify-center bg-amber-50 dark:bg-amber-900/20 rounded text-[10px] font-medium text-amber-600 border border-amber-100 dark:border-amber-800 shrink-0">OS</div>
-                                                            <div className="flex items-center gap-1.5 text-xs font-medium tabular-nums tracking-normal">
-                                                                <span className="text-slate-700 dark:text-slate-200">{latestPrescription.leftSphere}</span>
-                                                                <span className="text-slate-300 dark:text-slate-700 text-[10px]">/</span>
-                                                                <span className="text-slate-700 dark:text-slate-200">{latestPrescription.leftCylinder}</span>
-                                                                <span className="text-slate-300 dark:text-slate-700 text-[10px]">×</span>
-                                                                <span className="text-slate-700 dark:text-slate-200">{latestPrescription.leftAxis}°</span>
-                                                                {(latestPrescription.leftAdd && latestPrescription.leftAdd !== "0" && latestPrescription.leftAdd !== "0.00") && (
-                                                                    <span className="ml-1 text-[10px] text-amber-600 bg-amber-50 dark:bg-amber-900/30 px-1 rounded font-medium">+{latestPrescription.leftAdd}</span>
-                                                                )}
-                                                            </div>
+                                                <div className="flex flex-col gap-1.5">
+                                                    {/* Right Eye */}
+                                                    <div className="flex items-center gap-2">
+                                                        <div className="w-6 h-4 flex items-center justify-center bg-emerald-50 dark:bg-emerald-900/20 rounded text-[10px] font-medium text-emerald-600 border border-emerald-100 dark:border-emerald-800 shrink-0">OD</div>
+                                                        <div className="flex items-center gap-1.5 text-xs font-medium tabular-nums tracking-normal">
+                                                            <span className="text-slate-700 dark:text-slate-200">{latestPrescription.rightSphere}</span>
+                                                            <span className="text-slate-300 dark:text-slate-700 text-[10px]">/</span>
+                                                            <span className="text-slate-700 dark:text-slate-200">{latestPrescription.rightCylinder}</span>
+                                                            <span className="text-slate-300 dark:text-slate-700 text-[10px]">×</span>
+                                                            <span className="text-slate-700 dark:text-slate-200">{latestPrescription.rightAxis}°</span>
+                                                            {(latestPrescription.rightAdd && latestPrescription.rightAdd !== "0" && latestPrescription.rightAdd !== "0.00") && (
+                                                                <span className="ml-1 text-[10px] text-emerald-600 bg-emerald-50 dark:bg-emerald-900/30 px-1 rounded font-medium">+{latestPrescription.rightAdd}</span>
+                                                            )}
                                                         </div>
                                                     </div>
-                                                    <Button
-                                                        variant="ghost"
-                                                        size="icon"
-                                                        onClick={(e) => {
-                                                            e.stopPropagation();
-                                                            handleViewLatest(customer);
-                                                        }}
-                                                        className="h-8 w-8 rounded-md hover:bg-slate-100 dark:hover:bg-slate-800 opacity-0 group-hover:opacity-100 transition-all flex-none border border-transparent hover:border-slate-200 dark:hover:border-slate-700"
-                                                    >
-                                                        <Maximize2 className="w-4 h-4 text-slate-500" />
-                                                    </Button>
+                                                    {/* Left Eye */}
+                                                    <div className="flex items-center gap-2">
+                                                        <div className="w-6 h-4 flex items-center justify-center bg-amber-50 dark:bg-amber-900/20 rounded text-[10px] font-medium text-amber-600 border border-amber-100 dark:border-amber-800 shrink-0">OS</div>
+                                                        <div className="flex items-center gap-1.5 text-xs font-medium tabular-nums tracking-normal">
+                                                            <span className="text-slate-700 dark:text-slate-200">{latestPrescription.leftSphere}</span>
+                                                            <span className="text-slate-300 dark:text-slate-700 text-[10px]">/</span>
+                                                            <span className="text-slate-700 dark:text-slate-200">{latestPrescription.leftCylinder}</span>
+                                                            <span className="text-slate-300 dark:text-slate-700 text-[10px]">×</span>
+                                                            <span className="text-slate-700 dark:text-slate-200">{latestPrescription.leftAxis}°</span>
+                                                            {(latestPrescription.leftAdd && latestPrescription.leftAdd !== "0" && latestPrescription.leftAdd !== "0.00") && (
+                                                                <span className="ml-1 text-[10px] text-amber-600 bg-amber-50 dark:bg-amber-900/30 px-1 rounded font-medium">+{latestPrescription.leftAdd}</span>
+                                                            )}
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             ) : (
                                                 <div className="inline-flex items-center px-2 py-0.5 rounded bg-slate-50 dark:bg-slate-900 border border-dashed border-slate-200 dark:border-slate-800">
@@ -295,7 +303,7 @@ export function CustomerList({ customers }: CustomerListProps) {
                                                 }}
                                                 className="h-8 px-2 border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-md font-medium text-xs gap-1.5"
                                             >
-                                                <History className="w-3 h-3 text-indigo-500" /> View Archive
+                                                <History className="w-3 h-3 text-indigo-500" /> View Prescriptions
                                             </Button>
                                         </TableCell>
                                         <TableCell className="py-3 px-4">
@@ -369,8 +377,8 @@ export function CustomerList({ customers }: CustomerListProps) {
                                                                 <Edit2 className="w-3.5 h-3.5" />
                                                             </div>
                                                             <div className="flex flex-col">
-                                                                <span className="font-bold text-xs">Edit Profile</span>
-                                                                <span className="text-[9px] text-slate-500">Update contact</span>
+                                                                <span className="font-bold text-xs">Edit Customer</span>
+                                                                <span className="text-[9px] text-slate-500">Update customer details</span>
                                                             </div>
                                                         </DropdownMenuItem>
                                                         <div className="h-px bg-slate-100 dark:bg-slate-800 my-1" />
@@ -451,6 +459,9 @@ export function CustomerList({ customers }: CustomerListProps) {
                 open={sheetOpen}
                 onOpenChange={setSheetOpen}
                 customer={selectedCustomer}
+                onEdit={(customer) => {
+                    handleEdit(customer);
+                }}
             />
 
             {activeCustomer && (
@@ -471,7 +482,8 @@ export function CustomerList({ customers }: CustomerListProps) {
                         open={latestPrescriptionOpen}
                         onOpenChange={setLatestPrescriptionOpen}
                         prescription={activeCustomer.prescriptions?.[0]}
-                        customerName={activeCustomer.name}
+                        customer={activeCustomer}
+                        onSuccess={() => router.refresh()}
                     />
                     <PrescriptionDialog
                         open={prescriptionDialogOpen}

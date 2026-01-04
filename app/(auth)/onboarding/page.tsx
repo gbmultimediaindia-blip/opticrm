@@ -108,7 +108,7 @@ export default function OnboardingPage() {
                     </CardContent>
                     <CardFooter>
                         <Button className="w-full bg-indigo-600 hover:bg-indigo-700 text-white h-12 text-lg font-semibold shadow-lg shadow-indigo-200" disabled={loading}>
-                            {loading ? "Setting up store..." : "Launch Store"}
+                            {loading ? "Setting up store..." : "Create Store"}
                         </Button>
                     </CardFooter>
                 </form>

@@ -132,6 +132,63 @@ export async function getPrescription(id: string) {
     return result;
 }
 
+export async function updatePrescription(id: string, data: any) {
+    const { store: userStore } = await requireAccess("write");
+
+    // Verify ownership via customer join
+    const existing = await db.query.prescription.findFirst({
+        where: eq(prescription.id, id),
+        with: {
+            customer: true
+        }
+    });
+
+    if (!existing || existing.customer.storeId !== userStore.id) {
+        throw new Error("Prescription not found or access denied");
+    }
+
+    await db.update(prescription)
+        .set({
+            rightSphere: formatPrescriptionValue(data.rightSphere),
+            rightCylinder: formatPrescriptionValue(data.rightCylinder),
+            rightAxis: formatPrescriptionValue(data.rightAxis),
+            rightAdd: formatPrescriptionValue(data.rightAdd),
+            leftSphere: formatPrescriptionValue(data.leftSphere),
+            leftCylinder: formatPrescriptionValue(data.leftCylinder),
+            leftAxis: formatPrescriptionValue(data.leftAxis),
+            leftAdd: formatPrescriptionValue(data.leftAdd),
+            pd: formatPrescriptionValue(data.pd),
+            notes: data.notes || "",
+            updatedAt: new Date(),
+        })
+        .where(eq(prescription.id, id));
+
+    revalidatePath("/dashboard/customers");
+    revalidatePath("/dashboard");
+}
+
+export async function deletePrescription(id: string) {
+    const { store: userStore } = await requireAccess("write");
+
+    // Verify ownership via customer join
+    const existing = await db.query.prescription.findFirst({
+        where: eq(prescription.id, id),
+        with: {
+            customer: true
+        }
+    });
+
+    if (!existing || existing.customer.storeId !== userStore.id) {
+        throw new Error("Prescription not found or access denied");
+    }
+
+    await db.delete(prescription)
+        .where(eq(prescription.id, id));
+
+    revalidatePath("/dashboard/customers");
+    revalidatePath("/dashboard");
+}
+
 export async function getAllCustomers() {
     const { store: userStore } = await requireAccess("view");
 

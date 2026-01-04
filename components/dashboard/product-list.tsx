@@ -131,11 +131,11 @@ export function ProductList({ data }: ProductListProps) {
                                             <div className="w-16 h-16 rounded-2xl bg-slate-50 dark:bg-slate-800/50 flex items-center justify-center text-slate-300">
                                                 {searchQuery ? <Search className="w-8 h-8" /> : <Box className="w-8 h-8" />}
                                             </div>
-                                            <div className="max-w-[200px]">
-                                                <p className="text-slate-900 dark:text-white font-bold text-sm">
+                                            <div className="max-w-sm px-6">
+                                                <p className="text-slate-900 dark:text-white font-bold text-sm tracking-tight text-center">
                                                     {searchQuery ? "No matches found" : "Your product list is empty"}
                                                 </p>
-                                                <p className="text-[11px] text-slate-500 mt-1">
+                                                <p className="text-[11px] text-slate-500 mt-1.5 leading-relaxed text-center">
                                                     {searchQuery
                                                         ? `No products found for "${searchQuery}". Try a different term.`
                                                         : "Start tracking your products and stock levels today."}
