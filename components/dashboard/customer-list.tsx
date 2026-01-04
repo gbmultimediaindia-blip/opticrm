@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { Plus, Edit2, Trash2, MoreHorizontal, Eye, History, User, Mail, Phone, Calendar, Maximize2, ChevronLeft, ChevronRight, Search, Glasses } from "lucide-react";
+import { Plus, Edit2, Trash2, MoreHorizontal, Eye, History, User, Users, Mail, Phone, Calendar, Maximize2, ChevronLeft, ChevronRight, Search, Glasses } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { CustomerSheet } from "./customer-sheet";
@@ -107,8 +107,11 @@ export function CustomerList({ customers }: CustomerListProps) {
         <div className="space-y-6 animate-in fade-in duration-500">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 -mt-2">
                 <div>
-                    <h1 className="text-2xl font-extrabold text-slate-900 dark:text-white tracking-tight">Customers</h1>
-                    <p className="text-xs text-slate-500 mt-1">Manage and track customer vision records.</p>
+                    <h2 className="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                        <Users className="w-5 h-5 text-indigo-500" />
+                        Customers
+                    </h2>
+                    <p className="text-sm text-slate-500 mt-1">Manage and track customer vision records.</p>
                 </div>
                 <div className="flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto">
                     <div className="relative w-full sm:w-80 group">
@@ -123,22 +126,31 @@ export function CustomerList({ customers }: CustomerListProps) {
                             className="pl-10 h-10 rounded-lg border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 focus-visible:ring-indigo-500/20 focus-visible:border-indigo-500 transition-all text-sm font-medium"
                         />
                     </div>
-                    <Button onClick={handleCreate} className="w-full sm:w-auto bg-indigo-600 hover:bg-indigo-700 h-10 px-5 rounded-lg gap-2 font-bold shadow-sm transition-all hover:scale-[1.02] active:scale-[0.98] text-sm">
+                    <Button onClick={handleCreate} className="w-full sm:w-auto bg-indigo-600 hover:bg-indigo-700 h-10 px-5 rounded-lg gap-2 font-bold shadow-sm transition-all hover:scale-[1.02] active:scale-[0.98] text-sm text-white">
                         <Plus className="w-4 h-4" /> Add Customer
                     </Button>
                 </div>
             </div>
 
             <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
+                <div className="px-5 py-4 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between bg-slate-50/50 dark:bg-slate-900/50">
+                    <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
+                        <Users className="w-3.5 h-3.5 text-indigo-400" /> Customer Overview
+                    </h3>
+                    <div className="px-2.5 py-1 rounded-md bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-[10px] font-bold text-slate-500 flex items-center gap-2">
+                        <User className="w-3 h-3" />
+                        {filteredCustomers.length} {filteredCustomers.length === 1 ? 'Customer' : 'Customers'}
+                    </div>
+                </div>
                 <Table>
                     <TableHeader className="bg-slate-50/50 dark:bg-slate-800/50 border-b border-slate-200 dark:border-slate-800">
                         <TableRow className="hover:bg-transparent">
-                            <TableHead className="w-[200px] font-black text-slate-400 uppercase text-[10px] tracking-widest py-2.5 px-4 underline-offset-4">Customer</TableHead>
-                            <TableHead className="font-black text-slate-400 uppercase text-[10px] tracking-widest py-2.5 px-4">Contact Info</TableHead>
-                            <TableHead className="w-[180px] font-black text-slate-400 uppercase text-[10px] tracking-widest py-2.5 px-4 bg-slate-50/30 dark:bg-slate-900/10">Vision (Latest)</TableHead>
-                            <TableHead className="font-black text-slate-400 uppercase text-[10px] tracking-widest py-2.5 px-4">Old Presc.</TableHead>
-                            <TableHead className="font-black text-slate-400 uppercase text-[10px] tracking-widest py-2.5 px-4">Invoices</TableHead>
-                            <TableHead className="font-black text-slate-400 uppercase text-[10px] tracking-widest py-2.5 px-4 text-right">Actions</TableHead>
+                            <TableHead className="w-[200px] text-xs font-semibold text-slate-500 py-3 px-4">Customer</TableHead>
+                            <TableHead className="text-xs font-semibold text-slate-500 py-3 px-4">Contact Info</TableHead>
+                            <TableHead className="w-[180px] text-xs font-semibold text-slate-500 py-3 px-4 bg-slate-50/30 dark:bg-slate-900/10">Latest Vision</TableHead>
+                            <TableHead className="text-xs font-semibold text-slate-500 py-3 px-4">Old Presc.</TableHead>
+                            <TableHead className="text-xs font-semibold text-slate-500 py-3 px-4">Invoices</TableHead>
+                            <TableHead className="text-xs font-semibold text-slate-500 py-3 px-4 text-right">Actions</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -184,7 +196,7 @@ export function CustomerList({ customers }: CustomerListProps) {
                                 return (
                                     <TableRow
                                         key={customer.id}
-                                        className="group hover:bg-slate-50/30 dark:hover:bg-slate-800/20 transition-all border-slate-200 dark:border-slate-800 cursor-pointer"
+                                        className="group hover:bg-slate-50/30 dark:hover:bg-slate-800/20 transition-all border-slate-200 dark:border-slate-800 cursor-pointer outline-none select-none"
                                         onClick={() => handleEdit(customer)}
                                     >
                                         <TableCell className="py-3 px-4 border-r border-slate-100 dark:border-slate-800/50">
@@ -193,10 +205,10 @@ export function CustomerList({ customers }: CustomerListProps) {
                                                     {getInitials(customer.name)}
                                                 </div>
                                                 <div className="flex flex-col">
-                                                    <span className="font-bold text-slate-900 dark:text-white text-sm leading-tight">
+                                                    <span className="font-medium text-slate-900 dark:text-white text-sm">
                                                         {customer.name}
                                                     </span>
-                                                    <span className="text-[10px] text-slate-400 font-medium uppercase tracking-tighter mt-0.5">
+                                                    <span className="text-[10px] text-slate-400 font-medium uppercase mt-0.5">
                                                         ID: {customer.id.substring(0, 8)}
                                                     </span>
                                                 </div>
@@ -204,13 +216,13 @@ export function CustomerList({ customers }: CustomerListProps) {
                                         </TableCell>
                                         <TableCell className="py-3">
                                             <div className="flex flex-col gap-0.5">
-                                                <div className="flex items-center gap-1.5 text-[11px] text-slate-600 dark:text-slate-400">
+                                                <div className="flex items-center gap-1.5 text-xs text-slate-500">
                                                     <Mail className="w-3 h-3 text-slate-400" />
                                                     <span className="truncate max-w-[120px]">{customer.email || "-"}</span>
                                                 </div>
-                                                <div className="flex items-center gap-1.5 text-[11px] text-slate-600 dark:text-slate-400">
+                                                <div className="flex items-center gap-1.5 text-xs text-slate-500">
                                                     <Phone className="w-3 h-3 text-slate-400" />
-                                                    <span className="font-bold text-slate-900 dark:text-slate-200">{customer.phone}</span>
+                                                    <span className="font-medium text-slate-700 dark:text-slate-200">{customer.phone}</span>
                                                 </div>
                                             </div>
                                         </TableCell>
@@ -220,29 +232,29 @@ export function CustomerList({ customers }: CustomerListProps) {
                                                     <div className="flex flex-col gap-1.5">
                                                         {/* Right Eye */}
                                                         <div className="flex items-center gap-2">
-                                                            <div className="w-6 h-4 flex items-center justify-center bg-emerald-50 dark:bg-emerald-900/20 rounded text-[8px] font-bold text-emerald-600 border border-emerald-100 dark:border-emerald-800 shrink-0">OD</div>
-                                                            <div className="flex items-center gap-1.5 text-xs font-mono font-bold tracking-tight">
-                                                                <span className="text-slate-900 dark:text-slate-100">{latestPrescription.rightSphere}</span>
-                                                                <span className="text-slate-300 dark:text-slate-700">/</span>
-                                                                <span className="text-slate-900 dark:text-slate-100">{latestPrescription.rightCylinder}</span>
-                                                                <span className="text-slate-300 dark:text-slate-700">×</span>
-                                                                <span className="text-slate-900 dark:text-slate-100">{latestPrescription.rightAxis}°</span>
+                                                            <div className="w-6 h-4 flex items-center justify-center bg-emerald-50 dark:bg-emerald-900/20 rounded text-[10px] font-medium text-emerald-600 border border-emerald-100 dark:border-emerald-800 shrink-0">OD</div>
+                                                            <div className="flex items-center gap-1.5 text-xs font-medium tabular-nums tracking-normal">
+                                                                <span className="text-slate-700 dark:text-slate-200">{latestPrescription.rightSphere}</span>
+                                                                <span className="text-slate-300 dark:text-slate-700 text-[10px]">/</span>
+                                                                <span className="text-slate-700 dark:text-slate-200">{latestPrescription.rightCylinder}</span>
+                                                                <span className="text-slate-300 dark:text-slate-700 text-[10px]">×</span>
+                                                                <span className="text-slate-700 dark:text-slate-200">{latestPrescription.rightAxis}°</span>
                                                                 {(latestPrescription.rightAdd && latestPrescription.rightAdd !== "0" && latestPrescription.rightAdd !== "0.00") && (
-                                                                    <span className="ml-1 text-[10px] text-emerald-600 bg-emerald-50 dark:bg-emerald-900/30 px-1 rounded">+{latestPrescription.rightAdd}</span>
+                                                                    <span className="ml-1 text-[10px] text-emerald-600 bg-emerald-50 dark:bg-emerald-900/30 px-1 rounded font-medium">+{latestPrescription.rightAdd}</span>
                                                                 )}
                                                             </div>
                                                         </div>
                                                         {/* Left Eye */}
                                                         <div className="flex items-center gap-2">
-                                                            <div className="w-6 h-4 flex items-center justify-center bg-amber-50 dark:bg-amber-900/20 rounded text-[8px] font-bold text-amber-600 border border-amber-100 dark:border-amber-800 shrink-0">OS</div>
-                                                            <div className="flex items-center gap-1.5 text-xs font-mono font-bold tracking-tight">
-                                                                <span className="text-slate-900 dark:text-slate-100">{latestPrescription.leftSphere}</span>
-                                                                <span className="text-slate-300 dark:text-slate-700">/</span>
-                                                                <span className="text-slate-900 dark:text-slate-100">{latestPrescription.leftCylinder}</span>
-                                                                <span className="text-slate-300 dark:text-slate-700">×</span>
-                                                                <span className="text-slate-900 dark:text-slate-100">{latestPrescription.leftAxis}°</span>
+                                                            <div className="w-6 h-4 flex items-center justify-center bg-amber-50 dark:bg-amber-900/20 rounded text-[10px] font-medium text-amber-600 border border-amber-100 dark:border-amber-800 shrink-0">OS</div>
+                                                            <div className="flex items-center gap-1.5 text-xs font-medium tabular-nums tracking-normal">
+                                                                <span className="text-slate-700 dark:text-slate-200">{latestPrescription.leftSphere}</span>
+                                                                <span className="text-slate-300 dark:text-slate-700 text-[10px]">/</span>
+                                                                <span className="text-slate-700 dark:text-slate-200">{latestPrescription.leftCylinder}</span>
+                                                                <span className="text-slate-300 dark:text-slate-700 text-[10px]">×</span>
+                                                                <span className="text-slate-700 dark:text-slate-200">{latestPrescription.leftAxis}°</span>
                                                                 {(latestPrescription.leftAdd && latestPrescription.leftAdd !== "0" && latestPrescription.leftAdd !== "0.00") && (
-                                                                    <span className="ml-1 text-[10px] text-amber-600 bg-amber-50 dark:bg-amber-900/30 px-1 rounded">+{latestPrescription.leftAdd}</span>
+                                                                    <span className="ml-1 text-[10px] text-amber-600 bg-amber-50 dark:bg-amber-900/30 px-1 rounded font-medium">+{latestPrescription.leftAdd}</span>
                                                                 )}
                                                             </div>
                                                         </div>
@@ -273,7 +285,7 @@ export function CustomerList({ customers }: CustomerListProps) {
                                                     e.stopPropagation();
                                                     handleViewHistory(customer);
                                                 }}
-                                                className="h-8 px-2 border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-md font-bold text-[10px] gap-1.5"
+                                                className="h-8 px-2 border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-md font-medium text-xs gap-1.5"
                                             >
                                                 <History className="w-3 h-3 text-indigo-500" /> View Archive
                                             </Button>
@@ -286,7 +298,7 @@ export function CustomerList({ customers }: CustomerListProps) {
                                                     e.stopPropagation();
                                                     handleViewInvoiceHistory(customer);
                                                 }}
-                                                className="h-8 px-2 border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-md font-bold text-[10px] gap-1.5"
+                                                className="h-8 px-2 border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-md font-medium text-xs gap-1.5"
                                             >
                                                 <Receipt className="w-3 h-3 text-emerald-500" /> View Invoices
                                             </Button>
@@ -338,7 +350,13 @@ export function CustomerList({ customers }: CustomerListProps) {
                                                         </Button>
                                                     </DropdownMenuTrigger>
                                                     <DropdownMenuContent align="end" className="w-48 p-1.5 rounded-xl border-slate-200 dark:border-slate-800 shadow-2xl">
-                                                        <DropdownMenuItem onClick={() => handleEdit(customer)} className="gap-2.5 rounded-lg py-2">
+                                                        <DropdownMenuItem
+                                                            onClick={(e) => {
+                                                                e.stopPropagation();
+                                                                handleEdit(customer);
+                                                            }}
+                                                            className="gap-2.5 rounded-lg py-2"
+                                                        >
                                                             <div className="w-7 h-7 rounded-lg bg-blue-50 dark:bg-blue-900/20 flex items-center justify-center text-blue-600 dark:text-blue-400">
                                                                 <Edit2 className="w-3.5 h-3.5" />
                                                             </div>
@@ -348,7 +366,13 @@ export function CustomerList({ customers }: CustomerListProps) {
                                                             </div>
                                                         </DropdownMenuItem>
                                                         <div className="h-px bg-slate-100 dark:bg-slate-800 my-1" />
-                                                        <DropdownMenuItem onClick={() => handleDeleteClick(customer)} className="gap-2.5 rounded-lg py-2 text-red-600 focus:text-red-600">
+                                                        <DropdownMenuItem
+                                                            onClick={(e) => {
+                                                                e.stopPropagation();
+                                                                handleDeleteClick(customer);
+                                                            }}
+                                                            className="gap-2.5 rounded-lg py-2 text-red-600 focus:text-red-600"
+                                                        >
                                                             <div className="w-7 h-7 rounded-lg bg-red-50 dark:bg-red-900/20 flex items-center justify-center text-red-600 dark:text-red-400">
                                                                 <Trash2 className="w-3.5 h-3.5" />
                                                             </div>

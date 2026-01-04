@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
-import { createInvoice, createInvoiceWithCustomer } from "@/actions/invoice";
+import { createInvoice, createInvoiceWithCustomer, updateInvoice } from "@/actions/invoice";
 import { Receipt, IndianRupee, User, Info, UserPlus, Eye, X, Printer, CheckCircle2, Search, Check } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
@@ -26,9 +26,10 @@ interface InvoiceDialogProps {
     customers: any[];
     initialCustomerId?: string;
     initialMode?: "new" | "existing";
+    invoiceToEdit?: any;
 }
 
-export function InvoiceDialog({ open, onOpenChange, customers, initialCustomerId, initialMode }: InvoiceDialogProps) {
+export function InvoiceDialog({ open, onOpenChange, customers, initialCustomerId, initialMode, invoiceToEdit }: InvoiceDialogProps) {
     const [loading, setLoading] = useState(false);
     const [mode, setMode] = useState<"new" | "existing">("new");
     const [showSuccessDialog, setShowSuccessDialog] = useState(false);
@@ -78,15 +79,30 @@ export function InvoiceDialog({ open, onOpenChange, customers, initialCustomerId
 
     useEffect(() => {
         if (open) {
-            if (initialMode) setMode(initialMode);
-            if (initialCustomerId) {
-                setInvoiceData(prev => ({ ...prev, customerId: initialCustomerId }));
+            if (invoiceToEdit) {
+                setInvoiceData({
+                    customerId: invoiceToEdit.customerId,
+                    subtotal: invoiceToEdit.subtotal,
+                    taxType: invoiceToEdit.taxType,
+                    taxRate: invoiceToEdit.taxRate,
+                    taxAmount: invoiceToEdit.taxAmount,
+                    totalAmount: invoiceToEdit.totalAmount,
+                    advanceAmount: invoiceToEdit.advanceAmount,
+                    dueAmount: invoiceToEdit.dueAmount,
+                    notes: invoiceToEdit.notes || "",
+                });
                 setMode("existing");
+            } else {
+                if (initialMode) setMode(initialMode);
+                if (initialCustomerId) {
+                    setInvoiceData(prev => ({ ...prev, customerId: initialCustomerId }));
+                    setMode("existing");
+                }
             }
         } else {
             resetForm();
         }
-    }, [open, initialCustomerId, initialMode]);
+    }, [open, initialCustomerId, initialMode, invoiceToEdit]);
 
     useEffect(() => {
         const base = parseFloat(invoiceData.subtotal) || 0;
@@ -125,19 +141,12 @@ export function InvoiceDialog({ open, onOpenChange, customers, initialCustomerId
         setLoading(true);
 
         try {
-            const invoiceId = mode === "existing"
-                ? await createInvoice({
-                    customerId: invoiceData.customerId,
-                    subtotal: invoiceData.subtotal,
-                    taxType: invoiceData.taxType,
-                    taxRate: invoiceData.taxRate,
-                    taxAmount: invoiceData.taxAmount,
-                    totalAmount: invoiceData.totalAmount,
-                    advanceAmount: invoiceData.advanceAmount,
-                    dueAmount: invoiceData.dueAmount,
-                    notes: invoiceData.notes || undefined,
-                })
-                : await createInvoiceWithCustomer({
+            if (invoiceToEdit) {
+                await updateInvoice(invoiceToEdit.id, invoiceData);
+                toast.success("Invoice updated successfully");
+                onOpenChange(false);
+            } else if (mode === "new") {
+                const id = await createInvoiceWithCustomer({
                     customer: {
                         name: customerData.name,
                         email: customerData.email || undefined,
@@ -156,15 +165,33 @@ export function InvoiceDialog({ open, onOpenChange, customers, initialCustomerId
                         notes: invoiceData.notes || undefined,
                     }
                 });
-
-            toast.success("Invoice generated successfully");
-
-            setNewInvoiceId(invoiceId);
-            setShowSuccessDialog(true);
-            onOpenChange(false);
-            resetForm();
+                setNewInvoiceId(id);
+                setShowSuccessDialog(true);
+                onOpenChange(false); // Close sheet on creation
+                resetForm();
+            } else { // mode === "existing"
+                if (!invoiceData.customerId) {
+                    toast.error("Please select a customer");
+                    return;
+                }
+                const id = await createInvoice({
+                    customerId: invoiceData.customerId,
+                    subtotal: invoiceData.subtotal,
+                    taxType: invoiceData.taxType,
+                    taxRate: invoiceData.taxRate,
+                    taxAmount: invoiceData.taxAmount,
+                    totalAmount: invoiceData.totalAmount,
+                    advanceAmount: invoiceData.advanceAmount,
+                    dueAmount: invoiceData.dueAmount,
+                    notes: invoiceData.notes || undefined,
+                });
+                setNewInvoiceId(id);
+                setShowSuccessDialog(true);
+                onOpenChange(false); // Close sheet on creation
+                resetForm();
+            }
         } catch (error: any) {
-            toast.error(error.message || "Something went wrong");
+            toast.error(error.message || "Failed to save invoice");
         } finally {
             setLoading(false);
         }
@@ -213,9 +240,13 @@ export function InvoiceDialog({ open, onOpenChange, customers, initialCustomerId
                                     <Receipt className="w-6 h-6" />
                                 </div>
                                 <div>
-                                    <SheetTitle className="text-2xl font-bold text-slate-900 dark:text-white leading-none">New Invoice</SheetTitle>
-                                    <SheetDescription className="text-slate-500 text-xs mt-1 pr-12">
-                                        Record a sale for walk-in or existing customers.
+                                    <SheetTitle className="text-xl font-bold text-slate-900 dark:text-white">
+                                        {invoiceToEdit ? "Update Invoice" : (mode === "new" ? "Create New Invoice" : "Existing Customer Invoice")}
+                                    </SheetTitle>
+                                    <SheetDescription className="text-xs text-slate-500">
+                                        {invoiceToEdit
+                                            ? `Updating invoice #${invoiceToEdit.id.substring(0, 8)}`
+                                            : (mode === "new" ? "Enter customer and sales information below." : "Generate a new invoice for a registered customer.")}
                                     </SheetDescription>
                                 </div>
                             </div>
@@ -407,7 +438,7 @@ export function InvoiceDialog({ open, onOpenChange, customers, initialCustomerId
                                                                 placeholder="Clinical remarks..."
                                                                 value={customerData.prescription.notes}
                                                                 onChange={(e) => setCustomerData(p => ({ ...p, prescription: { ...p.prescription, notes: e.target.value } }))}
-                                                                className="h-9 mt-1 text-xs italic"
+                                                                className="h-9 mt-1 text-xs"
                                                             />
                                                         </div>
                                                     </div>
@@ -535,7 +566,7 @@ export function InvoiceDialog({ open, onOpenChange, customers, initialCustomerId
                                             placeholder="Frame/lens specifics or discount info..."
                                             value={invoiceData.notes}
                                             onChange={(e) => setInvoiceData({ ...invoiceData, notes: e.target.value })}
-                                            className="h-11 italic text-[11px] border-slate-200 dark:border-slate-800"
+                                            className="h-11 text-[11px] border-slate-200 dark:border-slate-800"
                                         />
                                     </div>
                                 </div>
@@ -556,7 +587,7 @@ export function InvoiceDialog({ open, onOpenChange, customers, initialCustomerId
                                 className="h-11 px-12 bg-indigo-600 hover:bg-indigo-700 text-white font-bold shadow-lg shadow-indigo-100 dark:shadow-none sm:flex-1 text-sm"
                                 disabled={loading}
                             >
-                                {loading ? "Processing..." : (mode === "new" ? "Register & Invoice" : "Finalize Invoice")}
+                                {loading ? "Processing..." : (invoiceToEdit ? "Update Invoice" : (mode === "new" ? "Register & Invoice" : "Finalize Invoice"))}
                             </Button>
                         </SheetFooter>
                     </div>

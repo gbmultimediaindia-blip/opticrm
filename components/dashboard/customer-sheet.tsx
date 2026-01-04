@@ -7,8 +7,12 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { createCustomer, updateCustomer } from "@/actions/customer";
-import { User, X, UserPlus, Edit2, Eye, Info, Calendar, Users as UsersIcon } from "lucide-react";
+import { User, X, UserPlus, Edit2, Eye, Info, Calendar as CalendarIcon, Users as UsersIcon } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Calendar } from "@/components/ui/calendar";
+import { format } from "date-fns";
+import { cn } from "@/lib/utils";
 
 interface Prescription {
     rightSphere: string;
@@ -29,7 +33,7 @@ interface FormData {
     phone: string;
     address: string;
     gender: string;
-    dateOfBirth: string;
+    dateOfBirth: Date | undefined;
     prescription: Prescription;
 }
 
@@ -58,13 +62,14 @@ const initialFormData: FormData = {
     phone: "",
     address: "",
     gender: "",
-    dateOfBirth: "",
+    dateOfBirth: undefined,
     prescription: initialPrescription
 };
 
 export function CustomerSheet({ open, onOpenChange, customer }: CustomerSheetProps) {
     const [loading, setLoading] = useState(false);
     const [formData, setFormData] = useState<FormData>(initialFormData);
+    const [dobInput, setDobInput] = useState("");
 
     useEffect(() => {
         if (customer) {
@@ -74,13 +79,58 @@ export function CustomerSheet({ open, onOpenChange, customer }: CustomerSheetPro
                 phone: customer.phone || "",
                 address: customer.address || "",
                 gender: customer.gender || "",
-                dateOfBirth: customer.dateOfBirth ? new Date(customer.dateOfBirth).toISOString().split('T')[0] : "",
+                dateOfBirth: customer.dateOfBirth ? new Date(customer.dateOfBirth) : undefined,
                 prescription: initialPrescription
             });
         } else {
             setFormData(initialFormData);
         }
     }, [customer, open]);
+
+    // Initial load: sync dobInput if customer has a birth date
+    useEffect(() => {
+        if (customer?.dateOfBirth) {
+            setDobInput(format(new Date(customer.dateOfBirth), "dd/MM/yyyy"));
+        } else {
+            setDobInput("");
+        }
+    }, [customer, open]);
+
+    const handleDobInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        let value = e.target.value.replace(/\D/g, ""); // Remove non-digits
+
+        // Add slashes automatically
+        if (value.length > 2 && value.length <= 4) {
+            value = value.slice(0, 2) + "/" + value.slice(2);
+        } else if (value.length > 4) {
+            value = value.slice(0, 2) + "/" + value.slice(2, 4) + "/" + value.slice(4, 8);
+        }
+
+        setDobInput(value);
+
+        // Parse date if complete (DD/MM/YYYY)
+        if (value.length === 10) {
+            const [day, month, year] = value.split("/").map(Number);
+            const date = new Date(year, month - 1, day);
+            // Validation: correct month/day mapping and reasonable year
+            if (!isNaN(date.getTime()) &&
+                date.getMonth() === month - 1 &&
+                date.getDate() === day &&
+                year > 1900 &&
+                year <= new Date().getFullYear()) {
+                setFormData(prev => ({ ...prev, dateOfBirth: date }));
+            }
+        }
+    };
+
+    const handleCalendarSelect = (date: Date | undefined) => {
+        setFormData(prev => ({ ...prev, dateOfBirth: date }));
+        if (date) {
+            setDobInput(format(date, "dd/MM/yyyy"));
+        } else {
+            setDobInput("");
+        }
+    };
 
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
@@ -89,7 +139,7 @@ export function CustomerSheet({ open, onOpenChange, customer }: CustomerSheetPro
         try {
             const submissionData = {
                 ...formData,
-                dateOfBirth: formData.dateOfBirth ? new Date(formData.dateOfBirth) : undefined,
+                dateOfBirth: formData.dateOfBirth,
                 gender: formData.gender || undefined,
             };
 
@@ -199,14 +249,41 @@ export function CustomerSheet({ open, onOpenChange, customer }: CustomerSheetPro
                             </div>
                             <div className="space-y-2">
                                 <Label className="text-[10px] font-black text-slate-400 uppercase">Date of Birth (Optional)</Label>
-                                <div className="relative">
+                                <div className="relative group">
                                     <Input
-                                        type="date"
-                                        value={formData.dateOfBirth}
-                                        onChange={(e) => setFormData({ ...formData, dateOfBirth: e.target.value })}
-                                        className="h-11 rounded-xl text-sm pl-10"
+                                        value={dobInput}
+                                        onChange={handleDobInputChange}
+                                        placeholder="DD/MM/YYYY"
+                                        className="h-11 rounded-xl text-sm pl-10 pr-12 bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 focus:ring-indigo-500 transition-all"
                                     />
-                                    <Calendar className="w-4 h-4 absolute left-3.5 top-3.5 text-slate-400 pointer-events-none" />
+                                    <CalendarIcon className="w-4 h-4 absolute left-3.5 top-3.5 text-slate-400 pointer-events-none" />
+
+                                    <div className="absolute right-1 top-1">
+                                        <Popover modal={false}>
+                                            <PopoverTrigger asChild>
+                                                <Button
+                                                    type="button"
+                                                    variant="ghost"
+                                                    size="icon"
+                                                    className="h-9 w-9 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400 hover:text-indigo-600 transition-colors"
+                                                >
+                                                    <CalendarIcon className="w-4 h-4" />
+                                                </Button>
+                                            </PopoverTrigger>
+                                            <PopoverContent className="w-auto p-0 rounded-2xl border-slate-200 dark:border-slate-800 shadow-2xl" align="end">
+                                                <Calendar
+                                                    mode="single"
+                                                    selected={formData.dateOfBirth}
+                                                    onSelect={handleCalendarSelect}
+                                                    captionLayout="dropdown"
+                                                    fromYear={1920}
+                                                    toYear={new Date().getFullYear()}
+                                                    initialFocus
+                                                    className="rounded-2xl border-none"
+                                                />
+                                            </PopoverContent>
+                                        </Popover>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -266,7 +343,7 @@ export function CustomerSheet({ open, onOpenChange, customer }: CustomerSheetPro
                                                 placeholder="e.g. Frame preference..."
                                                 value={formData.prescription.notes}
                                                 onChange={(e) => setFormData(p => ({ ...p, prescription: { ...p.prescription, notes: e.target.value } }))}
-                                                className="h-9 mt-1 text-xs italic"
+                                                className="h-9 mt-1 text-xs"
                                             />
                                         </div>
                                     </div>

@@ -174,7 +174,7 @@ export function PrescriptionDialog({ open, onOpenChange, customerId: initialCust
                                         placeholder="e.g. Near vision difficulty, frame preference..."
                                         value={formData.notes}
                                         onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
-                                        className="h-11 italic text-xs border-slate-200 dark:border-slate-800"
+                                        className="h-11 text-xs border-slate-200 dark:border-slate-800"
                                     />
                                 </div>
                             </div>

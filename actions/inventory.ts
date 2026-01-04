@@ -11,7 +11,8 @@ export async function createProduct(data: {
     name: string;
     category: string;
     brand?: string;
-    price: string;
+    sellingPrice: string;
+    costPrice: string;
     stock: string;
 }) {
     const { store: userStore } = await requireAccess("write");
@@ -46,7 +47,8 @@ export async function updateProduct(id: string, data: {
     name: string;
     category: string;
     brand?: string;
-    price: string;
+    sellingPrice: string;
+    costPrice: string;
     stock: string;
 }) {
     const { store: userStore } = await requireAccess("write");

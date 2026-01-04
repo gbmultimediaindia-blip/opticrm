@@ -77,16 +77,16 @@ export function InvoiceHistoryDialog({ open, onOpenChange, customerId, customerN
                             <Table>
                                 <TableHeader className="bg-slate-50 dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800">
                                     <TableRow className="hover:bg-transparent">
-                                        <TableHead className="w-[160px] font-bold text-slate-900 dark:text-slate-100 py-4 px-6 uppercase text-[10px] tracking-widest">
-                                            <div className="flex items-center gap-2"><Calendar className="w-3 h-3 text-emerald-500" /> Date</div>
+                                        <TableHead className="w-[160px] text-xs font-semibold text-slate-500 py-4 px-6">
+                                            <div className="flex items-center gap-2"><Calendar className="w-3.5 h-3.5" /> Date</div>
                                         </TableHead>
-                                        <TableHead className="font-bold text-slate-900 dark:text-slate-100 py-4 px-6 uppercase text-[10px] tracking-widest">
+                                        <TableHead className="text-xs font-semibold text-slate-500 py-4 px-6">
                                             Amount
                                         </TableHead>
-                                        <TableHead className="font-bold text-slate-900 dark:text-slate-100 py-4 px-6 uppercase text-[10px] tracking-widest">
-                                            Status
+                                        <TableHead className="text-xs font-semibold text-slate-500 py-4 px-6">
+                                            Payment Status
                                         </TableHead>
-                                        <TableHead className="font-bold text-slate-900 dark:text-slate-100 py-4 px-6 uppercase text-[10px] tracking-widest text-right">
+                                        <TableHead className="text-xs font-semibold text-slate-500 py-4 px-6 text-right">
                                             Actions
                                         </TableHead>
                                     </TableRow>
@@ -95,17 +95,21 @@ export function InvoiceHistoryDialog({ open, onOpenChange, customerId, customerN
                                     {paginatedHistory.map((inv) => (
                                         <TableRow key={inv.id} className="group hover:bg-slate-50 dark:hover:bg-slate-900/50 transition-colors border-0">
                                             <TableCell className="py-5 px-6">
-                                                <p className="font-bold text-sm text-slate-900 dark:text-white">{format(new Date(inv.createdAt), "MMM d, yyyy")}</p>
-                                                <p className="text-[10px] text-slate-400 font-medium mt-0.5">ID: {inv.id.substring(0, 8).toUpperCase()}</p>
+                                                <p className="font-medium text-sm text-slate-900 dark:text-white">{format(new Date(inv.createdAt), "MMM d, yyyy")}</p>
+                                                <div className="flex items-center gap-1.5 mt-0.5 text-xs text-slate-500">
+                                                    <span>{format(new Date(inv.createdAt), "h:mm a")}</span>
+                                                    <span className="text-slate-300">•</span>
+                                                    <span>#{inv.id.substring(0, 8).toUpperCase()}</span>
+                                                </div>
                                             </TableCell>
                                             <TableCell className="py-5 px-6">
                                                 <div className="flex flex-col">
-                                                    <span className="text-sm font-bold text-slate-900 dark:text-white flex items-center">
+                                                    <span className="text-sm font-medium text-slate-900 dark:text-white flex items-center tabular-nums">
                                                         <IndianRupee className="w-3 h-3 mr-0.5" />
                                                         {inv.totalAmount}
                                                     </span>
                                                     {parseFloat(inv.dueAmount) > 0 && (
-                                                        <span className="text-[10px] text-red-500 font-medium">
+                                                        <span className="text-xs text-red-500 font-medium">
                                                             Due: ₹{inv.dueAmount}
                                                         </span>
                                                     )}
@@ -113,11 +117,11 @@ export function InvoiceHistoryDialog({ open, onOpenChange, customerId, customerN
                                             </TableCell>
                                             <TableCell className="py-5 px-6">
                                                 {parseFloat(inv.dueAmount) === 0 ? (
-                                                    <span className="px-2 py-0.5 rounded-full text-[10px] bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400 font-bold uppercase tracking-wider">Paid</span>
+                                                    <span className="px-2.5 py-1 rounded-md text-xs bg-emerald-50 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400 font-medium border border-emerald-100 dark:border-emerald-800">Paid</span>
                                                 ) : parseFloat(inv.advanceAmount) > 0 ? (
-                                                    <span className="px-2 py-0.5 rounded-full text-[10px] bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400 font-bold uppercase tracking-wider">Partial</span>
+                                                    <span className="px-2.5 py-1 rounded-md text-xs bg-amber-50 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400 font-medium border border-amber-100 dark:border-amber-800">Partial</span>
                                                 ) : (
-                                                    <span className="px-2 py-0.5 rounded-full text-[10px] bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400 font-bold uppercase tracking-wider">Unpaid</span>
+                                                    <span className="px-2.5 py-1 rounded-md text-xs bg-red-50 text-red-700 dark:bg-red-900/30 dark:text-red-400 font-medium border border-red-100 dark:border-red-800">Unpaid</span>
                                                 )}
                                             </TableCell>
                                             <TableCell className="py-5 px-6 text-right">
@@ -125,7 +129,7 @@ export function InvoiceHistoryDialog({ open, onOpenChange, customerId, customerN
                                                     variant="outline"
                                                     size="sm"
                                                     asChild
-                                                    className="h-8 rounded-lg border-slate-200 dark:border-slate-800 text-xs font-bold gap-2"
+                                                    className="h-8 rounded-lg border-slate-200 dark:border-slate-800 text-xs font-medium gap-2"
                                                 >
                                                     <Link href={`/print/invoices/${inv.id}`} target="_blank">
                                                         <Printer className="w-3 h-3" />

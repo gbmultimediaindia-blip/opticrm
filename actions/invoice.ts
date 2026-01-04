@@ -21,6 +21,8 @@ export async function createInvoice(data: {
     totalAmount: string;
     advanceAmount: string;
     dueAmount: string;
+    status?: string;
+    deliveryStatus?: string;
     notes?: string;
 }) {
     const { store: userStore } = await requireAccess("write");
@@ -34,6 +36,8 @@ export async function createInvoice(data: {
         totalAmount: formatAmount(data.totalAmount),
         advanceAmount: formatAmount(data.advanceAmount),
         dueAmount: formatAmount(data.dueAmount),
+        status: parseFloat(formatAmount(data.dueAmount)) <= 0 ? "completed" : "pending",
+        deliveryStatus: data.deliveryStatus || "pending",
         notes: data.notes,
         storeId: userStore.id,
     }).returning();
@@ -85,6 +89,8 @@ export async function createInvoiceWithCustomer(data: {
         totalAmount: string;
         advanceAmount: string;
         dueAmount: string;
+        status?: string;
+        deliveryStatus?: string;
         notes?: string;
     };
 }) {
@@ -124,6 +130,8 @@ export async function createInvoiceWithCustomer(data: {
             totalAmount: formatAmount(data.invoice.totalAmount),
             advanceAmount: formatAmount(data.invoice.advanceAmount),
             dueAmount: formatAmount(data.invoice.dueAmount),
+            status: parseFloat(formatAmount(data.invoice.dueAmount)) <= 0 ? "completed" : "pending",
+            deliveryStatus: data.invoice.deliveryStatus || "pending",
             notes: data.invoice.notes || "",
             storeId: userStore.id,
         }).returning();
@@ -139,6 +147,82 @@ export async function deleteInvoice(id: string) {
     const { store: userStore } = await requireAccess("write");
 
     await db.delete(invoice)
+        .where(and(eq(invoice.id, id), eq(invoice.storeId, userStore.id)));
+
+    revalidatePath("/dashboard/invoices");
+}
+
+export async function updateInvoice(id: string, data: {
+    subtotal: string;
+    taxType: string;
+    taxRate: string;
+    taxAmount: string;
+    totalAmount: string;
+    advanceAmount: string;
+    dueAmount: string;
+    status?: string;
+    deliveryStatus?: string;
+    notes?: string;
+}) {
+    const { store: userStore } = await requireAccess("write");
+
+    await db.update(invoice)
+        .set({
+            subtotal: formatAmount(data.subtotal),
+            taxType: data.taxType,
+            taxRate: formatAmount(data.taxRate),
+            taxAmount: formatAmount(data.taxAmount),
+            totalAmount: formatAmount(data.totalAmount),
+            advanceAmount: formatAmount(data.advanceAmount),
+            dueAmount: formatAmount(data.dueAmount),
+            status: parseFloat(formatAmount(data.dueAmount)) <= 0 ? "completed" : "pending",
+            deliveryStatus: data.deliveryStatus,
+            notes: data.notes,
+        })
+        .where(and(eq(invoice.id, id), eq(invoice.storeId, userStore.id)));
+
+    revalidatePath("/dashboard/invoices");
+}
+
+export async function completeInvoice(id: string) {
+    const { store: userStore } = await requireAccess("write");
+
+    const inv = await db.query.invoice.findFirst({
+        where: and(eq(invoice.id, id), eq(invoice.storeId, userStore.id)),
+    });
+
+    if (!inv) throw new Error("Invoice not found");
+
+    await db.update(invoice)
+        .set({
+            status: "completed",
+            advanceAmount: inv.totalAmount,
+            dueAmount: "0",
+            updatedAt: new Date(),
+        })
+        .where(and(eq(invoice.id, id), eq(invoice.storeId, userStore.id)));
+
+    revalidatePath("/dashboard/invoices");
+}
+
+export async function toggleDeliveryStatus(id: string, deliveryStatus: string) {
+    const { store: userStore } = await requireAccess("write");
+
+    const inv = await db.query.invoice.findFirst({
+        where: and(eq(invoice.id, id), eq(invoice.storeId, userStore.id)),
+    });
+
+    if (!inv) throw new Error("Invoice not found");
+
+    if (deliveryStatus === "delivered" && inv.status === "pending") {
+        throw new Error("Cannot mark as delivered while payment is pending. Please complete payment first.");
+    }
+
+    await db.update(invoice)
+        .set({
+            deliveryStatus: deliveryStatus,
+            updatedAt: new Date(),
+        })
         .where(and(eq(invoice.id, id), eq(invoice.storeId, userStore.id)));
 
     revalidatePath("/dashboard/invoices");

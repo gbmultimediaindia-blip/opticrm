@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import {
     Sheet,
@@ -22,6 +22,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
+import { Package, Tag, Layers, BadgeIndianRupee, Boxes, Plus, Edit2, Info } from "lucide-react";
 
 interface ProductSheetProps {
     open: boolean;
@@ -40,31 +41,57 @@ const CATEGORIES = [
 
 export function ProductSheet({ open, onOpenChange, productToEdit }: ProductSheetProps) {
     const [loading, setLoading] = useState(false);
+    const [formData, setFormData] = useState({
+        name: "",
+        category: "",
+        brand: "",
+        costPrice: "",
+        sellingPrice: "",
+        stock: "",
+    });
 
-    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    useEffect(() => {
+        if (productToEdit) {
+            setFormData({
+                name: productToEdit.name || "",
+                category: productToEdit.category || "",
+                brand: productToEdit.brand || "",
+                costPrice: productToEdit.costPrice || "",
+                sellingPrice: productToEdit.sellingPrice || "",
+                stock: productToEdit.stock || "0",
+            });
+        } else {
+            setFormData({
+                name: "",
+                category: "",
+                brand: "",
+                costPrice: "",
+                sellingPrice: "",
+                stock: "0",
+            });
+        }
+    }, [productToEdit, open]);
+
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setLoading(true);
 
-        const formData = new FormData(e.currentTarget);
-        const data = {
-            name: formData.get("name") as string,
-            category: formData.get("category") as string,
-            brand: formData.get("brand") as string,
-            price: formData.get("price") as string,
-            stock: formData.get("stock") as string,
+        const dataToSubmit = {
+            ...formData,
+            category: formData.category || "Other"
         };
 
         try {
             if (productToEdit) {
-                await updateProduct(productToEdit.id, data);
-                toast.success("Product updated successfully");
+                await updateProduct(productToEdit.id, dataToSubmit);
+                toast.success("Product profile updated");
             } else {
-                await createProduct(data);
-                toast.success("Product added successfully");
+                await createProduct(dataToSubmit);
+                toast.success("New product added to inventory");
             }
             onOpenChange(false);
         } catch (error: any) {
-            toast.error(error.message);
+            toast.error(error.message || "Failed to save product");
         } finally {
             setLoading(false);
         }
@@ -72,89 +99,166 @@ export function ProductSheet({ open, onOpenChange, productToEdit }: ProductSheet
 
     return (
         <Sheet open={open} onOpenChange={onOpenChange}>
-            <SheetContent className="w-[400px] sm:w-[540px] border-l border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950">
-                <SheetHeader className="mb-8">
-                    <SheetTitle className="text-2xl font-bold text-slate-900 dark:text-white">
-                        {productToEdit ? "Edit Product" : "Add Product"}
-                    </SheetTitle>
-                    <SheetDescription className="text-slate-500 dark:text-slate-400">
-                        {productToEdit ? "Update product details." : "Add a new item to your inventory."}
-                    </SheetDescription>
-                </SheetHeader>
+            <SheetContent className="sm:max-w-xl border-l border-slate-200 dark:border-slate-800 p-0 flex flex-col overflow-hidden">
+                {/* Header Section */}
+                <div className="p-6 bg-slate-50/50 dark:bg-slate-900/50 border-b border-slate-100 dark:border-slate-800 shrink-0 relative">
+                    <SheetHeader>
+                        <div className="flex items-center gap-4 mt-4 text-left">
+                            <div className="w-12 h-12 rounded-xl bg-indigo-600 flex items-center justify-center text-white shadow-lg shadow-indigo-100 dark:shadow-none">
+                                {productToEdit ? <Edit2 className="w-6 h-6" /> : <Plus className="w-6 h-6" />}
+                            </div>
+                            <div>
+                                <SheetTitle className="text-2xl font-bold text-slate-900 dark:text-white leading-none">
+                                    {productToEdit ? "Edit Product" : "Add Product"}
+                                </SheetTitle>
+                                <SheetDescription className="text-slate-500 text-xs mt-1 pr-12">
+                                    {productToEdit ? `Updating details for ${productToEdit.name}` : "Categorize and track your inventory stock."}
+                                </SheetDescription>
+                            </div>
+                        </div>
+                    </SheetHeader>
+                </div>
 
-                <form onSubmit={handleSubmit} className="flex flex-col gap-6">
-                    <div className="grid gap-2">
-                        <Label htmlFor="name">Product Name</Label>
-                        <Input
-                            id="name"
-                            name="name"
-                            defaultValue={productToEdit?.name}
-                            placeholder="e.g. Ray-Ban Aviator"
-                            required
-                        />
-                    </div>
+                {/* Form Content */}
+                <form id="product-form" onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-6 space-y-8 bg-white dark:bg-slate-950 custom-scrollbar">
+                    {/* Basic Info */}
+                    <div className="space-y-6">
+                        <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
+                            <Package className="w-3.5 h-3.5 text-indigo-400" /> General Identification
+                        </h3>
 
-                    <div className="grid gap-2">
-                        <Label htmlFor="category">Category</Label>
-                        <Select name="category" defaultValue={productToEdit?.category} required>
-                            <SelectTrigger>
-                                <SelectValue placeholder="Select category" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                {CATEGORIES.map((cat) => (
-                                    <SelectItem key={cat} value={cat}>
-                                        {cat}
-                                    </SelectItem>
-                                ))}
-                            </SelectContent>
-                        </Select>
-                    </div>
-
-                    <div className="grid gap-2">
-                        <Label htmlFor="brand">Brand</Label>
-                        <Input
-                            id="brand"
-                            name="brand"
-                            defaultValue={productToEdit?.brand}
-                            placeholder="e.g. Ray-Ban"
-                        />
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-4">
-                        <div className="grid gap-2">
-                            <Label htmlFor="price">Price</Label>
+                        <div className="space-y-2">
+                            <Label className="text-[10px] font-black text-slate-400 uppercase">Product Name</Label>
                             <Input
-                                id="price"
-                                name="price"
-                                type="number"
-                                step="0.01"
-                                defaultValue={productToEdit?.price}
-                                placeholder="0.00"
+                                value={formData.name}
+                                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                                placeholder="e.g. Ray-Ban Aviator Classic"
+                                className="h-11 rounded-xl"
                                 required
                             />
                         </div>
-                        <div className="grid gap-2">
-                            <Label htmlFor="stock">Stock Quantity</Label>
-                            <Input
-                                id="stock"
-                                name="stock"
-                                type="number"
-                                defaultValue={productToEdit?.stock}
-                                placeholder="0"
-                                required
-                            />
+
+                        <div className="grid grid-cols-2 gap-4">
+                            <div className="space-y-2">
+                                <Label className="text-[10px] font-black text-slate-400 uppercase">Category</Label>
+                                <Select
+                                    value={formData.category}
+                                    onValueChange={(v) => setFormData({ ...formData, category: v })}
+                                >
+                                    <SelectTrigger className="h-11 rounded-xl">
+                                        <SelectValue placeholder="Select category" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        {CATEGORIES.map((cat) => (
+                                            <SelectItem key={cat} value={cat}>
+                                                <div className="flex items-center gap-2">
+                                                    <Layers className="w-3.5 h-3.5 text-slate-400" />
+                                                    {cat}
+                                                </div>
+                                            </SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
+                            </div>
+                            <div className="space-y-2">
+                                <Label className="text-[10px] font-black text-slate-400 uppercase">Brand (Optional)</Label>
+                                <div className="relative">
+                                    <Input
+                                        value={formData.brand}
+                                        onChange={(e) => setFormData({ ...formData, brand: e.target.value })}
+                                        placeholder="e.g. Ray-Ban"
+                                        className="h-11 rounded-xl pl-9"
+                                    />
+                                    <Tag className="w-3.5 h-3.5 absolute left-3.5 top-3.5 text-slate-400" />
+                                </div>
+                            </div>
                         </div>
                     </div>
 
-                    <SheetFooter className="mt-8">
+                    {/* Financials & Stock */}
+                    <div className="space-y-6">
+                        <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
+                            <BadgeIndianRupee className="w-3.5 h-3.5 text-indigo-400" /> Financials & Inventory
+                        </h3>
+
+                        <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-800 space-y-6">
+                            <div className="grid grid-cols-2 gap-4">
+                                <div className="space-y-2">
+                                    <Label className="text-[10px] font-black text-slate-400 uppercase flex items-center gap-1.5">
+                                        Cost Price <Info className="w-2.5 h-2.5 text-slate-400" />
+                                    </Label>
+                                    <div className="relative">
+                                        <Input
+                                            type="number"
+                                            step="0.01"
+                                            value={formData.costPrice}
+                                            onChange={(e) => setFormData({ ...formData, costPrice: e.target.value })}
+                                            placeholder="0.00"
+                                            className="h-11 rounded-xl pl-9 font-mono font-bold"
+                                            required
+                                        />
+                                        <span className="absolute left-3.5 top-3 text-slate-400 font-bold text-sm">₹</span>
+                                    </div>
+                                    <p className="text-[9px] text-slate-500">Purchase price per unit</p>
+                                </div>
+                                <div className="space-y-2">
+                                    <Label className="text-[10px] font-black text-slate-400 uppercase flex items-center gap-1.5">
+                                        Selling Price <Info className="w-2.5 h-2.5 text-slate-400" />
+                                    </Label>
+                                    <div className="relative">
+                                        <Input
+                                            type="number"
+                                            step="0.01"
+                                            value={formData.sellingPrice}
+                                            onChange={(e) => setFormData({ ...formData, sellingPrice: e.target.value })}
+                                            placeholder="0.00"
+                                            className="h-11 rounded-xl pl-9 font-mono font-bold text-indigo-600 dark:text-indigo-400"
+                                            required
+                                        />
+                                        <span className="absolute left-3.5 top-3 text-indigo-400 font-bold text-sm">₹</span>
+                                    </div>
+                                    <p className="text-[9px] text-slate-500">Retail price for customers</p>
+                                </div>
+                            </div>
+
+                            <div className="pt-4 border-t border-slate-100 dark:border-slate-800">
+                                <div className="space-y-2">
+                                    <Label className="text-[10px] font-black text-slate-400 uppercase">Available Stock</Label>
+                                    <div className="relative">
+                                        <Input
+                                            type="number"
+                                            value={formData.stock}
+                                            onChange={(e) => setFormData({ ...formData, stock: e.target.value })}
+                                            placeholder="0"
+                                            className="h-11 rounded-xl pl-9 font-bold"
+                                            required
+                                        />
+                                        <Boxes className="w-3.5 h-3.5 absolute left-3.5 top-3.5 text-slate-400" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+
+                {/* Footer Section */}
+                <div className="p-6 bg-slate-50/50 dark:bg-slate-900/50 border-t border-slate-100 dark:border-slate-800 shrink-0">
+                    <SheetFooter className="gap-3 sm:flex-row flex-col">
                         <SheetClose asChild>
-                            <Button variant="ghost" type="button">Cancel</Button>
+                            <Button type="button" variant="ghost" className="h-11 px-8 font-semibold text-slate-500">
+                                Cancel
+                            </Button>
                         </SheetClose>
-                        <Button type="submit" className="bg-indigo-600 hover:bg-indigo-700 text-white" disabled={loading}>
-                            {loading ? "Saving..." : (productToEdit ? "Update Product" : "Add Product")}
+                        <Button
+                            type="submit"
+                            form="product-form"
+                            className="h-11 px-12 bg-indigo-600 hover:bg-indigo-700 text-white font-bold shadow-lg shadow-indigo-100 dark:shadow-none sm:flex-1 text-sm"
+                            disabled={loading}
+                        >
+                            {loading ? "Saving..." : productToEdit ? "Save Changes" : "Add Product"}
                         </Button>
                     </SheetFooter>
-                </form>
+                </div>
             </SheetContent>
         </Sheet>
     );

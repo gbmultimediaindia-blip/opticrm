@@ -35,7 +35,7 @@ export function InvoicePrint({ invoice, store }: InvoicePrintProps) {
                             INVOICE NO: <span className="font-mono font-bold text-slate-600 tracking-tight ml-2">#{invoice.id.substring(0, 8).toUpperCase()}</span>
                         </span>
                         <span className="text-xs font-bold text-slate-900">
-                            DATE: <span className="font-medium text-slate-600 ml-2">{format(new Date(invoice.createdAt), "dd MMM yyyy")}</span>
+                            DATE: <span className="font-medium text-slate-600 ml-2">{format(new Date(invoice.createdAt), "dd MMM yyyy, h:mm a")}</span>
                         </span>
                     </div>
                 </div>
@@ -49,7 +49,7 @@ export function InvoicePrint({ invoice, store }: InvoicePrintProps) {
                         <div className="text-lg font-bold text-slate-900 uppercase tracking-tight">{invoice.customer.name}</div>
                         <div className="text-sm font-medium text-slate-600">{invoice.customer.phone}</div>
                         {invoice.customer.address && (
-                            <div className="text-xs text-slate-500 max-w-[250px] leading-relaxed mt-2 italic">{invoice.customer.address}</div>
+                            <div className="text-xs text-slate-500 max-w-[250px] leading-relaxed mt-2">{invoice.customer.address}</div>
                         )}
                     </div>
                 </div>
@@ -71,7 +71,7 @@ export function InvoicePrint({ invoice, store }: InvoicePrintProps) {
                             <td className="py-6">
                                 <div className="font-bold text-slate-900 text-sm">Optical Services & Products</div>
                                 {invoice.notes && (
-                                    <p className="text-xs text-slate-500 mt-2 font-medium bg-slate-50 p-3 rounded-lg border border-slate-100 italic">
+                                    <p className="text-xs text-slate-500 mt-2 font-medium bg-slate-50 p-3 rounded-lg border border-slate-100">
                                         Notes: {invoice.notes}
                                     </p>
                                 )}
@@ -126,7 +126,7 @@ export function InvoicePrint({ invoice, store }: InvoicePrintProps) {
                     <div className="h-10 w-48 bg-slate-50 rounded border border-slate-100 font-mono text-[10px] text-slate-300 flex items-center justify-center tracking-[0.3em]">
                         {invoice.id.toUpperCase()}
                     </div>
-                    <p className="text-[10px] text-slate-400 italic font-medium leading-relaxed max-w-[250px]">
+                    <p className="text-[10px] text-slate-400 font-medium leading-relaxed max-w-[250px]">
                         This is a computer generated invoice. No physical signature required. Standard warranty applies to all frames and lenses.
                     </p>
                 </div>

@@ -76,18 +76,18 @@ export function PrescriptionHistoryDialog({ open, onOpenChange, customerId, cust
                             <Table>
                                 <TableHeader className="bg-slate-50 dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800">
                                     <TableRow className="hover:bg-transparent">
-                                        <TableHead className="w-[160px] font-bold text-slate-900 dark:text-slate-100 py-4 px-6 uppercase text-[10px] tracking-widest">
-                                            <div className="flex items-center gap-2"><Calendar className="w-3 h-3 text-indigo-500" /> Date</div>
+                                        <TableHead className="w-[160px] text-xs font-semibold text-slate-500 py-4 px-6">
+                                            <div className="flex items-center gap-2"><Calendar className="w-3.5 h-3.5" /> Date</div>
                                         </TableHead>
-                                        <TableHead className="w-[220px] font-bold text-slate-900 dark:text-slate-100 py-4 px-6 uppercase text-[10px] tracking-widest">
-                                            <div className="flex items-center gap-2"><Eye className="w-4 h-4 text-emerald-500" /> Right Eye (OD)</div>
+                                        <TableHead className="w-[220px] text-xs font-semibold text-slate-500 py-4 px-6">
+                                            <div className="flex items-center gap-2"><Eye className="w-3.5 h-3.5 text-emerald-500" /> Right Eye (OD)</div>
                                         </TableHead>
-                                        <TableHead className="w-[220px] font-bold text-slate-900 dark:text-slate-100 py-4 px-6 uppercase text-[10px] tracking-widest">
-                                            <div className="flex items-center gap-2"><Eye className="w-4 h-4 text-amber-500" /> Left Eye (OS)</div>
+                                        <TableHead className="w-[220px] text-xs font-semibold text-slate-500 py-4 px-6">
+                                            <div className="flex items-center gap-2"><Eye className="w-3.5 h-3.5 text-amber-500" /> Left Eye (OS)</div>
                                         </TableHead>
-                                        <TableHead className="w-[100px] font-bold text-slate-900 dark:text-slate-100 py-4 px-6 uppercase text-[10px] tracking-widest text-center">PD</TableHead>
-                                        <TableHead className="font-bold text-slate-900 dark:text-slate-100 py-4 px-6 uppercase text-[10px] tracking-widest whitespace-nowrap">
-                                            <div className="flex items-center gap-2"><Info className="w-3 h-3 text-slate-400" /> Notes</div>
+                                        <TableHead className="w-[100px] text-xs font-semibold text-slate-500 py-4 px-6 text-center">PD</TableHead>
+                                        <TableHead className="text-xs font-semibold text-slate-500 py-4 px-6 whitespace-nowrap">
+                                            <div className="flex items-center gap-2"><Info className="w-3.5 h-3.5 text-slate-400" /> Notes</div>
                                         </TableHead>
                                     </TableRow>
                                 </TableHeader>
@@ -95,8 +95,8 @@ export function PrescriptionHistoryDialog({ open, onOpenChange, customerId, cust
                                     {paginatedHistory.map((record) => (
                                         <TableRow key={record.id} className="group hover:bg-slate-50 dark:hover:bg-slate-900/50 transition-colors border-0">
                                             <TableCell className="py-5 px-6 align-top">
-                                                <p className="font-bold text-sm text-slate-900 dark:text-white">{format(new Date(record.createdAt), "MMM d, yyyy")}</p>
-                                                <p className="text-[10px] text-slate-400 font-medium mt-0.5">{format(new Date(record.createdAt), "h:mm aa")}</p>
+                                                <p className="font-medium text-sm text-slate-900 dark:text-white">{format(new Date(record.createdAt), "MMM d, yyyy")}</p>
+                                                <p className="text-xs text-slate-500 mt-0.5">{format(new Date(record.createdAt), "h:mm aa")}</p>
                                             </TableCell>
                                             <TableCell className="py-5 px-6">
                                                 <div className="grid grid-cols-2 gap-3">
@@ -115,7 +115,7 @@ export function PrescriptionHistoryDialog({ open, onOpenChange, customerId, cust
                                                 </div>
                                             </TableCell>
                                             <TableCell className="py-5 px-6 text-center">
-                                                <span className="font-mono font-bold text-slate-900 dark:text-white bg-slate-100 dark:bg-slate-800 px-2 py-1 rounded text-xs select-all">
+                                                <span className="font-medium text-slate-900 dark:text-white bg-slate-100 dark:bg-slate-800 px-2 py-1 rounded text-xs select-all tabular-nums">
                                                     {record.pd}
                                                 </span>
                                             </TableCell>
@@ -167,8 +167,8 @@ export function PrescriptionHistoryDialog({ open, onOpenChange, customerId, cust
 function Metric({ label, value, highlight = false }: { label: string; value: string; highlight?: boolean }) {
     return (
         <div className="flex flex-col gap-0.5 min-w-[60px]">
-            <span className="text-[9px] font-bold text-slate-400 uppercase tracking-tighter">{label}</span>
-            <span className={`text-xs font-mono font-bold select-all ${highlight ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-700 dark:text-slate-300'}`}>
+            <span className="text-[10px] font-medium text-slate-500 uppercase">{label}</span>
+            <span className={`text-xs font-medium tabular-nums select-all ${highlight ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-900 dark:text-slate-300'}`}>
                 {value}
             </span>
         </div>

@@ -113,6 +113,8 @@ export const invoice = pgTable("invoices", {
     totalAmount: text("total_amount").notNull(),
     advanceAmount: text("advance_amount").notNull().default("0"),
     dueAmount: text("due_amount").notNull().default("0"),
+    status: text("status").notNull().default("pending"), // 'pending', 'completed' (payment status)
+    deliveryStatus: text("delivery_status").notNull().default("pending"), // 'pending', 'delivered'
     notes: text("notes"),
     createdAt: timestamp("created_at").notNull().defaultNow(),
     updatedAt: timestamp("updated_at").notNull().defaultNow(),
@@ -123,7 +125,8 @@ export const product = pgTable("products", {
     name: text("name").notNull(),
     category: text("category").notNull(), // 'Frames', 'Lenses', 'Sunglasses', 'Accessories'
     brand: text("brand"),
-    price: text("price").notNull(),
+    sellingPrice: text("selling_price").notNull(),
+    costPrice: text("cost_price").notNull().default("0"),
     stock: text("stock").notNull().default("0"),
     storeId: uuid("store_id").notNull().references(() => store.id, { onDelete: "cascade" }),
     createdAt: timestamp("created_at").notNull().defaultNow(),
