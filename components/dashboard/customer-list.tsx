@@ -482,7 +482,6 @@ export function CustomerList({ customers }: CustomerListProps) {
                         onOpenChange={setInvoiceDialogOpen}
                         customers={customers}
                         initialCustomerId={activeCustomer.id}
-                        initialMode="existing"
                     />
                 </>
             )}

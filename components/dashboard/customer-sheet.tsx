@@ -41,95 +41,105 @@ interface CustomerSheetProps {
     open: boolean;
     onOpenChange: (open: boolean) => void;
     customer?: any;
+    onSuccess?: (customer: any) => void;
 }
 
-const initialPrescription: Prescription = {
-    rightSphere: "",
-    rightCylinder: "",
-    rightAxis: "",
-    rightAdd: "",
-    leftSphere: "",
-    leftCylinder: "",
-    leftAxis: "",
-    leftAdd: "",
-    pd: "",
-    notes: ""
-};
-
-const initialFormData: FormData = {
-    name: "",
-    email: "",
-    phone: "",
-    address: "",
-    gender: "",
-    dateOfBirth: undefined,
-    prescription: initialPrescription
-};
-
-export function CustomerSheet({ open, onOpenChange, customer }: CustomerSheetProps) {
+export function CustomerSheet({ open, onOpenChange, customer, onSuccess }: CustomerSheetProps) {
     const [loading, setLoading] = useState(false);
-    const [formData, setFormData] = useState<FormData>(initialFormData);
     const [dobInput, setDobInput] = useState("");
+    const [formData, setFormData] = useState<FormData>({
+        name: "",
+        email: "",
+        phone: "",
+        address: "",
+        gender: "",
+        dateOfBirth: undefined,
+        prescription: {
+            rightSphere: "",
+            rightCylinder: "",
+            rightAxis: "",
+            rightAdd: "",
+            leftSphere: "",
+            leftCylinder: "",
+            leftAxis: "",
+            leftAdd: "",
+            pd: "",
+            notes: "",
+        },
+    });
 
     useEffect(() => {
-        if (customer) {
-            setFormData({
-                name: customer.name || "",
-                email: customer.email || "",
-                phone: customer.phone || "",
-                address: customer.address || "",
-                gender: customer.gender || "",
-                dateOfBirth: customer.dateOfBirth ? new Date(customer.dateOfBirth) : undefined,
-                prescription: initialPrescription
-            });
-        } else {
-            setFormData(initialFormData);
+        if (open) {
+            if (customer) {
+                setFormData({
+                    name: customer.name || "",
+                    email: customer.email || "",
+                    phone: customer.phone || "",
+                    address: customer.address || "",
+                    gender: customer.gender || "",
+                    dateOfBirth: customer.dateOfBirth ? new Date(customer.dateOfBirth) : undefined,
+                    prescription: {
+                        rightSphere: customer.prescription?.rightSphere || "",
+                        rightCylinder: customer.prescription?.rightCylinder || "",
+                        rightAxis: customer.prescription?.rightAxis || "",
+                        rightAdd: customer.prescription?.rightAdd || "",
+                        leftSphere: customer.prescription?.leftSphere || "",
+                        leftCylinder: customer.prescription?.leftCylinder || "",
+                        leftAxis: customer.prescription?.leftAxis || "",
+                        leftAdd: customer.prescription?.leftAdd || "",
+                        pd: customer.prescription?.pd || "",
+                        notes: customer.prescription?.notes || "",
+                    },
+                });
+                setDobInput(customer.dateOfBirth ? format(new Date(customer.dateOfBirth), "dd/MM/yyyy") : "");
+            } else {
+                setFormData({
+                    name: "",
+                    email: "",
+                    phone: "",
+                    address: "",
+                    gender: "",
+                    dateOfBirth: undefined,
+                    prescription: {
+                        rightSphere: "",
+                        rightCylinder: "",
+                        rightAxis: "",
+                        rightAdd: "",
+                        leftSphere: "",
+                        leftCylinder: "",
+                        leftAxis: "",
+                        leftAdd: "",
+                        pd: "",
+                        notes: "",
+                    },
+                });
+                setDobInput("");
+            }
         }
-    }, [customer, open]);
-
-    // Initial load: sync dobInput if customer has a birth date
-    useEffect(() => {
-        if (customer?.dateOfBirth) {
-            setDobInput(format(new Date(customer.dateOfBirth), "dd/MM/yyyy"));
-        } else {
-            setDobInput("");
-        }
-    }, [customer, open]);
+    }, [open, customer]);
 
     const handleDobInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        let value = e.target.value.replace(/\D/g, ""); // Remove non-digits
-
-        // Add slashes automatically
-        if (value.length > 2 && value.length <= 4) {
-            value = value.slice(0, 2) + "/" + value.slice(2);
-        } else if (value.length > 4) {
-            value = value.slice(0, 2) + "/" + value.slice(2, 4) + "/" + value.slice(4, 8);
-        }
-
+        const value = e.target.value;
         setDobInput(value);
-
-        // Parse date if complete (DD/MM/YYYY)
         if (value.length === 10) {
-            const [day, month, year] = value.split("/").map(Number);
-            const date = new Date(year, month - 1, day);
-            // Validation: correct month/day mapping and reasonable year
-            if (!isNaN(date.getTime()) &&
-                date.getMonth() === month - 1 &&
-                date.getDate() === day &&
-                year > 1900 &&
-                year <= new Date().getFullYear()) {
-                setFormData(prev => ({ ...prev, dateOfBirth: date }));
+            const parts = value.split("/");
+            if (parts.length === 3) {
+                const day = parseInt(parts[0], 10);
+                const month = parseInt(parts[1], 10) - 1;
+                const year = parseInt(parts[2], 10);
+                const date = new Date(year, month, day);
+                if (!isNaN(date.getTime())) {
+                    setFormData(prev => ({ ...prev, dateOfBirth: date }));
+                }
             }
+        } else if (value === "") {
+            setFormData(prev => ({ ...prev, dateOfBirth: undefined }));
         }
     };
 
     const handleCalendarSelect = (date: Date | undefined) => {
         setFormData(prev => ({ ...prev, dateOfBirth: date }));
-        if (date) {
-            setDobInput(format(date, "dd/MM/yyyy"));
-        } else {
-            setDobInput("");
-        }
+        setDobInput(date ? format(date, "dd/MM/yyyy") : "");
     };
 
     const handleSubmit = async (e: FormEvent) => {
@@ -147,9 +157,11 @@ export function CustomerSheet({ open, onOpenChange, customer }: CustomerSheetPro
                 const { name, email, phone, address, gender, dateOfBirth } = submissionData;
                 await updateCustomer(customer.id, { name, email, phone, address, gender, dateOfBirth });
                 toast.success("Customer profile updated");
+                if (onSuccess) onSuccess(customer); // Pass updated customer (though technically incomplete object compared on return, usually id is enough)
             } else {
-                await createCustomer(submissionData);
+                const newCustomer = await createCustomer(submissionData);
                 toast.success("New customer registered");
+                if (onSuccess) onSuccess(newCustomer);
             }
             onOpenChange(false);
         } catch (error: any) {

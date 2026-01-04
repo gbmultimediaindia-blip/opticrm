@@ -58,6 +58,7 @@ export async function createCustomer(formData: {
     }
 
     revalidatePath("/dashboard/customers");
+    return newCustomer;
 }
 
 export async function updateCustomer(id: string, formData: {
