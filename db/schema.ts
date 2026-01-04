@@ -113,6 +113,9 @@ export const invoice = pgTable("invoices", {
     totalAmount: text("total_amount").notNull(),
     advanceAmount: text("advance_amount").notNull().default("0"),
     dueAmount: text("due_amount").notNull().default("0"),
+    discountType: text("discount_type").notNull().default("fixed"),
+    discountValue: text("discount_value").notNull().default("0"),
+    discountAmount: text("discount_amount").notNull().default("0"),
     status: text("status").notNull().default("pending"), // 'pending', 'completed' (payment status)
     deliveryStatus: text("delivery_status").notNull().default("pending"), // 'pending', 'delivered'
     notes: text("notes"),

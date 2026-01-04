@@ -75,9 +75,10 @@ export function InvoicePrint({ invoice, store }: InvoicePrintProps) {
                                         Notes: {invoice.notes}
                                     </p>
                                 )}
+
                             </td>
                             <td className="py-6 text-right align-top font-mono font-bold text-slate-900">
-                                ₹{invoice.totalAmount}
+                                ₹{invoice.subtotal || invoice.totalAmount}
                             </td>
                         </tr>
                     </tbody>
@@ -96,6 +97,13 @@ export function InvoicePrint({ invoice, store }: InvoicePrintProps) {
                         <div className="flex justify-between items-center text-sm font-medium text-slate-500 px-2">
                             <span>Tax ({invoice.taxRate}% {invoice.taxType === "included" ? "Incl." : "Excl."})</span>
                             <span className="font-mono text-slate-900 font-bold tracking-tight">₹{invoice.taxAmount}</span>
+                        </div>
+                    )}
+
+                    {parseFloat(invoice.discountAmount) > 0 && (
+                        <div className="flex justify-between items-center text-sm font-medium text-slate-500 px-2">
+                            <span>Discount ({invoice.discountType === "percentage" ? `${invoice.discountValue}%` : "Fixed"})</span>
+                            <span className="font-mono text-red-600 font-bold tracking-tight">-₹{invoice.discountAmount}</span>
                         </div>
                     )}
 
@@ -142,6 +150,6 @@ export function InvoicePrint({ invoice, store }: InvoicePrintProps) {
             <div className="mt-12 text-center text-[9px] font-bold text-slate-400 uppercase tracking-[0.5em] opacity-40">
                 Generated via OptiCRM — Premium Practice Management
             </div>
-        </div>
+        </div >
     );
 }

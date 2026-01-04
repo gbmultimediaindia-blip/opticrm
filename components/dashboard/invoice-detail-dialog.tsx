@@ -94,6 +94,12 @@ export function InvoiceDetailDialog({ invoice, open, onOpenChange, onDelete }: I
                                     <span className="font-mono font-bold text-slate-900 dark:text-white text-sm">₹{invoice.taxAmount}</span>
                                 </div>
                             )}
+                            {parseFloat(invoice.discountAmount) > 0 && (
+                                <div className="flex items-center justify-between py-1 border-b border-slate-200/50 dark:border-slate-800/50">
+                                    <span className="text-xs text-slate-500">Discount ({invoice.discountType === "percentage" ? `${invoice.discountValue}%` : "Fixed"})</span>
+                                    <span className="font-mono font-bold text-red-600 dark:text-red-400 text-sm">-₹{invoice.discountAmount}</span>
+                                </div>
+                            )}
                             <div className="flex items-center justify-between py-1">
                                 <span className="text-xs font-bold text-slate-900 dark:text-white">Total Amount</span>
                                 <span className="text-lg font-mono font-black text-indigo-600 dark:text-indigo-400">₹{invoice.totalAmount}</span>

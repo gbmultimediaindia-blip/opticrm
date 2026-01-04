@@ -24,6 +24,9 @@ export async function createInvoice(data: {
     status?: string;
     deliveryStatus?: string;
     notes?: string;
+    discountType?: string;
+    discountValue?: string;
+    discountAmount?: string;
 }) {
     const { store: userStore } = await requireAccess("write");
 
@@ -39,6 +42,9 @@ export async function createInvoice(data: {
         status: parseFloat(formatAmount(data.dueAmount)) <= 0 ? "completed" : "pending",
         deliveryStatus: data.deliveryStatus || "pending",
         notes: data.notes,
+        discountType: data.discountType || "fixed",
+        discountValue: formatAmount(data.discountValue),
+        discountAmount: formatAmount(data.discountAmount),
         storeId: userStore.id,
     }).returning();
 
@@ -92,6 +98,9 @@ export async function createInvoiceWithCustomer(data: {
         status?: string;
         deliveryStatus?: string;
         notes?: string;
+        discountType?: string;
+        discountValue?: string;
+        discountAmount?: string;
     };
 }) {
     const { store: userStore } = await requireAccess("write");
@@ -133,6 +142,9 @@ export async function createInvoiceWithCustomer(data: {
             status: parseFloat(formatAmount(data.invoice.dueAmount)) <= 0 ? "completed" : "pending",
             deliveryStatus: data.invoice.deliveryStatus || "pending",
             notes: data.invoice.notes || "",
+            discountType: data.invoice.discountType || "fixed",
+            discountValue: formatAmount(data.invoice.discountValue),
+            discountAmount: formatAmount(data.invoice.discountAmount),
             storeId: userStore.id,
         }).returning();
 
@@ -164,6 +176,9 @@ export async function updateInvoice(id: string, data: {
     status?: string;
     deliveryStatus?: string;
     notes?: string;
+    discountType?: string;
+    discountValue?: string;
+    discountAmount?: string;
 }) {
     const { store: userStore } = await requireAccess("write");
 
@@ -180,6 +195,9 @@ export async function updateInvoice(id: string, data: {
             status: parseFloat(formatAmount(data.dueAmount)) <= 0 ? "completed" : "pending",
             deliveryStatus: data.deliveryStatus,
             notes: data.notes,
+            discountType: data.discountType,
+            discountValue: formatAmount(data.discountValue),
+            discountAmount: formatAmount(data.discountAmount),
         })
         .where(and(eq(invoice.id, id), eq(invoice.storeId, userStore.id)));
 

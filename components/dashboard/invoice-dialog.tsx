@@ -45,6 +45,9 @@ export function InvoiceDialog({ open, onOpenChange, customers, initialCustomerId
         advanceAmount: "",
         dueAmount: "0",
         notes: "",
+        discountType: "fixed", // fixed, percentage
+        discountValue: "0",
+        discountAmount: "0",
     });
 
     const [showAddCustomerSheet, setShowAddCustomerSheet] = useState(false);
@@ -74,6 +77,9 @@ export function InvoiceDialog({ open, onOpenChange, customers, initialCustomerId
                     advanceAmount: invoiceToEdit.advanceAmount,
                     dueAmount: invoiceToEdit.dueAmount,
                     notes: invoiceToEdit.notes || "",
+                    discountType: invoiceToEdit.discountType || "fixed",
+                    discountValue: invoiceToEdit.discountValue || "0",
+                    discountAmount: invoiceToEdit.discountAmount || "0",
                 });
             } else {
                 if (initialCustomerId) {
@@ -106,6 +112,17 @@ export function InvoiceDialog({ open, onOpenChange, customers, initialCustomerId
             total = base;
         }
 
+        let discount = 0;
+        const discountVal = parseFloat(invoiceData.discountValue) || 0;
+
+        if (invoiceData.discountType === "percentage") {
+            discount = (total * discountVal) / 100;
+        } else {
+            discount = discountVal;
+        }
+
+        total = Math.max(0, total - discount);
+
         const advance = parseFloat(invoiceData.advanceAmount) || 0;
         const due = Math.max(0, total - advance);
 
@@ -113,9 +130,36 @@ export function InvoiceDialog({ open, onOpenChange, customers, initialCustomerId
             ...prev,
             taxAmount: tax.toFixed(2),
             totalAmount: total.toFixed(2),
+            discountAmount: discount.toFixed(2),
             dueAmount: due.toFixed(2)
         }));
-    }, [invoiceData.subtotal, invoiceData.taxType, invoiceData.taxRate, invoiceData.advanceAmount]);
+    }, [invoiceData.subtotal, invoiceData.taxType, invoiceData.taxRate, invoiceData.advanceAmount, invoiceData.discountType, invoiceData.discountValue]);
+
+    const handleTotalChange = (newTotalStr: string) => {
+        const newTotal = parseFloat(newTotalStr) || 0;
+        const base = parseFloat(invoiceData.subtotal) || 0;
+        const rate = parseFloat(invoiceData.taxRate) || 0;
+        let subtotal = base;
+        let preDiscountTotal = base;
+
+        if (invoiceData.taxType === "included") {
+            preDiscountTotal = base;
+            subtotal = preDiscountTotal / (1 + rate / 100);
+        } else if (invoiceData.taxType === "excluded") {
+            subtotal = base;
+            preDiscountTotal = subtotal + (subtotal * rate) / 100;
+        } else {
+            preDiscountTotal = base;
+        }
+
+        const discountNeeded = Math.max(0, preDiscountTotal - newTotal);
+
+        setInvoiceData(prev => ({
+            ...prev,
+            discountType: "fixed",
+            discountValue: discountNeeded.toFixed(2),
+        }));
+    };
 
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
@@ -141,11 +185,13 @@ export function InvoiceDialog({ open, onOpenChange, customers, initialCustomerId
                     advanceAmount: invoiceData.advanceAmount,
                     dueAmount: invoiceData.dueAmount,
                     notes: invoiceData.notes || undefined,
+                    discountType: invoiceData.discountType,
+                    discountValue: invoiceData.discountValue,
+                    discountAmount: invoiceData.discountAmount,
                 });
                 setNewInvoiceId(id);
                 setShowSuccessDialog(true);
-                onOpenChange(false); // Close sheet on creation
-
+                onOpenChange(false);
             }
         } catch (error: any) {
             toast.error(error.message || "Failed to save invoice");
@@ -172,6 +218,9 @@ export function InvoiceDialog({ open, onOpenChange, customers, initialCustomerId
             advanceAmount: "",
             dueAmount: "0",
             notes: "",
+            discountType: "fixed",
+            discountValue: "0",
+            discountAmount: "0",
         });
     };
 
@@ -179,6 +228,7 @@ export function InvoiceDialog({ open, onOpenChange, customers, initialCustomerId
         <>
             <Sheet open={open} onOpenChange={onOpenChange}>
                 <SheetContent className="sm:max-w-xl border-l border-slate-200 dark:border-slate-800 p-0 flex flex-col overflow-hidden [&_[data-slot=sheet-close]]:hidden">
+                    {/* Header */}
                     <div className="h-16 px-6 flex items-center bg-slate-50/50 dark:bg-slate-900/50 border-b border-slate-100 dark:border-slate-800 shrink-0">
                         <div className="flex items-center gap-3">
                             <div className="w-9 h-9 rounded-lg bg-indigo-600 flex items-center justify-center text-white shadow-md shadow-indigo-100 dark:shadow-none shrink-0">
@@ -197,9 +247,11 @@ export function InvoiceDialog({ open, onOpenChange, customers, initialCustomerId
                         </div>
                     </div>
 
+                    {/* Scrollable Body */}
                     <div className="flex-1 overflow-y-auto custom-scrollbar bg-white dark:bg-slate-950">
                         <form id="invoice-form" onSubmit={handleSubmit} className="p-6 space-y-8">
                             <div className="space-y-4 animate-in slide-in-from-right-2 duration-300">
+                                {/* Customer Search Section */}
                                 <div className="space-y-2 relative">
                                     <Label className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
                                         <Search className="w-3 h-3 text-indigo-400" /> Customer Search
@@ -297,12 +349,14 @@ export function InvoiceDialog({ open, onOpenChange, customers, initialCustomerId
                                 </div>
                             </div>
 
+                            {/* Transaction Details Grid */}
                             <div className="pt-6 border-t border-slate-100 dark:border-slate-800 space-y-6">
                                 <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
                                     <IndianRupee className="w-3.5 h-3.5 text-emerald-500" /> Transaction Details
                                 </h3>
 
                                 <div className="grid grid-cols-2 gap-4">
+                                    {/* Subtotal */}
                                     <div className="space-y-2 col-span-2">
                                         <Label className="text-[10px] font-black text-slate-400 uppercase leading-none">Subtotal Amount</Label>
                                         <div className="relative">
@@ -318,6 +372,7 @@ export function InvoiceDialog({ open, onOpenChange, customers, initialCustomerId
                                         </div>
                                     </div>
 
+                                    {/* Tax Settings */}
                                     <div className="col-span-2 space-y-3 p-4 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-800">
                                         <div className="flex items-center justify-between">
                                             <Label className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Tax Settings</Label>
@@ -369,18 +424,73 @@ export function InvoiceDialog({ open, onOpenChange, customers, initialCustomerId
                                         )}
                                     </div>
 
+                                    {/* Discount Settings */}
+                                    <div className="col-span-2 space-y-3 p-4 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-800">
+                                        <div className="flex items-center justify-between">
+                                            <Label className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Discount</Label>
+                                            <div className="flex gap-1.5 p-1 bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700">
+                                                {["fixed", "percentage"].map((t) => (
+                                                    <button
+                                                        key={t}
+                                                        type="button"
+                                                        onClick={() => setInvoiceData({ ...invoiceData, discountType: t })}
+                                                        className={cn(
+                                                            "px-3 py-1 text-[9px] font-bold uppercase rounded-md transition-all",
+                                                            invoiceData.discountType === t
+                                                                ? "bg-amber-500 text-white"
+                                                                : "text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
+                                                        )}
+                                                    >
+                                                        {t === "fixed" ? "Fixed (₹)" : "Percent (%)"}
+                                                    </button>
+                                                ))}
+                                            </div>
+                                        </div>
+                                        <div className="flex items-center gap-4 animate-in fade-in slide-in-from-top-1">
+                                            <div className="flex-1 space-y-1.5">
+                                                <Label className="text-[10px] font-bold text-slate-400">Discount Value</Label>
+                                                <div className="relative">
+                                                    <Input
+                                                        type="number"
+                                                        value={invoiceData.discountValue}
+                                                        onChange={(e) => setInvoiceData({ ...invoiceData, discountValue: e.target.value })}
+                                                        className="h-9 pr-8 font-mono font-bold text-xs"
+                                                    />
+                                                    <div className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs font-bold">
+                                                        {invoiceData.discountType === "percentage" ? "%" : "₹"}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div className="flex-1 space-y-1.5">
+                                                <Label className="text-[10px] font-bold text-slate-400">Reduction</Label>
+                                                <div className="relative">
+                                                    <div className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs font-bold font-mono">₹</div>
+                                                    <Input
+                                                        value={invoiceData.discountAmount}
+                                                        readOnly
+                                                        className="h-9 pl-6 font-mono font-bold text-xs bg-slate-50/50 dark:bg-slate-900/50 border-dashed text-red-500"
+                                                    />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Total Amount */}
                                     <div className="space-y-2 col-span-2">
                                         <Label className="text-[10px] font-black text-indigo-600 uppercase leading-none">Total Amount</Label>
                                         <div className="relative">
                                             <div className="absolute left-3 top-1/2 -translate-y-1/2 text-indigo-400 text-sm font-bold font-mono">₹</div>
                                             <Input
+                                                type="number"
                                                 value={invoiceData.totalAmount}
-                                                readOnly
-                                                className="h-11 pl-8 font-mono font-bold text-lg bg-indigo-50/50 dark:bg-indigo-900/10 border-indigo-100 dark:border-indigo-900/30 text-indigo-600"
+                                                onChange={(e) => handleTotalChange(e.target.value)}
+                                                className="h-11 pl-8 font-mono font-bold text-lg bg-indigo-50/50 dark:bg-indigo-900/10 border-indigo-100 dark:border-indigo-900/30 text-indigo-600 focus:ring-indigo-500"
                                                 required
                                             />
                                         </div>
                                     </div>
+
+                                    {/* Advance Paid */}
                                     <div className="space-y-2">
                                         <Label className="text-[10px] font-black text-emerald-600 uppercase leading-none">Advance Paid</Label>
                                         <div className="relative">
@@ -394,6 +504,8 @@ export function InvoiceDialog({ open, onOpenChange, customers, initialCustomerId
                                             />
                                         </div>
                                     </div>
+
+                                    {/* Balance Due */}
                                     <div className="space-y-2">
                                         <Label className="text-[10px] font-black text-red-600 uppercase leading-none">Net Balance</Label>
                                         <div className="relative">
@@ -406,6 +518,7 @@ export function InvoiceDialog({ open, onOpenChange, customers, initialCustomerId
                                         </div>
                                     </div>
 
+                                    {/* Notes */}
                                     <div className="space-y-2 col-span-2">
                                         <Label className="text-[10px] font-black text-slate-400 uppercase flex items-center gap-2">
                                             <Info className="w-3 h-3 text-slate-300" /> Sales/Product Notes
@@ -422,6 +535,7 @@ export function InvoiceDialog({ open, onOpenChange, customers, initialCustomerId
                         </form>
                     </div>
 
+                    {/* Footer */}
                     <div className="h-16 px-6 flex items-center bg-slate-50/50 dark:bg-slate-900/50 border-t border-slate-100 dark:border-slate-800 shrink-0">
                         <SheetFooter className="mt-0 flex-row w-full justify-end gap-3 items-center">
                             <SheetClose asChild>
@@ -442,6 +556,7 @@ export function InvoiceDialog({ open, onOpenChange, customers, initialCustomerId
                 </SheetContent>
             </Sheet>
 
+            {/* Sub-Sheets and Dialogs */}
             <CustomerSheet
                 open={showAddCustomerSheet}
                 onOpenChange={setShowAddCustomerSheet}
@@ -481,5 +596,3 @@ export function InvoiceDialog({ open, onOpenChange, customers, initialCustomerId
         </>
     );
 }
-
-
