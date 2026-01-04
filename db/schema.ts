@@ -74,6 +74,8 @@ export const customer = pgTable("customers", {
     email: text("email"),
     phone: text("phone").notNull(),
     address: text("address"),
+    gender: text("gender"),
+    dateOfBirth: timestamp("date_of_birth"),
     storeId: uuid("store_id").notNull().references(() => store.id, { onDelete: "cascade" }),
     createdAt: timestamp("created_at").notNull().defaultNow(),
     updatedAt: timestamp("updated_at").notNull().defaultNow(),
@@ -100,7 +102,7 @@ export const prescription = pgTable("prescriptions", {
     createdAt: timestamp("created_at").notNull().defaultNow(),
     updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
-export const bill = pgTable("bills", {
+export const invoice = pgTable("invoices", {
     id: uuid("id").primaryKey().defaultRandom(),
     customerId: uuid("customer_id").notNull().references(() => customer.id, { onDelete: "cascade" }),
     storeId: uuid("store_id").notNull().references(() => store.id, { onDelete: "cascade" }),
@@ -132,7 +134,7 @@ import { relations } from "drizzle-orm";
 
 export const customerRelations = relations(customer, ({ many }) => ({
     prescriptions: many(prescription),
-    bills: many(bill),
+    invoices: many(invoice),
 }));
 
 export const prescriptionRelations = relations(prescription, ({ one }) => ({
@@ -142,13 +144,13 @@ export const prescriptionRelations = relations(prescription, ({ one }) => ({
     }),
 }));
 
-export const billRelations = relations(bill, ({ one }) => ({
+export const invoiceRelations = relations(invoice, ({ one }) => ({
     customer: one(customer, {
-        fields: [bill.customerId],
+        fields: [invoice.customerId],
         references: [customer.id],
     }),
     store: one(store, {
-        fields: [bill.storeId],
+        fields: [invoice.storeId],
         references: [store.id],
     }),
 }));
@@ -156,7 +158,7 @@ export const billRelations = relations(bill, ({ one }) => ({
 export const storeRelations = relations(store, ({ many }) => ({
     products: many(product),
     customers: many(customer),
-    bills: many(bill),
+    invoices: many(invoice),
     members: many(storeMember),
 }));
 

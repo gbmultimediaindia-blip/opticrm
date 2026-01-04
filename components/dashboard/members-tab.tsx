@@ -156,7 +156,7 @@ export function MembersTab({ store, currentUser }: MembersTabProps) {
                                         </SelectTrigger>
                                         <SelectContent>
                                             <SelectItem value="admin">Admin (Can edit store & members)</SelectItem>
-                                            <SelectItem value="editor">Editor (Can manage inventory/bills)</SelectItem>
+                                            <SelectItem value="editor">Editor (Can manage inventory/invoices)</SelectItem>
                                             <SelectItem value="viewer">Viewer (Read only)</SelectItem>
                                         </SelectContent>
                                     </Select>

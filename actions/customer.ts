@@ -17,6 +17,8 @@ export async function createCustomer(formData: {
     email?: string;
     phone: string;
     address?: string;
+    gender?: string;
+    dateOfBirth?: Date;
     prescription?: {
         rightSphere?: string;
         rightCylinder?: string;
@@ -63,6 +65,8 @@ export async function updateCustomer(id: string, formData: {
     email?: string;
     phone: string;
     address?: string;
+    gender?: string;
+    dateOfBirth?: Date;
 }) {
     const { store: userStore } = await requireAccess("write");
 

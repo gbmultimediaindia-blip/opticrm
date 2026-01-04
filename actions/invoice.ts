@@ -1,7 +1,7 @@
 "use server";
 
 import { db } from "@/lib/db";
-import { bill, store, customer, prescription } from "@/db/schema";
+import { invoice, store, customer, prescription } from "@/db/schema";
 import { eq, and, desc } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 
@@ -12,7 +12,7 @@ const formatAmount = (val: string | undefined | null) => {
     return val;
 };
 
-export async function createBill(data: {
+export async function createInvoice(data: {
     customerId: string;
     subtotal: string;
     taxType: string;
@@ -25,7 +25,7 @@ export async function createBill(data: {
 }) {
     const { store: userStore } = await requireAccess("write");
 
-    const [newBill] = await db.insert(bill).values({
+    const [newInvoice] = await db.insert(invoice).values({
         customerId: data.customerId,
         subtotal: formatAmount(data.subtotal),
         taxType: data.taxType,
@@ -38,19 +38,19 @@ export async function createBill(data: {
         storeId: userStore.id,
     }).returning();
 
-    revalidatePath("/dashboard/billing");
-    return newBill.id;
+    revalidatePath("/dashboard/invoices");
+    return newInvoice.id;
 }
 
-export async function getBills() {
+export async function getInvoices() {
     const { store: userStore } = await requireAccess("view");
 
-    return await db.query.bill.findMany({
-        where: eq(bill.storeId, userStore.id),
+    return await db.query.invoice.findMany({
+        where: eq(invoice.storeId, userStore.id),
         with: {
             customer: true,
         },
-        orderBy: [desc(bill.createdAt)],
+        orderBy: [desc(invoice.createdAt)],
     });
 }
 const formatPrescriptionValue = (val: string | undefined | null) => {
@@ -58,7 +58,7 @@ const formatPrescriptionValue = (val: string | undefined | null) => {
     return val;
 };
 
-export async function createBillWithCustomer(data: {
+export async function createInvoiceWithCustomer(data: {
     customer: {
         name: string;
         email?: string;
@@ -77,7 +77,7 @@ export async function createBillWithCustomer(data: {
         pd?: string;
         notes?: string;
     };
-    bill: {
+    invoice: {
         subtotal: string;
         taxType: string;
         taxRate: string;
@@ -114,48 +114,48 @@ export async function createBillWithCustomer(data: {
             });
         }
 
-        // 3. Create Bill
-        const [newBill] = await tx.insert(bill).values({
+        // 3. Create Invoice
+        const [newInvoice] = await tx.insert(invoice).values({
             customerId: newCustomer.id,
-            subtotal: formatAmount(data.bill.subtotal),
-            taxType: data.bill.taxType,
-            taxRate: formatAmount(data.bill.taxRate),
-            taxAmount: formatAmount(data.bill.taxAmount),
-            totalAmount: formatAmount(data.bill.totalAmount),
-            advanceAmount: formatAmount(data.bill.advanceAmount),
-            dueAmount: formatAmount(data.bill.dueAmount),
-            notes: data.bill.notes || "",
+            subtotal: formatAmount(data.invoice.subtotal),
+            taxType: data.invoice.taxType,
+            taxRate: formatAmount(data.invoice.taxRate),
+            taxAmount: formatAmount(data.invoice.taxAmount),
+            totalAmount: formatAmount(data.invoice.totalAmount),
+            advanceAmount: formatAmount(data.invoice.advanceAmount),
+            dueAmount: formatAmount(data.invoice.dueAmount),
+            notes: data.invoice.notes || "",
             storeId: userStore.id,
         }).returning();
 
-        revalidatePath("/dashboard/billing");
+        revalidatePath("/dashboard/invoices");
         revalidatePath("/dashboard/customers");
 
-        return newBill.id;
+        return newInvoice.id;
     });
 }
 
-export async function deleteBill(id: string) {
+export async function deleteInvoice(id: string) {
     const { store: userStore } = await requireAccess("write");
 
-    await db.delete(bill)
-        .where(and(eq(bill.id, id), eq(bill.storeId, userStore.id)));
+    await db.delete(invoice)
+        .where(and(eq(invoice.id, id), eq(invoice.storeId, userStore.id)));
 
-    revalidatePath("/dashboard/billing");
+    revalidatePath("/dashboard/invoices");
 }
 
-export async function getBill(id: string) {
+export async function getInvoice(id: string) {
     const { store: userStore } = await requireAccess("view");
 
-    const result = await db.query.bill.findFirst({
-        where: and(eq(bill.id, id), eq(bill.storeId, userStore.id)),
+    const result = await db.query.invoice.findFirst({
+        where: and(eq(invoice.id, id), eq(invoice.storeId, userStore.id)),
         with: {
             customer: true,
             store: true,
         },
     });
 
-    if (!result) throw new Error("Bill not found");
+    if (!result) throw new Error("Invoice not found");
 
     return result;
 }

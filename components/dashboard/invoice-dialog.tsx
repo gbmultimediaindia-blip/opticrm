@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
-import { createBill, createBillWithCustomer } from "@/actions/billing";
+import { createInvoice, createInvoiceWithCustomer } from "@/actions/invoice";
 import { Receipt, IndianRupee, User, Info, UserPlus, Eye, X, Printer, CheckCircle2, Search, Check } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
@@ -20,22 +20,22 @@ import {
     AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 
-interface BillDialogProps {
+interface InvoiceDialogProps {
     open: boolean;
     onOpenChange: (open: boolean) => void;
     customers: any[];
 }
 
-export function BillDialog({ open, onOpenChange, customers }: BillDialogProps) {
+export function InvoiceDialog({ open, onOpenChange, customers }: InvoiceDialogProps) {
     const [loading, setLoading] = useState(false);
     const [mode, setMode] = useState<"new" | "existing">("new");
     const [showSuccessDialog, setShowSuccessDialog] = useState(false);
-    const [newBillId, setNewBillId] = useState<string | null>(null);
+    const [newInvoiceId, setNewInvoiceId] = useState<string | null>(null);
     const [searchQuery, setSearchQuery] = useState("");
     const [showResults, setShowResults] = useState(false);
 
-    // Bill State
-    const [billData, setBillData] = useState({
+    // Invoice State
+    const [invoiceData, setInvoiceData] = useState({
         customerId: "",
         subtotal: "",
         taxType: "none", // none, included, excluded
@@ -72,20 +72,20 @@ export function BillDialog({ open, onOpenChange, customers }: BillDialogProps) {
         c.phone.includes(searchQuery)
     );
 
-    const selectedCustomer = customers.find(c => c.id === billData.customerId);
+    const selectedCustomer = customers.find(c => c.id === invoiceData.customerId);
 
     useEffect(() => {
-        const base = parseFloat(billData.subtotal) || 0;
-        const rate = parseFloat(billData.taxRate) || 0;
+        const base = parseFloat(invoiceData.subtotal) || 0;
+        const rate = parseFloat(invoiceData.taxRate) || 0;
         let subtotal = base;
         let tax = 0;
         let total = base;
 
-        if (billData.taxType === "included") {
+        if (invoiceData.taxType === "included") {
             total = base;
             subtotal = total / (1 + rate / 100);
             tax = total - subtotal;
-        } else if (billData.taxType === "excluded") {
+        } else if (invoiceData.taxType === "excluded") {
             subtotal = base;
             tax = (subtotal * rate) / 100;
             total = subtotal + tax;
@@ -95,35 +95,35 @@ export function BillDialog({ open, onOpenChange, customers }: BillDialogProps) {
             total = base;
         }
 
-        const advance = parseFloat(billData.advanceAmount) || 0;
+        const advance = parseFloat(invoiceData.advanceAmount) || 0;
         const due = Math.max(0, total - advance);
 
-        setBillData(prev => ({
+        setInvoiceData(prev => ({
             ...prev,
             taxAmount: tax.toFixed(2),
             totalAmount: total.toFixed(2),
             dueAmount: due.toFixed(2)
         }));
-    }, [billData.subtotal, billData.taxType, billData.taxRate, billData.advanceAmount]);
+    }, [invoiceData.subtotal, invoiceData.taxType, invoiceData.taxRate, invoiceData.advanceAmount]);
 
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
         setLoading(true);
 
         try {
-            const billId = mode === "existing"
-                ? await createBill({
-                    customerId: billData.customerId,
-                    subtotal: billData.subtotal,
-                    taxType: billData.taxType,
-                    taxRate: billData.taxRate,
-                    taxAmount: billData.taxAmount,
-                    totalAmount: billData.totalAmount,
-                    advanceAmount: billData.advanceAmount,
-                    dueAmount: billData.dueAmount,
-                    notes: billData.notes || undefined,
+            const invoiceId = mode === "existing"
+                ? await createInvoice({
+                    customerId: invoiceData.customerId,
+                    subtotal: invoiceData.subtotal,
+                    taxType: invoiceData.taxType,
+                    taxRate: invoiceData.taxRate,
+                    taxAmount: invoiceData.taxAmount,
+                    totalAmount: invoiceData.totalAmount,
+                    advanceAmount: invoiceData.advanceAmount,
+                    dueAmount: invoiceData.dueAmount,
+                    notes: invoiceData.notes || undefined,
                 })
-                : await createBillWithCustomer({
+                : await createInvoiceWithCustomer({
                     customer: {
                         name: customerData.name,
                         email: customerData.email || undefined,
@@ -131,21 +131,21 @@ export function BillDialog({ open, onOpenChange, customers }: BillDialogProps) {
                         address: customerData.address || undefined,
                     },
                     prescription: customerData.prescription,
-                    bill: {
-                        subtotal: billData.subtotal,
-                        taxType: billData.taxType,
-                        taxRate: billData.taxRate,
-                        taxAmount: billData.taxAmount,
-                        totalAmount: billData.totalAmount,
-                        advanceAmount: billData.advanceAmount,
-                        dueAmount: billData.dueAmount,
-                        notes: billData.notes || undefined,
+                    invoice: {
+                        subtotal: invoiceData.subtotal,
+                        taxType: invoiceData.taxType,
+                        taxRate: invoiceData.taxRate,
+                        taxAmount: invoiceData.taxAmount,
+                        totalAmount: invoiceData.totalAmount,
+                        advanceAmount: invoiceData.advanceAmount,
+                        dueAmount: invoiceData.dueAmount,
+                        notes: invoiceData.notes || undefined,
                     }
                 });
 
-            toast.success("Bill generated successfully");
+            toast.success("Invoice generated successfully");
 
-            setNewBillId(billId);
+            setNewInvoiceId(invoiceId);
             setShowSuccessDialog(true);
             onOpenChange(false);
             resetForm();
@@ -157,7 +157,7 @@ export function BillDialog({ open, onOpenChange, customers }: BillDialogProps) {
     };
 
     const resetForm = () => {
-        setBillData({
+        setInvoiceData({
             customerId: "",
             subtotal: "",
             taxType: "none",
@@ -209,7 +209,7 @@ export function BillDialog({ open, onOpenChange, customers }: BillDialogProps) {
                     </div>
 
                     <div className="flex-1 overflow-y-auto custom-scrollbar bg-white dark:bg-slate-950">
-                        <form id="bill-form" onSubmit={handleSubmit} className="p-6 space-y-8">
+                        <form id="invoice-form" onSubmit={handleSubmit} className="p-6 space-y-8">
                             {/* Mode Selection */}
                             <div className="bg-slate-50/50 dark:bg-slate-900/50 p-1.5 rounded-2xl border border-slate-100 dark:border-slate-800 flex gap-1.5 isolate">
                                 <button
@@ -247,7 +247,7 @@ export function BillDialog({ open, onOpenChange, customers }: BillDialogProps) {
                                             <Search className="w-3 h-3 text-indigo-400" /> Customer Search
                                         </Label>
 
-                                        {!billData.customerId ? (
+                                        {!invoiceData.customerId ? (
                                             <div className="relative">
                                                 <div className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">
                                                     <Search className="w-4 h-4" />
@@ -272,7 +272,7 @@ export function BillDialog({ open, onOpenChange, customers }: BillDialogProps) {
                                                                         key={c.id}
                                                                         type="button"
                                                                         onClick={() => {
-                                                                            setBillData({ ...billData, customerId: c.id });
+                                                                            setInvoiceData({ ...invoiceData, customerId: c.id });
                                                                             setSearchQuery("");
                                                                             setShowResults(false);
                                                                         }}
@@ -307,7 +307,7 @@ export function BillDialog({ open, onOpenChange, customers }: BillDialogProps) {
                                                 </div>
                                                 <button
                                                     type="button"
-                                                    onClick={() => setBillData({ ...billData, customerId: "" })}
+                                                    onClick={() => setInvoiceData({ ...invoiceData, customerId: "" })}
                                                     className="w-8 h-8 rounded-full hover:bg-white dark:hover:bg-slate-800 flex items-center justify-center text-slate-400 hover:text-red-500 transition-all border border-transparent hover:border-slate-100 dark:hover:border-slate-700"
                                                 >
                                                     <X className="w-4 h-4" />
@@ -417,8 +417,8 @@ export function BillDialog({ open, onOpenChange, customers }: BillDialogProps) {
                                             <Input
                                                 type="number"
                                                 placeholder="0.00"
-                                                value={billData.subtotal}
-                                                onChange={(e) => setBillData({ ...billData, subtotal: e.target.value })}
+                                                value={invoiceData.subtotal}
+                                                onChange={(e) => setInvoiceData({ ...invoiceData, subtotal: e.target.value })}
                                                 className="h-11 pl-8 font-mono font-bold text-lg text-slate-900 dark:text-white"
                                                 required
                                             />
@@ -433,10 +433,10 @@ export function BillDialog({ open, onOpenChange, customers }: BillDialogProps) {
                                                     <button
                                                         key={t}
                                                         type="button"
-                                                        onClick={() => setBillData({ ...billData, taxType: t })}
+                                                        onClick={() => setInvoiceData({ ...invoiceData, taxType: t })}
                                                         className={cn(
                                                             "px-3 py-1 text-[9px] font-bold uppercase rounded-md transition-all",
-                                                            billData.taxType === t
+                                                            invoiceData.taxType === t
                                                                 ? "bg-indigo-600 text-white"
                                                                 : "text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
                                                         )}
@@ -447,15 +447,15 @@ export function BillDialog({ open, onOpenChange, customers }: BillDialogProps) {
                                             </div>
                                         </div>
 
-                                        {billData.taxType !== "none" && (
+                                        {invoiceData.taxType !== "none" && (
                                             <div className="flex items-center gap-4 animate-in fade-in slide-in-from-top-1">
                                                 <div className="flex-1 space-y-1.5">
                                                     <Label className="text-[10px] font-bold text-slate-400">Tax Rate (%)</Label>
                                                     <div className="relative">
                                                         <Input
                                                             type="number"
-                                                            value={billData.taxRate}
-                                                            onChange={(e) => setBillData({ ...billData, taxRate: e.target.value })}
+                                                            value={invoiceData.taxRate}
+                                                            onChange={(e) => setInvoiceData({ ...invoiceData, taxRate: e.target.value })}
                                                             className="h-9 pr-8 font-mono font-bold text-xs"
                                                         />
                                                         <div className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs font-bold">%</div>
@@ -466,7 +466,7 @@ export function BillDialog({ open, onOpenChange, customers }: BillDialogProps) {
                                                     <div className="relative">
                                                         <div className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs font-bold font-mono">₹</div>
                                                         <Input
-                                                            value={billData.taxAmount}
+                                                            value={invoiceData.taxAmount}
                                                             readOnly
                                                             className="h-9 pl-6 font-mono font-bold text-xs bg-slate-50/50 dark:bg-slate-900/50 border-dashed"
                                                         />
@@ -481,7 +481,7 @@ export function BillDialog({ open, onOpenChange, customers }: BillDialogProps) {
                                         <div className="relative">
                                             <div className="absolute left-3 top-1/2 -translate-y-1/2 text-indigo-400 text-sm font-bold font-mono">₹</div>
                                             <Input
-                                                value={billData.totalAmount}
+                                                value={invoiceData.totalAmount}
                                                 readOnly
                                                 className="h-11 pl-8 font-mono font-bold text-lg bg-indigo-50/50 dark:bg-indigo-900/10 border-indigo-100 dark:border-indigo-900/30 text-indigo-600"
                                                 required
@@ -495,8 +495,8 @@ export function BillDialog({ open, onOpenChange, customers }: BillDialogProps) {
                                             <Input
                                                 type="number"
                                                 placeholder="0.00"
-                                                value={billData.advanceAmount}
-                                                onChange={(e) => setBillData({ ...billData, advanceAmount: e.target.value })}
+                                                value={invoiceData.advanceAmount}
+                                                onChange={(e) => setInvoiceData({ ...invoiceData, advanceAmount: e.target.value })}
                                                 className="h-11 pl-8 font-mono font-bold text-lg border-emerald-100 dark:border-emerald-900/30 bg-emerald-50/20"
                                             />
                                         </div>
@@ -506,7 +506,7 @@ export function BillDialog({ open, onOpenChange, customers }: BillDialogProps) {
                                         <div className="relative">
                                             <div className="absolute left-3 top-1/2 -translate-y-1/2 text-red-400 text-sm font-bold font-mono">₹</div>
                                             <Input
-                                                value={billData.dueAmount}
+                                                value={invoiceData.dueAmount}
                                                 readOnly
                                                 className="h-11 pl-8 font-mono font-bold text-lg bg-red-50/50 dark:bg-red-900/10 border-red-100 dark:border-red-900/30 text-red-600"
                                             />
@@ -519,8 +519,8 @@ export function BillDialog({ open, onOpenChange, customers }: BillDialogProps) {
                                         </Label>
                                         <Input
                                             placeholder="Frame/lens specifics or discount info..."
-                                            value={billData.notes}
-                                            onChange={(e) => setBillData({ ...billData, notes: e.target.value })}
+                                            value={invoiceData.notes}
+                                            onChange={(e) => setInvoiceData({ ...invoiceData, notes: e.target.value })}
                                             className="h-11 italic text-[11px] border-slate-200 dark:border-slate-800"
                                         />
                                     </div>
@@ -538,7 +538,7 @@ export function BillDialog({ open, onOpenChange, customers }: BillDialogProps) {
                             </SheetClose>
                             <Button
                                 type="submit"
-                                form="bill-form"
+                                form="invoice-form"
                                 className="h-11 px-12 bg-indigo-600 hover:bg-indigo-700 text-white font-bold shadow-lg shadow-indigo-100 dark:shadow-none sm:flex-1 text-sm"
                                 disabled={loading}
                             >
@@ -558,14 +558,14 @@ export function BillDialog({ open, onOpenChange, customers }: BillDialogProps) {
                         <div className="space-y-2">
                             <AlertDialogTitle className="text-2xl font-bold">Invoice Ready!</AlertDialogTitle>
                             <AlertDialogDescription className="text-slate-500 text-sm">
-                                The bill has been generated successfully. How would you like to proceed?
+                                What would you like to do next?
                             </AlertDialogDescription>
                         </div>
                     </AlertDialogHeader>
                     <AlertDialogFooter className="flex-col sm:flex-col gap-2 pt-4">
                         <AlertDialogAction
                             onClick={() => {
-                                if (newBillId) window.open(`/print/billing/${newBillId}`, '_blank');
+                                if (newInvoiceId) window.open(`/print/invoices/${newInvoiceId}`, '_blank');
                                 setShowSuccessDialog(false);
                             }}
                             className="bg-indigo-600 hover:bg-indigo-700 text-white h-11 w-full font-bold"

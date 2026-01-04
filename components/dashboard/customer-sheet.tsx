@@ -7,7 +7,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { createCustomer, updateCustomer } from "@/actions/customer";
-import { User, X, UserPlus, Edit2, Eye, Info } from "lucide-react";
+import { User, X, UserPlus, Edit2, Eye, Info, Calendar, Users as UsersIcon } from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 interface Prescription {
     rightSphere: string;
@@ -27,6 +28,8 @@ interface FormData {
     email: string;
     phone: string;
     address: string;
+    gender: string;
+    dateOfBirth: string;
     prescription: Prescription;
 }
 
@@ -54,6 +57,8 @@ const initialFormData: FormData = {
     email: "",
     phone: "",
     address: "",
+    gender: "",
+    dateOfBirth: "",
     prescription: initialPrescription
 };
 
@@ -68,6 +73,8 @@ export function CustomerSheet({ open, onOpenChange, customer }: CustomerSheetPro
                 email: customer.email || "",
                 phone: customer.phone || "",
                 address: customer.address || "",
+                gender: customer.gender || "",
+                dateOfBirth: customer.dateOfBirth ? new Date(customer.dateOfBirth).toISOString().split('T')[0] : "",
                 prescription: initialPrescription
             });
         } else {
@@ -80,12 +87,18 @@ export function CustomerSheet({ open, onOpenChange, customer }: CustomerSheetPro
         setLoading(true);
 
         try {
+            const submissionData = {
+                ...formData,
+                dateOfBirth: formData.dateOfBirth ? new Date(formData.dateOfBirth) : undefined,
+                gender: formData.gender || undefined,
+            };
+
             if (customer) {
-                const { name, email, phone, address } = formData;
-                await updateCustomer(customer.id, { name, email, phone, address });
+                const { name, email, phone, address, gender, dateOfBirth } = submissionData;
+                await updateCustomer(customer.id, { name, email, phone, address, gender, dateOfBirth });
                 toast.success("Customer profile updated");
             } else {
-                await createCustomer(formData);
+                await createCustomer(submissionData);
                 toast.success("New customer registered");
             }
             onOpenChange(false);
@@ -165,6 +178,37 @@ export function CustomerSheet({ open, onOpenChange, customer }: CustomerSheetPro
                                 placeholder="Local area or full address..."
                                 className="h-11 rounded-xl text-sm"
                             />
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-4">
+                            <div className="space-y-2">
+                                <Label className="text-[10px] font-black text-slate-400 uppercase">Gender (Optional)</Label>
+                                <Select
+                                    value={formData.gender}
+                                    onValueChange={(v) => setFormData({ ...formData, gender: v })}
+                                >
+                                    <SelectTrigger className="h-11 rounded-xl">
+                                        <SelectValue placeholder="Select gender" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="male">Male</SelectItem>
+                                        <SelectItem value="female">Female</SelectItem>
+                                        <SelectItem value="other">Other</SelectItem>
+                                    </SelectContent>
+                                </Select>
+                            </div>
+                            <div className="space-y-2">
+                                <Label className="text-[10px] font-black text-slate-400 uppercase">Date of Birth (Optional)</Label>
+                                <div className="relative">
+                                    <Input
+                                        type="date"
+                                        value={formData.dateOfBirth}
+                                        onChange={(e) => setFormData({ ...formData, dateOfBirth: e.target.value })}
+                                        className="h-11 rounded-xl text-sm pl-10"
+                                    />
+                                    <Calendar className="w-4 h-4 absolute left-3.5 top-3.5 text-slate-400 pointer-events-none" />
+                                </div>
+                            </div>
                         </div>
                     </div>
 

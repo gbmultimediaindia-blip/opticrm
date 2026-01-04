@@ -1,19 +1,19 @@
-import { getBill } from "@/actions/billing";
-import { BillPrint } from "@/components/dashboard/bill-print";
+import { getInvoice } from "@/actions/invoice";
+import { InvoicePrint } from "@/components/dashboard/invoice-print";
 import { notFound } from "next/navigation";
 
 interface PageProps {
     params: Promise<{ id: string }>;
 }
 
-export default async function PrintBillPage({ params }: PageProps) {
+export default async function PrintInvoicePage({ params }: PageProps) {
     const { id } = await params;
 
     try {
-        const bill = await getBill(id);
+        const invoice = await getInvoice(id);
         return (
             <div className="min-h-screen bg-white">
-                <BillPrint bill={bill} store={bill.store} />
+                <InvoicePrint invoice={invoice} store={invoice.store} />
                 <script
                     dangerouslySetInnerHTML={{
                         __html: `window.print();`,

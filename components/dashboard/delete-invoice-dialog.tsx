@@ -4,23 +4,23 @@ import { useState } from "react";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { AlertTriangle, Trash2 } from "lucide-react";
-import { deleteBill } from "@/actions/billing";
+import { deleteInvoice } from "@/actions/invoice";
 import { toast } from "sonner";
 
-interface DeleteBillDialogProps {
+interface DeleteInvoiceDialogProps {
     open: boolean;
     onOpenChange: (open: boolean) => void;
-    billId: string;
+    invoiceId: string;
     invoiceNumber: string;
 }
 
-export function DeleteBillDialog({ open, onOpenChange, billId, invoiceNumber }: DeleteBillDialogProps) {
+export function DeleteInvoiceDialog({ open, onOpenChange, invoiceId, invoiceNumber }: DeleteInvoiceDialogProps) {
     const [loading, setLoading] = useState(false);
 
     const handleDelete = async () => {
         setLoading(true);
         try {
-            await deleteBill(billId);
+            await deleteInvoice(invoiceId);
             toast.success("Invoice deleted successfully");
             onOpenChange(false);
         } catch (error: any) {
@@ -69,7 +69,7 @@ export function DeleteBillDialog({ open, onOpenChange, billId, invoiceNumber }: 
                                 "Deleting..."
                             ) : (
                                 <>
-                                    <Trash2 className="w-4 h-4" /> Delete Bill
+                                    <Trash2 className="w-4 h-4" /> Delete Invoice
                                 </>
                             )}
                         </Button>

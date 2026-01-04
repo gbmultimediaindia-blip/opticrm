@@ -212,7 +212,7 @@ export function SettingsView({ store, user }: SettingsViewProps) {
                                             <AlertDialogHeader>
                                                 <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
                                                 <AlertDialogDescription>
-                                                    This action cannot be undone. This will permanently delete <strong>{store?.name}</strong> and remove all associated data including products, customers, and bills.
+                                                    This action cannot be undone. This will permanently delete <strong>{store?.name}</strong> and remove all associated data including products, customers, and invoices.
                                                 </AlertDialogDescription>
                                             </AlertDialogHeader>
                                             <AlertDialogFooter>

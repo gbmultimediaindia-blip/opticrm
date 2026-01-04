@@ -17,17 +17,18 @@ export function MobileNav() {
                     <span className="sr-only">Open Menu</span>
                 </Button>
             </SheetTrigger>
-            <SheetContent side="left" className="w-64 bg-slate-900 border-slate-800 p-6">
+            <SheetContent side="left" className="w-[300px] bg-slate-950 border-slate-900 p-0">
                 <div className="flex flex-col h-full">
-                    {/* Header in mobile menu if needed, or just nav */}
-                    <div className="flex items-center gap-2 mb-8">
-                        <div className="w-8 h-8 rounded-full bg-slate-900 dark:bg-white text-white dark:text-slate-900 flex items-center justify-center border border-slate-700">
-                            <span className="font-bold text-lg">O</span>
+                    <div className="h-20 flex items-center gap-3 px-6 border-b border-slate-900/50 mb-4">
+                        <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white shadow-lg shadow-indigo-500/20">
+                            <span className="font-black text-lg leading-none">O</span>
                         </div>
-                        <span className="text-xl font-bold tracking-tight text-white">OptiCRM</span>
+                        <h1 className="text-xl font-black tracking-tight text-white">OptiCRM</h1>
                     </div>
 
-                    <SidebarNav onNavigate={() => setOpen(false)} />
+                    <div className="flex-1 px-4 overflow-y-auto">
+                        <SidebarNav onNavigate={() => setOpen(false)} />
+                    </div>
                 </div>
             </SheetContent>
         </Sheet>
