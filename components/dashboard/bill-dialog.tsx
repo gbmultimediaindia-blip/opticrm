@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { createBill, createBillWithCustomer } from "@/actions/billing";
-import { Receipt, IndianRupee, User, Info, UserPlus, Eye, X, Printer, CheckCircle2 } from "lucide-react";
+import { Receipt, IndianRupee, User, Info, UserPlus, Eye, X, Printer, CheckCircle2, Search, Check } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
     AlertDialog,
@@ -31,6 +31,8 @@ export function BillDialog({ open, onOpenChange, customers }: BillDialogProps) {
     const [mode, setMode] = useState<"new" | "existing">("new");
     const [showSuccessDialog, setShowSuccessDialog] = useState(false);
     const [newBillId, setNewBillId] = useState<string | null>(null);
+    const [searchQuery, setSearchQuery] = useState("");
+    const [showResults, setShowResults] = useState(false);
 
     // Bill State
     const [billData, setBillData] = useState({
@@ -64,6 +66,13 @@ export function BillDialog({ open, onOpenChange, customers }: BillDialogProps) {
             notes: ""
         }
     });
+
+    const filteredCustomers = customers.filter(c =>
+        c.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        c.phone.includes(searchQuery)
+    );
+
+    const selectedCustomer = customers.find(c => c.id === billData.customerId);
 
     useEffect(() => {
         const base = parseFloat(billData.subtotal) || 0;
@@ -233,23 +242,78 @@ export function BillDialog({ open, onOpenChange, customers }: BillDialogProps) {
 
                             {mode === "existing" ? (
                                 <div className="space-y-4 animate-in slide-in-from-right-2 duration-300">
-                                    <div className="space-y-2">
+                                    <div className="space-y-2 relative">
                                         <Label className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
-                                            <User className="w-3 h-3 text-indigo-400" /> Customer Search
+                                            <Search className="w-3 h-3 text-indigo-400" /> Customer Search
                                         </Label>
-                                        <select
-                                            value={billData.customerId}
-                                            onChange={(e) => setBillData({ ...billData, customerId: e.target.value })}
-                                            className="w-full h-11 px-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 focus:ring-2 focus:ring-indigo-500 transition-all text-sm outline-none font-medium"
-                                            required={mode === "existing"}
-                                        >
-                                            <option value="">Choose or search customer...</option>
-                                            {customers.map((c) => (
-                                                <option key={c.id} value={c.id}>
-                                                    {c.name} — {c.phone}
-                                                </option>
-                                            ))}
-                                        </select>
+
+                                        {!billData.customerId ? (
+                                            <div className="relative">
+                                                <div className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">
+                                                    <Search className="w-4 h-4" />
+                                                </div>
+                                                <Input
+                                                    placeholder="Search by name or mobile number..."
+                                                    value={searchQuery}
+                                                    onChange={(e) => {
+                                                        setSearchQuery(e.target.value);
+                                                        setShowResults(true);
+                                                    }}
+                                                    onFocus={() => setShowResults(true)}
+                                                    className="pl-9 h-11 rounded-xl"
+                                                />
+
+                                                {showResults && searchQuery && (
+                                                    <div className="absolute top-full left-0 right-0 mt-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl shadow-2xl z-50 overflow-hidden max-h-[300px] overflow-y-auto">
+                                                        {filteredCustomers.length > 0 ? (
+                                                            <div className="p-1">
+                                                                {filteredCustomers.map((c) => (
+                                                                    <button
+                                                                        key={c.id}
+                                                                        type="button"
+                                                                        onClick={() => {
+                                                                            setBillData({ ...billData, customerId: c.id });
+                                                                            setSearchQuery("");
+                                                                            setShowResults(false);
+                                                                        }}
+                                                                        className="w-full flex items-center justify-between p-3 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-lg transition-colors text-left"
+                                                                    >
+                                                                        <div className="flex flex-col">
+                                                                            <span className="font-bold text-sm text-slate-900 dark:text-white capitalize">{c.name}</span>
+                                                                            <span className="text-[10px] text-slate-500 font-mono tracking-wider">{c.phone}</span>
+                                                                        </div>
+                                                                        <Check className="w-4 h-4 text-indigo-500 opacity-0 group-hover:opacity-100" />
+                                                                    </button>
+                                                                ))}
+                                                            </div>
+                                                        ) : (
+                                                            <div className="p-8 text-center text-slate-400">
+                                                                <p className="text-xs font-bold uppercase tracking-widest">No customers found</p>
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                )}
+                                            </div>
+                                        ) : (
+                                            <div className="flex items-center justify-between p-3 rounded-xl border-2 border-indigo-100 dark:border-indigo-900/30 bg-indigo-50/20 dark:bg-indigo-900/10">
+                                                <div className="flex items-center gap-3">
+                                                    <div className="w-10 h-10 rounded-lg bg-indigo-600 flex items-center justify-center text-white shadow-md">
+                                                        <User className="w-5 h-5" />
+                                                    </div>
+                                                    <div className="flex flex-col">
+                                                        <span className="font-bold text-slate-900 dark:text-white capitalize">{selectedCustomer?.name}</span>
+                                                        <span className="text-[10px] text-indigo-600 dark:text-indigo-400 font-mono font-bold tracking-wider">{selectedCustomer?.phone}</span>
+                                                    </div>
+                                                </div>
+                                                <button
+                                                    type="button"
+                                                    onClick={() => setBillData({ ...billData, customerId: "" })}
+                                                    className="w-8 h-8 rounded-full hover:bg-white dark:hover:bg-slate-800 flex items-center justify-center text-slate-400 hover:text-red-500 transition-all border border-transparent hover:border-slate-100 dark:hover:border-slate-700"
+                                                >
+                                                    <X className="w-4 h-4" />
+                                                </button>
+                                            </div>
+                                        )}
                                     </div>
                                 </div>
                             ) : (

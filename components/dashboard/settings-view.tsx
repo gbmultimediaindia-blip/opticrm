@@ -60,6 +60,7 @@ export function SettingsView({ store, user }: SettingsViewProps) {
                 address: formData.get("address") as string,
                 email: formData.get("email") as string,
                 phone: formData.get("phone") as string,
+                gstNumber: formData.get("gstNumber") as string,
             });
             toast.success("Store settings updated successfully");
         } catch (error: any) {
@@ -116,7 +117,7 @@ export function SettingsView({ store, user }: SettingsViewProps) {
                         className={`justify-start ${activeTab === "store" ? "bg-slate-100 dark:bg-slate-800" : ""}`}
                     >
                         <Store className="w-4 h-4 mr-2" />
-                        Store Profile
+                        Store Settings
                     </Button>
                     <Button
                         variant="ghost"
@@ -140,9 +141,9 @@ export function SettingsView({ store, user }: SettingsViewProps) {
                 {activeTab === "store" && (
                     <div className="space-y-6">
                         <div>
-                            <h3 className="text-lg font-medium">Store Profile</h3>
+                            <h3 className="text-lg font-medium">Store Settings</h3>
                             <p className="text-sm text-muted-foreground">
-                                Manage your store details and public information.
+                                Manage your store details and tax information.
                             </p>
                         </div>
                         <div className="h-px bg-slate-200 dark:bg-slate-800" />
@@ -166,6 +167,10 @@ export function SettingsView({ store, user }: SettingsViewProps) {
                                             <Label htmlFor="phone">Phone Number</Label>
                                             <Input id="phone" name="phone" type="tel" defaultValue={store?.phone} required />
                                         </div>
+                                    </div>
+                                    <div className="grid gap-2">
+                                        <Label htmlFor="gstNumber">GST Number (Optional)</Label>
+                                        <Input id="gstNumber" name="gstNumber" defaultValue={store?.gstNumber} placeholder="22AAAAA0000A1Z5" className="max-w-md uppercase" />
                                     </div>
                                 </CardContent>
                                 <CardFooter className="border-t bg-slate-50/50 dark:bg-slate-900/50 p-4">

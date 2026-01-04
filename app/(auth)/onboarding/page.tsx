@@ -23,6 +23,7 @@ export default function OnboardingPage() {
             address: formData.get("address") as string,
             email: formData.get("email") as string,
             phone: formData.get("phone") as string,
+            gstNumber: formData.get("gstNumber") as string,
         };
 
         try {
@@ -93,6 +94,16 @@ export default function OnboardingPage() {
                                     required
                                 />
                             </div>
+                        </div>
+                        <div className="grid gap-2">
+                            <Label htmlFor="gstNumber" className="text-slate-700">GST Number (Optional)</Label>
+                            <Input
+                                id="gstNumber"
+                                name="gstNumber"
+                                type="text"
+                                placeholder="22AAAAA0000A1Z5"
+                                className="bg-white border-slate-200 text-slate-900 placeholder:text-slate-400 focus:ring-2 focus:ring-indigo-500/20 transition-all uppercase"
+                            />
                         </div>
                     </CardContent>
                     <CardFooter>

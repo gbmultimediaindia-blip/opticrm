@@ -28,6 +28,7 @@ export function CreateStoreDialog({ open, onOpenChange }: CreateStoreDialogProps
             address: formData.get("address") as string,
             email: formData.get("email") as string,
             phone: formData.get("phone") as string,
+            gstNumber: formData.get("gstNumber") as string,
         };
 
         try {
@@ -68,6 +69,10 @@ export function CreateStoreDialog({ open, onOpenChange }: CreateStoreDialogProps
                         <div className="grid gap-2">
                             <Label htmlFor="phone">Phone</Label>
                             <Input id="phone" name="phone" type="tel" placeholder="+1234567890" required />
+                        </div>
+                        <div className="grid gap-2">
+                            <Label htmlFor="gstNumber">GST Number (Optional)</Label>
+                            <Input id="gstNumber" name="gstNumber" placeholder="22AAAAA0000A1Z5" className="uppercase" />
                         </div>
                     </div>
                     <DialogFooter>

@@ -54,8 +54,8 @@ export default async function DashboardLayout({
                             <StoreSwitcher
                                 stores={JSON.parse(JSON.stringify(allStores))}
                                 activeStore={JSON.parse(JSON.stringify(store))}
-                                // @ts-ignore
-                                isAdmin={session.user.role === "admin"}
+                                // Anyone who can access the dashboard can create a store for themselves
+                                isAdmin={true}
                             />
                         </div>
                         <div className="flex items-center gap-4">

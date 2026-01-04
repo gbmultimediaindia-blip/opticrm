@@ -12,6 +12,7 @@ export async function createStore(formData: {
     address: string;
     email: string;
     phone: string;
+    gstNumber?: string;
 }) {
     const session = await auth.api.getSession({
         headers: await headers(),
@@ -21,18 +22,14 @@ export async function createStore(formData: {
         throw new Error("Unauthorized");
     }
 
-    // @ts-ignore - session.user.role is added via Better Auth additionalFields
-    if (session.user.role !== "admin") {
-        throw new Error("Unauthorized: Only store admins can create new stores.");
-    }
-
-    const { name, address, email, phone } = formData;
+    const { name, address, email, phone, gstNumber } = formData;
 
     await db.insert(store).values({
         name,
         address,
         email,
         phone,
+        gstNumber,
         ownerId: session.user.id,
     });
 }
@@ -162,6 +159,7 @@ export async function updateStore(formData: {
     address: string;
     email: string;
     phone: string;
+    gstNumber?: string;
 }) {
     const session = await auth.api.getSession({
         headers: await headers(),
@@ -171,7 +169,7 @@ export async function updateStore(formData: {
         throw new Error("Unauthorized");
     }
 
-    const { id, name, address, email, phone } = formData;
+    const { id, name, address, email, phone, gstNumber } = formData;
 
     // Verify ownership
     const userStore = await db.query.store.findFirst({
@@ -188,6 +186,7 @@ export async function updateStore(formData: {
             address,
             email,
             phone,
+            gstNumber,
             updatedAt: new Date(),
         })
         .where(eq(store.id, id));
