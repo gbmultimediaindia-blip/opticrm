@@ -459,9 +459,6 @@ export function CustomerList({ customers }: CustomerListProps) {
                 open={sheetOpen}
                 onOpenChange={setSheetOpen}
                 customer={selectedCustomer}
-                onEdit={(customer) => {
-                    handleEdit(customer);
-                }}
             />
 
             {activeCustomer && (
