@@ -56,19 +56,19 @@ export function CreateStoreDialog({ open, onOpenChange }: CreateStoreDialogProps
                     <div className="grid gap-4 py-4">
                         <div className="grid gap-2">
                             <Label htmlFor="name">Store Name</Label>
-                            <Input id="name" name="name" placeholder="Acme Optics" required />
+                            <Input id="name" name="name" placeholder="Acme Optics" autoComplete="organization" required />
                         </div>
                         <div className="grid gap-2">
                             <Label htmlFor="address">Address</Label>
-                            <Input id="address" name="address" placeholder="123 Main St" required />
+                            <Input id="address" name="address" placeholder="123 Main St" autoComplete="street-address" required />
                         </div>
                         <div className="grid gap-2">
                             <Label htmlFor="email">Email</Label>
-                            <Input id="email" name="email" type="email" placeholder="store@example.com" required />
+                            <Input id="email" name="email" type="email" placeholder="store@example.com" autoComplete="email" required />
                         </div>
                         <div className="grid gap-2">
                             <Label htmlFor="phone">Phone</Label>
-                            <Input id="phone" name="phone" type="tel" placeholder="9876543210" required />
+                            <Input id="phone" name="phone" type="tel" placeholder="9876543210" autoComplete="tel" required />
                         </div>
                         <div className="grid gap-2">
                             <Label htmlFor="gstNumber">GST Number (Optional)</Label>

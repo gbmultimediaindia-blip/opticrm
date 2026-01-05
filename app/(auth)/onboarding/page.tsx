@@ -56,6 +56,7 @@ export default function OnboardingPage() {
                                 name="name"
                                 type="text"
                                 placeholder="Quantum Electronics"
+                                autoComplete="organization"
                                 className="bg-white border-slate-200 text-slate-900 placeholder:text-slate-400 focus:ring-2 focus:ring-indigo-500/20 transition-all"
                                 required
                             />
@@ -67,6 +68,7 @@ export default function OnboardingPage() {
                                 name="address"
                                 type="text"
                                 placeholder="123 Tech Lane, Silicon Valley"
+                                autoComplete="street-address"
                                 className="bg-white border-slate-200 text-slate-900 placeholder:text-slate-400 focus:ring-2 focus:ring-indigo-500/20 transition-all"
                                 required
                             />
@@ -79,6 +81,7 @@ export default function OnboardingPage() {
                                     name="email"
                                     type="email"
                                     placeholder="contact@store.com"
+                                    autoComplete="email"
                                     className="bg-white border-slate-200 text-slate-900 placeholder:text-slate-400 focus:ring-2 focus:ring-indigo-500/20 transition-all"
                                     required
                                 />
@@ -90,6 +93,7 @@ export default function OnboardingPage() {
                                     name="phone"
                                     type="tel"
                                     placeholder="+1 (555) 000-0000"
+                                    autoComplete="tel"
                                     className="bg-white border-slate-200 text-slate-900 placeholder:text-slate-400 focus:ring-2 focus:ring-indigo-500/20 transition-all"
                                     required
                                 />

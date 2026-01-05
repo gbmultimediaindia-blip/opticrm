@@ -57,6 +57,7 @@ export default function LoginPage() {
                 placeholder="m@example.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
+                autoComplete="email"
                 className="bg-white border-slate-200 text-slate-900 placeholder:text-slate-400 focus:ring-2 focus:ring-indigo-500/20 transition-all"
                 required
               />
@@ -73,6 +74,7 @@ export default function LoginPage() {
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+                autoComplete="current-password"
                 className="bg-white border-slate-200 text-slate-900 focus:ring-2 focus:ring-indigo-500/20 transition-all"
                 required
               />
