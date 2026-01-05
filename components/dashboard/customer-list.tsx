@@ -152,7 +152,7 @@ export function CustomerList({ customers }: CustomerListProps) {
                                 <TableHead className="w-[200px] text-xs font-semibold text-slate-500 py-3 px-4">Customer</TableHead>
                                 <TableHead className="text-xs font-semibold text-slate-500 py-3 px-4">Contact Info</TableHead>
                                 <TableHead className="w-[180px] text-xs font-semibold text-slate-500 py-3 px-4 bg-slate-50/30 dark:bg-slate-900/10">Latest Prescription</TableHead>
-                                <TableHead className="text-xs font-semibold text-slate-500 py-3 px-4">Old Prescription</TableHead>
+                                <TableHead className="text-xs font-semibold text-slate-500 py-3 px-4">Prescriptions</TableHead>
                                 <TableHead className="text-xs font-semibold text-slate-500 py-3 px-4">Invoices</TableHead>
                                 <TableHead className="text-xs font-semibold text-slate-500 py-3 px-4 text-right">Actions</TableHead>
                             </TableRow>
@@ -226,41 +226,55 @@ export function CustomerList({ customers }: CustomerListProps) {
                                                     </div>
                                                 </div>
                                             </TableCell>
-                                            <TableCell className="py-3 px-4">
+                                            <TableCell className="py-4 px-4 bg-slate-50/20 dark:bg-slate-900/5">
                                                 {latestPrescription ? (
-                                                    <div className="flex flex-col gap-1.5">
-                                                        {/* Right Eye */}
-                                                        <div className="flex items-center gap-2">
-                                                            <div className="w-6 h-4 flex items-center justify-center bg-emerald-50 dark:bg-emerald-900/20 rounded text-[10px] font-medium text-emerald-600 border border-emerald-100 dark:border-emerald-800 shrink-0">OD</div>
-                                                            <div className="flex items-center gap-1.5 text-xs font-medium tabular-nums tracking-normal">
-                                                                <span className="text-slate-700 dark:text-slate-200">{latestPrescription.rightSphere}</span>
-                                                                <span className="text-slate-300 dark:text-slate-700 text-[10px]">/</span>
-                                                                <span className="text-slate-700 dark:text-slate-200">{latestPrescription.rightCylinder}</span>
-                                                                <span className="text-slate-300 dark:text-slate-700 text-[10px]">×</span>
-                                                                <span className="text-slate-700 dark:text-slate-200">{latestPrescription.rightAxis}°</span>
-                                                                {(latestPrescription.rightAdd && latestPrescription.rightAdd !== "0" && latestPrescription.rightAdd !== "0.00") && (
-                                                                    <span className="ml-1 text-[10px] text-emerald-600 bg-emerald-50 dark:bg-emerald-900/30 px-1 rounded font-medium">+{latestPrescription.rightAdd}</span>
-                                                                )}
+                                                    <div className="flex flex-col gap-2.5">
+                                                        <div className="flex items-center gap-3">
+                                                            <div className="flex flex-col gap-1.5 flex-1">
+                                                                {/* Right Eye */}
+                                                                <div className="flex items-center gap-2">
+                                                                    <div className="w-5 h-5 flex items-center justify-center bg-emerald-100/50 dark:bg-emerald-900/30 rounded text-[9px] font-bold text-emerald-700 dark:text-emerald-400 border border-emerald-200/50 dark:border-emerald-800/50 shrink-0">R</div>
+                                                                    <div className="flex items-center gap-1 text-xs font-medium tabular-nums">
+                                                                        <span className="text-slate-900 dark:text-slate-100">{latestPrescription.rightSphere}</span>
+                                                                        <span className="text-slate-300 dark:text-slate-700">/</span>
+                                                                        <span className="text-slate-600 dark:text-slate-400">{latestPrescription.rightCylinder}</span>
+                                                                        <span className="text-slate-300 dark:text-slate-700">×</span>
+                                                                        <span className="text-slate-900 dark:text-slate-100">{latestPrescription.rightAxis}°</span>
+                                                                        {(latestPrescription.rightAdd && latestPrescription.rightAdd !== "0" && latestPrescription.rightAdd !== "0.00") && (
+                                                                            <span className="ml-1.5 px-1 rounded-sm bg-indigo-50 dark:bg-indigo-900/30 text-[9px] font-bold text-indigo-600 dark:text-indigo-400 border border-indigo-100/50 dark:border-indigo-800/50">
+                                                                                +{latestPrescription.rightAdd}
+                                                                            </span>
+                                                                        )}
+                                                                    </div>
+                                                                </div>
+                                                                {/* Left Eye */}
+                                                                <div className="flex items-center gap-2">
+                                                                    <div className="w-5 h-5 flex items-center justify-center bg-amber-100/50 dark:bg-amber-900/30 rounded text-[9px] font-bold text-amber-700 dark:text-amber-400 border border-amber-200/50 dark:border-amber-800/50 shrink-0">L</div>
+                                                                    <div className="flex items-center gap-1 text-xs font-medium tabular-nums">
+                                                                        <span className="text-slate-900 dark:text-slate-100">{latestPrescription.leftSphere}</span>
+                                                                        <span className="text-slate-300 dark:text-slate-700">/</span>
+                                                                        <span className="text-slate-600 dark:text-slate-400">{latestPrescription.leftCylinder}</span>
+                                                                        <span className="text-slate-300 dark:text-slate-700">×</span>
+                                                                        <span className="text-slate-900 dark:text-slate-100">{latestPrescription.leftAxis}°</span>
+                                                                        {(latestPrescription.leftAdd && latestPrescription.leftAdd !== "0" && latestPrescription.leftAdd !== "0.00") && (
+                                                                            <span className="ml-1.5 px-1 rounded-sm bg-indigo-50 dark:bg-indigo-900/30 text-[9px] font-bold text-indigo-600 dark:text-indigo-400 border border-indigo-100/50 dark:border-indigo-800/50">
+                                                                                +{latestPrescription.leftAdd}
+                                                                            </span>
+                                                                        )}
+                                                                    </div>
+                                                                </div>
                                                             </div>
-                                                        </div>
-                                                        {/* Left Eye */}
-                                                        <div className="flex items-center gap-2">
-                                                            <div className="w-6 h-4 flex items-center justify-center bg-amber-50 dark:bg-amber-900/20 rounded text-[10px] font-medium text-amber-600 border border-amber-100 dark:border-amber-800 shrink-0">OS</div>
-                                                            <div className="flex items-center gap-1.5 text-xs font-medium tabular-nums tracking-normal">
-                                                                <span className="text-slate-700 dark:text-slate-200">{latestPrescription.leftSphere}</span>
-                                                                <span className="text-slate-300 dark:text-slate-700 text-[10px]">/</span>
-                                                                <span className="text-slate-700 dark:text-slate-200">{latestPrescription.leftCylinder}</span>
-                                                                <span className="text-slate-300 dark:text-slate-700 text-[10px]">×</span>
-                                                                <span className="text-slate-700 dark:text-slate-200">{latestPrescription.leftAxis}°</span>
-                                                                {(latestPrescription.leftAdd && latestPrescription.leftAdd !== "0" && latestPrescription.leftAdd !== "0.00") && (
-                                                                    <span className="ml-1 text-[10px] text-amber-600 bg-amber-50 dark:bg-amber-900/30 px-1 rounded font-medium">+{latestPrescription.leftAdd}</span>
-                                                                )}
-                                                            </div>
+                                                            {latestPrescription.pd && latestPrescription.pd !== "0" && latestPrescription.pd !== "0.00" && (
+                                                                <div className="flex flex-col items-center justify-center px-2 py-1.5 rounded-lg bg-slate-100/50 dark:bg-slate-800/50 border border-slate-200/50 dark:border-slate-700/50 shrink-0 min-w-[36px]">
+                                                                    <span className="text-[7px] font-bold text-slate-400 uppercase leading-none">PD</span>
+                                                                    <span className="text-xs font-bold text-slate-900 dark:text-slate-100 tabular-nums leading-none mt-1">{latestPrescription.pd}</span>
+                                                                </div>
+                                                            )}
                                                         </div>
                                                     </div>
                                                 ) : (
-                                                    <div className="inline-flex items-center px-2 py-0.5 rounded bg-slate-50 dark:bg-slate-900 border border-dashed border-slate-200 dark:border-slate-800">
-                                                        <span className="text-[10px] text-slate-400 font-bold uppercase tracking-tighter">No History</span>
+                                                    <div className="inline-flex items-center px-2.5 py-1 rounded bg-slate-50 dark:bg-slate-900/50 border border-dashed border-slate-200 dark:border-slate-800">
+                                                        <span className="text-[9px] text-slate-400 font-bold uppercase tracking-widest">No Record</span>
                                                     </div>
                                                 )}
                                             </TableCell>

@@ -294,7 +294,7 @@ export function CustomerSheet({ open, onOpenChange, customer, onSuccess }: Custo
                                         value={formData.gender}
                                         onValueChange={(v) => setFormData({ ...formData, gender: v })}
                                     >
-                                        <SelectTrigger className="h-11 rounded-xl border-slate-200 dark:border-slate-800 focus:ring-2 focus:ring-indigo-500">
+                                        <SelectTrigger className="!h-11 rounded-xl border-slate-200 dark:border-slate-800 focus:ring-2 focus:ring-indigo-500">
                                             <SelectValue placeholder="Select gender" />
                                         </SelectTrigger>
                                         <SelectContent>
