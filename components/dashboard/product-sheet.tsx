@@ -99,7 +99,7 @@ export function ProductSheet({ open, onOpenChange, productToEdit }: ProductSheet
 
     return (
         <Sheet open={open} onOpenChange={onOpenChange}>
-            <SheetContent className="sm:max-w-xl border-l border-slate-200 dark:border-slate-800 p-0 flex flex-col overflow-hidden [&_[data-slot=sheet-close]]:hidden">
+            <SheetContent className="w-full sm:max-w-xl border-l border-slate-200 dark:border-slate-800 p-0 flex flex-col overflow-hidden [&_[data-slot=sheet-close]]:hidden">
                 {/* Header Section */}
                 <div className="h-16 px-6 flex items-center bg-slate-50/50 dark:bg-slate-900/50 border-b border-slate-100 dark:border-slate-800 shrink-0">
                     <div className="flex items-center gap-3">
@@ -243,14 +243,14 @@ export function ProductSheet({ open, onOpenChange, productToEdit }: ProductSheet
                 <div className="h-16 px-6 flex items-center bg-slate-50/50 dark:bg-slate-900/50 border-t border-slate-100 dark:border-slate-800 shrink-0">
                     <SheetFooter className="mt-0 flex-row w-full justify-end gap-3 items-center">
                         <SheetClose asChild>
-                            <Button type="button" variant="ghost" className="h-11 px-8 font-semibold text-slate-500">
+                            <Button type="button" variant="ghost" className="h-11 flex-1 font-semibold text-slate-500">
                                 Cancel
                             </Button>
                         </SheetClose>
                         <Button
                             type="submit"
                             form="product-form"
-                            className="h-11 px-12 bg-indigo-600 hover:bg-indigo-700 text-white font-bold shadow-lg shadow-indigo-100 dark:shadow-none sm:flex-1 text-sm"
+                            className="h-11 flex-1 bg-indigo-600 hover:bg-indigo-700 text-white font-bold shadow-lg shadow-indigo-100 dark:shadow-none text-sm"
                             disabled={loading}
                         >
                             {loading ? "Saving..." : productToEdit ? "Save Changes" : "Add Product"}

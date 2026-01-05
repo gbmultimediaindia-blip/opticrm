@@ -35,85 +35,138 @@ const routes = [
 
 interface SidebarNavProps {
     onNavigate?: () => void;
+    forceFull?: boolean;
 }
 
-export function SidebarNav({ onNavigate }: SidebarNavProps) {
+import { useSidebar } from "./sidebar-context";
+import {
+    Tooltip,
+    TooltipContent,
+    TooltipProvider,
+    TooltipTrigger,
+} from "@/components/ui/tooltip";
+
+export function SidebarNav({ onNavigate, forceFull }: SidebarNavProps) {
     const pathname = usePathname();
+    const { isCollapsed: contextCollapsed } = useSidebar();
+    const isCollapsed = forceFull ? false : contextCollapsed;
 
     return (
-        <div className="flex flex-col h-full">
-            <nav className="space-y-1.5">
-                {routes.map((route) => {
-                    const isActive = route.active(pathname);
-                    return (
-                        <Link key={route.href} href={route.href} onClick={onNavigate} className="block group">
-                            <div
-                                className={cn(
-                                    "flex items-center gap-3 px-4 py-2.5 rounded-md transition-all duration-300 relative overflow-hidden",
-                                    isActive
-                                        ? "bg-gradient-to-r from-indigo-500/15 to-indigo-500/5 text-white shadow-[0_4px_20px_-4px_rgba(99,102,241,0.2)]"
-                                        : "text-slate-400 hover:text-slate-100 hover:bg-slate-800/40"
-                                )}
-                            >
-                                {/* Active Indicator */}
-                                <div className={cn(
-                                    "absolute left-0 top-0 bottom-0 w-1 bg-indigo-500 transition-all duration-300",
-                                    isActive ? "opacity-100" : "opacity-0 group-hover:opacity-30"
-                                )} />
+        <TooltipProvider delayDuration={0}>
+            <div className="flex flex-col h-full">
+                <nav className="space-y-1.5">
+                    {routes.map((route) => {
+                        const isActive = route.active(pathname);
+                        const content = (
+                            <Link key={route.href} href={route.href} onClick={onNavigate} className="block group">
+                                <div
+                                    className={cn(
+                                        "flex items-center rounded-md transition-all duration-300 relative overflow-hidden",
+                                        isCollapsed ? "justify-center p-2.5" : "gap-3 px-4 py-2.5",
+                                        isActive
+                                            ? "bg-gradient-to-r from-indigo-500/15 to-indigo-500/5 text-white shadow-[0_4px_20px_-4px_rgba(99,102,241,0.2)]"
+                                            : "text-slate-400 hover:text-slate-100 hover:bg-slate-800/40"
+                                    )}
+                                >
+                                    {/* Active Indicator */}
+                                    <div className={cn(
+                                        "absolute left-0 top-0 bottom-0 w-1 bg-indigo-500 transition-all duration-300",
+                                        isActive ? "opacity-100" : "opacity-0 group-hover:opacity-30"
+                                    )} />
 
-                                <route.icon className={cn(
-                                    "w-5 h-5 transition-transform duration-300",
-                                    isActive ? "text-indigo-400 scale-100" : "text-slate-500 group-hover:scale-110 group-hover:text-slate-300"
-                                )} />
+                                    <route.icon className={cn(
+                                        "w-5 h-5 transition-transform duration-300 shrink-0",
+                                        isActive ? "text-indigo-400 scale-100" : "text-slate-500 group-hover:scale-110 group-hover:text-slate-300"
+                                    )} />
 
-                                <span className={cn(
-                                    "text-sm font-semibold tracking-wide transition-all",
-                                    isActive ? "translate-x-0" : "-translate-x-1 group-hover:translate-x-0"
-                                )}>
-                                    {route.label}
-                                </span>
+                                    {!isCollapsed && (
+                                        <span className={cn(
+                                            "text-sm font-semibold tracking-wide transition-all",
+                                            isActive ? "translate-x-0" : "-translate-x-1 group-hover:translate-x-0"
+                                        )}>
+                                            {route.label}
+                                        </span>
+                                    )}
 
-                                {isActive && (
-                                    <div className="ml-auto w-1.5 h-1.5 rounded-full bg-indigo-400 animate-pulse shadow-[0_0_8px_rgba(129,140,248,0.8)]" />
-                                )}
-                            </div>
-                        </Link>
-                    );
-                })}
-            </nav>
+                                    {isActive && !isCollapsed && (
+                                        <div className="ml-auto w-1.5 h-1.5 rounded-full bg-indigo-400 animate-pulse shadow-[0_0_8px_rgba(129,140,248,0.8)]" />
+                                    )}
+                                </div>
+                            </Link>
+                        );
 
-            <div className="mt-auto pt-8">
-                <div className="px-4 mb-3">
-                    <div className="h-px bg-gradient-to-r from-transparent via-slate-800 to-transparent" />
-                </div>
-                <Link href="/dashboard/settings" onClick={onNavigate} className="block group">
-                    <div
-                        className={cn(
-                            "flex items-center gap-3 px-4 py-2.5 rounded-md transition-all duration-300 relative overflow-hidden",
-                            pathname === "/dashboard/settings"
-                                ? "bg-gradient-to-r from-indigo-500/15 to-indigo-500/5 text-white shadow-[0_4px_20px_-4px_rgba(99,102,241,0.2)]"
-                                : "text-slate-400 hover:text-slate-100 hover:bg-slate-800/40"
-                        )}
-                    >
-                        <div className={cn(
-                            "absolute left-0 top-0 bottom-0 w-1 bg-indigo-500 transition-all duration-300",
-                            pathname === "/dashboard/settings" ? "opacity-100" : "opacity-0 group-hover:opacity-30"
-                        )} />
+                        if (isCollapsed) {
+                            return (
+                                <Tooltip key={route.href}>
+                                    <TooltipTrigger asChild>
+                                        {content}
+                                    </TooltipTrigger>
+                                    <TooltipContent side="right" className="bg-slate-900 border-slate-800 text-white font-semibold">
+                                        {route.label}
+                                    </TooltipContent>
+                                </Tooltip>
+                            );
+                        }
 
-                        <Settings className={cn(
-                            "w-5 h-5 transition-transform duration-300",
-                            pathname === "/dashboard/settings" ? "text-indigo-400 scale-100" : "text-slate-500 group-hover:scale-110 group-hover:text-slate-300"
-                        )} />
+                        return content;
+                    })}
+                </nav>
 
-                        <span className={cn(
-                            "text-sm font-semibold tracking-wide transition-all",
-                            pathname === "/dashboard/settings" ? "translate-x-0" : "-translate-x-1 group-hover:translate-x-0"
-                        )}>
-                            Settings
-                        </span>
+                <div className="mt-auto pt-8">
+                    <div className={cn("px-4 mb-3", isCollapsed && "px-2")}>
+                        <div className="h-px bg-gradient-to-r from-transparent via-slate-800 to-transparent" />
                     </div>
-                </Link>
+                    {(() => {
+                        const settingsContent = (
+                            <Link href="/dashboard/settings" onClick={onNavigate} className="block group">
+                                <div
+                                    className={cn(
+                                        "flex items-center rounded-md transition-all duration-300 relative overflow-hidden",
+                                        isCollapsed ? "justify-center p-2.5" : "gap-3 px-4 py-2.5",
+                                        pathname === "/dashboard/settings"
+                                            ? "bg-gradient-to-r from-indigo-500/15 to-indigo-500/5 text-white shadow-[0_4px_20px_-4px_rgba(99,102,241,0.2)]"
+                                            : "text-slate-400 hover:text-slate-100 hover:bg-slate-800/40"
+                                    )}
+                                >
+                                    <div className={cn(
+                                        "absolute left-0 top-0 bottom-0 w-1 bg-indigo-500 transition-all duration-300",
+                                        pathname === "/dashboard/settings" ? "opacity-100" : "opacity-0 group-hover:opacity-30"
+                                    )} />
+
+                                    <Settings className={cn(
+                                        "w-5 h-5 transition-transform duration-300 shrink-0",
+                                        pathname === "/dashboard/settings" ? "text-indigo-400 scale-100" : "text-slate-500 group-hover:scale-110 group-hover:text-slate-300"
+                                    )} />
+
+                                    {!isCollapsed && (
+                                        <span className={cn(
+                                            "text-sm font-semibold tracking-wide transition-all",
+                                            pathname === "/dashboard/settings" ? "translate-x-0" : "-translate-x-1 group-hover:translate-x-0"
+                                        )}>
+                                            Settings
+                                        </span>
+                                    )}
+                                </div>
+                            </Link>
+                        );
+
+                        if (isCollapsed) {
+                            return (
+                                <Tooltip>
+                                    <TooltipTrigger asChild>
+                                        {settingsContent}
+                                    </TooltipTrigger>
+                                    <TooltipContent side="right" className="bg-slate-900 border-slate-800 text-white font-semibold">
+                                        Settings
+                                    </TooltipContent>
+                                </Tooltip>
+                            );
+                        }
+
+                        return settingsContent;
+                    })()}
+                </div>
             </div>
-        </div>
+        </TooltipProvider>
     );
 }

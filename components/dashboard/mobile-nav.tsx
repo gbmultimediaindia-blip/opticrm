@@ -20,6 +20,8 @@ interface MobileNavProps {
 export function MobileNav({ user }: MobileNavProps) {
     const [open, setOpen] = useState(false);
 
+    if (!user) return null;
+
     return (
         <Sheet open={open} onOpenChange={setOpen}>
             <SheetTrigger asChild>
@@ -37,7 +39,7 @@ export function MobileNav({ user }: MobileNavProps) {
                 </div>
 
                 <div className="flex-1 px-4 py-6 overflow-y-auto">
-                    <SidebarNav onNavigate={() => setOpen(false)} />
+                    <SidebarNav onNavigate={() => setOpen(false)} forceFull />
                 </div>
 
                 <div className="p-4 border-t border-slate-900 bg-slate-950/50 mt-auto">

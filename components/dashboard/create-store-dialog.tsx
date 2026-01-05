@@ -45,7 +45,7 @@ export function CreateStoreDialog({ open, onOpenChange }: CreateStoreDialogProps
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent className="sm:max-w-[425px]">
+            <DialogContent className="w-full sm:max-w-[425px]">
                 <DialogHeader>
                     <DialogTitle>Create Store</DialogTitle>
                     <DialogDescription>
@@ -76,7 +76,7 @@ export function CreateStoreDialog({ open, onOpenChange }: CreateStoreDialogProps
                         </div>
                     </div>
                     <DialogFooter>
-                        <Button type="submit" disabled={loading} className="bg-indigo-600 hover:bg-indigo-700 text-white">
+                        <Button type="submit" disabled={loading} className="w-full bg-indigo-600 hover:bg-indigo-700 text-white h-11 font-bold">
                             {loading ? "Creating..." : "Create Store"}
                         </Button>
                     </DialogFooter>

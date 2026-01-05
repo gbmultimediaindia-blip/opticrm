@@ -39,7 +39,7 @@ export function InvoiceHistoryDialog({ open, onOpenChange, customerId, customerN
 
     return (
         <Sheet open={open} onOpenChange={onOpenChange}>
-            <SheetContent className="sm:max-w-4xl flex flex-col p-0 border-slate-200 dark:border-slate-800 shadow-2xl [&_[data-slot=sheet-close]]:hidden">
+            <SheetContent className="w-full sm:max-w-4xl flex flex-col p-0 border-slate-200 dark:border-slate-800 shadow-2xl [&_[data-slot=sheet-close]]:hidden">
                 <div className="h-16 px-6 flex items-center bg-slate-50/50 dark:bg-slate-900/50 border-b border-slate-100 dark:border-slate-800 shrink-0">
                     <div className="flex items-center gap-3">
                         <div className="w-9 h-9 rounded-lg bg-emerald-600 flex items-center justify-center text-white shadow-md shadow-emerald-200 dark:shadow-none shrink-0">
@@ -172,9 +172,9 @@ export function InvoiceHistoryDialog({ open, onOpenChange, customerId, customerN
                 </div>
 
                 <div className="h-16 px-6 flex items-center bg-slate-50/50 dark:bg-slate-900/50 border-t border-slate-100 dark:border-slate-800 shrink-0">
-                    <SheetFooter className="mt-0 flex-row w-full justify-end items-center">
+                    <SheetFooter className="mt-0 w-full">
                         <SheetClose asChild>
-                            <Button variant="outline" className="font-bold text-xs px-8">Close</Button>
+                            <Button variant="outline" className="w-full font-bold text-xs h-11">Close</Button>
                         </SheetClose>
                     </SheetFooter>
                 </div>

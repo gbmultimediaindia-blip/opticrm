@@ -82,7 +82,7 @@ export function PrescriptionHistoryDialog({ open, onOpenChange, customerId, cust
 
     return (
         <Sheet open={open} onOpenChange={onOpenChange}>
-            <SheetContent className="sm:max-w-4xl flex flex-col p-0 border-l border-slate-200 dark:border-slate-800 shadow-xl [&_[data-slot=sheet-close]]:hidden">
+            <SheetContent className="w-full sm:max-w-4xl flex flex-col p-0 border-l border-slate-200 dark:border-slate-800 shadow-xl [&_[data-slot=sheet-close]]:hidden">
                 <div className="h-16 px-6 flex items-center bg-white dark:bg-slate-950 border-b border-slate-200 dark:border-slate-800 shrink-0">
                     <div className="flex items-center gap-3">
                         <div className="w-8 h-8 rounded bg-indigo-50 dark:bg-indigo-900/20 flex items-center justify-center text-indigo-600 dark:text-indigo-400">
@@ -218,9 +218,9 @@ export function PrescriptionHistoryDialog({ open, onOpenChange, customerId, cust
                     )}
                 </div>
 
-                <div className="h-14 px-6 flex items-center justify-end border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 shrink-0">
+                <div className="h-14 px-6 flex items-center bg-white dark:bg-slate-950 border-t border-slate-200 dark:border-slate-800 shrink-0">
                     <SheetClose asChild>
-                        <Button variant="ghost" className="h-11 px-8 font-semibold text-slate-500">Close</Button>
+                        <Button variant="ghost" className="w-full h-11 font-semibold text-slate-500">Close</Button>
                     </SheetClose>
                 </div>
             </SheetContent>

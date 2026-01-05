@@ -21,7 +21,7 @@ export function LatestPrescriptionDialog({ open, onOpenChange, prescription, cus
 
     return (
         <Sheet open={open} onOpenChange={onOpenChange}>
-            <SheetContent className="sm:max-w-xl p-0 flex flex-col border-l border-slate-200 dark:border-slate-800 shadow-xl [&_[data-slot=sheet-close]]:hidden">
+            <SheetContent className="w-full sm:max-w-xl p-0 flex flex-col border-l border-slate-200 dark:border-slate-800 shadow-xl [&_[data-slot=sheet-close]]:hidden">
                 {/* Minimal Header */}
                 <div className="h-16 px-6 flex items-center bg-white dark:bg-slate-950 border-b border-slate-200 dark:border-slate-800 shrink-0">
                     <div className="flex items-center gap-3">
@@ -123,13 +123,13 @@ export function LatestPrescriptionDialog({ open, onOpenChange, prescription, cus
                 <div className="h-16 px-6 flex items-center border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 shrink-0">
                     <SheetFooter className="mt-0 flex-row w-full justify-end gap-3 items-center">
                         <SheetClose asChild>
-                            <Button variant="ghost" className="h-11 px-8 font-semibold text-slate-500">
+                            <Button variant="ghost" className="h-11 flex-1 font-semibold text-slate-500">
                                 Dismiss
                             </Button>
                         </SheetClose>
                         <Button
                             onClick={() => setShowEditDialog(true)}
-                            className="h-11 px-12 bg-indigo-600 hover:bg-indigo-700 text-white font-bold shadow-lg shadow-indigo-100 dark:shadow-none sm:flex-1 text-sm gap-2"
+                            className="h-11 flex-1 bg-indigo-600 hover:bg-indigo-700 text-white font-bold shadow-lg shadow-indigo-100 dark:shadow-none text-sm gap-2"
                         >
                             {prescription ? (
                                 <>

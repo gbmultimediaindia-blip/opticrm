@@ -124,7 +124,7 @@ export function PrescriptionDialog({
 
     return (
         <Sheet open={open} onOpenChange={onOpenChange}>
-            <SheetContent className="sm:max-w-xl border-l border-slate-200 dark:border-slate-800 p-0 flex flex-col overflow-hidden [&_[data-slot=sheet-close]]:hidden bg-white dark:bg-slate-950">
+            <SheetContent className="w-full sm:max-w-xl border-l border-slate-200 dark:border-slate-800 p-0 flex flex-col overflow-hidden [&_[data-slot=sheet-close]]:hidden bg-white dark:bg-slate-950">
                 <div className="h-16 px-6 flex items-center bg-white dark:bg-slate-950 border-b border-slate-200 dark:border-slate-800 shrink-0">
                     <div className="flex items-center gap-3">
                         <div className="w-8 h-8 rounded bg-indigo-50 dark:bg-indigo-900/20 flex items-center justify-center text-indigo-600 dark:text-indigo-400">
@@ -217,14 +217,14 @@ export function PrescriptionDialog({
                 <div className="h-14 px-6 flex items-center justify-end border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 shrink-0">
                     <SheetFooter className="mt-0 flex-row w-full justify-end gap-2 items-center">
                         <SheetClose asChild>
-                            <Button type="button" variant="ghost" className="h-11 px-8 font-semibold text-slate-500">
+                            <Button type="button" variant="ghost" className="h-11 flex-1 font-semibold text-slate-500">
                                 Cancel
                             </Button>
                         </SheetClose>
                         <Button
                             type="submit"
                             form="rx-form"
-                            className="h-11 px-12 bg-indigo-600 hover:bg-indigo-700 text-white font-bold shadow-lg shadow-indigo-100 dark:shadow-none sm:flex-1 text-sm"
+                            className="h-11 flex-1 bg-indigo-600 hover:bg-indigo-700 text-white font-bold shadow-lg shadow-indigo-100 dark:shadow-none text-sm"
                             disabled={loading}
                         >
                             {loading

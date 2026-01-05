@@ -48,6 +48,15 @@ export function DateRangePicker({
         router.push(`?${params.toString()}`);
     };
 
+    const [isMobile, setIsMobile] = React.useState(false);
+
+    React.useEffect(() => {
+        const checkMobile = () => setIsMobile(window.innerWidth < 640);
+        checkMobile();
+        window.addEventListener('resize', checkMobile);
+        return () => window.removeEventListener('resize', checkMobile);
+    }, []);
+
     return (
         <div className={cn("grid gap-2", className)}>
             <Popover>
@@ -56,33 +65,33 @@ export function DateRangePicker({
                         id="date"
                         variant={"outline"}
                         className={cn(
-                            "w-[260px] justify-start text-left font-normal rounded-xl border-slate-200 dark:border-slate-800",
+                            "w-full sm:w-[260px] justify-start text-center sm:text-left font-bold h-10 px-4 rounded-xl border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm",
                             !date && "text-muted-foreground"
                         )}
                     >
-                        <CalendarIcon className="mr-2 h-4 w-4" />
+                        <CalendarIcon className="mr-2 h-4 w-4 text-indigo-500" />
                         {date?.from ? (
                             date.to ? (
-                                <>
-                                    {format(date.from, "LLL dd, y")} -{" "}
-                                    {format(date.to, "LLL dd, y")}
-                                </>
+                                <span className="text-xs sm:text-sm">
+                                    {format(date.from, "dd MMM")} - {format(date.to, "dd MMM, y")}
+                                </span>
                             ) : (
-                                format(date.from, "LLL dd, y")
+                                <span className="text-xs sm:text-sm">{format(date.from, "dd MMM, y")}</span>
                             )
                         ) : (
-                            <span>Pick a date range</span>
+                            <span className="text-xs sm:text-sm">Select dates</span>
                         )}
                     </Button>
                 </PopoverTrigger>
-                <PopoverContent className="w-auto p-0 rounded-xl overflow-hidden shadow-2xl border-slate-200 dark:border-slate-800" align="end">
+                <PopoverContent className="w-auto p-0 rounded-2xl overflow-hidden shadow-2xl border-slate-200 dark:border-slate-800" align={isMobile ? "center" : "end"}>
                     <Calendar
                         initialFocus
                         mode="range"
                         defaultMonth={date?.from}
                         selected={date}
                         onSelect={handleSelect}
-                        numberOfMonths={2}
+                        numberOfMonths={isMobile ? 1 : 2}
+                        className="rounded-xl"
                     />
                 </PopoverContent>
             </Popover>

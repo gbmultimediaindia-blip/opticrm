@@ -20,7 +20,7 @@ export function InvoiceDetailDialog({ invoice, open, onOpenChange, onDelete }: I
 
     return (
         <Sheet open={open} onOpenChange={onOpenChange}>
-            <SheetContent className="sm:max-w-xl border-l border-slate-200 dark:border-slate-800 p-0 flex flex-col overflow-hidden [&_[data-slot=sheet-close]]:hidden">
+            <SheetContent className="w-full sm:max-w-xl border-l border-slate-200 dark:border-slate-800 p-0 flex flex-col overflow-hidden [&_[data-slot=sheet-close]]:hidden">
                 <div className="h-16 px-6 flex items-center bg-slate-50/50 dark:bg-slate-900/50 border-b border-slate-100 dark:border-slate-800 shrink-0">
                     <div className="flex items-center gap-3">
                         <div className="w-9 h-9 rounded-lg bg-indigo-600 flex items-center justify-center text-white shadow-md shadow-indigo-100 dark:shadow-none shrink-0">
@@ -185,22 +185,22 @@ export function InvoiceDetailDialog({ invoice, open, onOpenChange, onDelete }: I
                         <Button
                             variant="ghost"
                             onClick={() => onDelete(invoice)}
-                            className="text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/10 font-bold text-xs gap-2"
+                            className="text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/10 font-bold text-xs gap-2 px-3"
                         >
-                            <Trash2 className="w-4 h-4" /> Delete Invoice
+                            <Trash2 className="w-4 h-4" /> Delete
                         </Button>
-                        <div className="flex gap-3 w-full sm:w-auto">
+                        <div className="flex gap-3 w-full sm:w-auto flex-1">
                             <SheetClose asChild>
                                 <Button
                                     variant="outline"
-                                    className="font-bold text-xs flex-1 sm:flex-none"
+                                    className="font-bold text-xs flex-1 sm:flex-none h-11"
                                 >
                                     Close
                                 </Button>
                             </SheetClose>
                             <Button
                                 onClick={() => window.open(`/print/invoices/${invoice.id}`, '_blank')}
-                                className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs gap-2 shadow-lg shadow-indigo-100 dark:shadow-none px-6 flex-1 sm:flex-none"
+                                className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs gap-2 shadow-lg shadow-indigo-100 dark:shadow-none px-6 flex-1 sm:flex-none h-11"
                             >
                                 <Printer className="w-4 h-4" /> Print
                             </Button>
