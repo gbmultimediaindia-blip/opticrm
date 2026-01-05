@@ -166,10 +166,9 @@ export function CustomerSheet({ open, onOpenChange, customer, onSuccess }: Custo
             };
 
             if (customer) {
-                const { name, email, phone, address, gender, dateOfBirth } = submissionData;
-                await updateCustomer(customer.id, { name, email, phone, address, gender, dateOfBirth });
+                await updateCustomer(customer.id, submissionData);
                 toast.success("Customer profile updated");
-                if (onSuccess) onSuccess(customer); // Pass updated customer (though technically incomplete object compared on return, usually id is enough)
+                if (onSuccess) onSuccess(customer);
             } else {
                 const newCustomer = await createCustomer(submissionData);
                 toast.success("New customer registered");

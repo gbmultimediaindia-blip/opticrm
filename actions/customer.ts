@@ -62,19 +62,27 @@ export async function createCustomer(formData: {
     return newCustomer;
 }
 
-export async function updateCustomer(id: string, formData: {
-    name: string;
-    email?: string;
-    phone: string;
-    address?: string;
-    gender?: string;
-    dateOfBirth?: Date;
-}) {
+export async function updateCustomer(id: string, data: any) {
     const { store: userStore } = await requireAccess("write");
+    const { prescription: prescriptionData, ...customerData } = data;
 
     await db.update(customer)
-        .set(formData)
+        .set(customerData)
         .where(and(eq(customer.id, id), eq(customer.storeId, userStore.id)));
+
+    if (prescriptionData) {
+        if (prescriptionData.id) {
+            await updatePrescription(prescriptionData.id, prescriptionData);
+        } else {
+            // Check if any clinical data was actually entered
+            const hasData = prescriptionData.rightSphere || prescriptionData.rightCylinder ||
+                prescriptionData.leftSphere || prescriptionData.leftCylinder ||
+                prescriptionData.pd;
+            if (hasData) {
+                await createPrescription(id, prescriptionData);
+            }
+        }
+    }
 
     revalidatePath("/dashboard/customers");
     revalidatePath("/dashboard");

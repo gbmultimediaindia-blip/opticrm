@@ -539,6 +539,7 @@ export function CustomerList({ customers }: CustomerListProps) {
                 open={sheetOpen}
                 onOpenChange={setSheetOpen}
                 customer={selectedCustomer}
+                onSuccess={() => router.refresh()}
             />
 
             {activeCustomer && (
@@ -567,6 +568,7 @@ export function CustomerList({ customers }: CustomerListProps) {
                         onOpenChange={setPrescriptionDialogOpen}
                         customerId={activeCustomer.id}
                         customerName={activeCustomer.name}
+                        onSuccess={() => router.refresh()}
                     />
                     <DeleteCustomerDialog
                         open={deleteDialogOpen}
