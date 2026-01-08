@@ -2,9 +2,17 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Button } from "@/components/ui/button";
 import { LayoutDashboard, Users, Box, FileText, Settings } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useSidebar } from "./sidebar-context";
+import { motion, AnimatePresence } from "framer-motion";
+import {
+    Tooltip,
+    TooltipContent,
+    TooltipProvider,
+    TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { useState } from "react";
 
 const routes = [
     {
@@ -38,59 +46,81 @@ interface SidebarNavProps {
     forceFull?: boolean;
 }
 
-import { useSidebar } from "./sidebar-context";
-import {
-    Tooltip,
-    TooltipContent,
-    TooltipProvider,
-    TooltipTrigger,
-} from "@/components/ui/tooltip";
-
 export function SidebarNav({ onNavigate, forceFull }: SidebarNavProps) {
     const pathname = usePathname();
     const { isCollapsed: contextCollapsed } = useSidebar();
     const isCollapsed = forceFull ? false : contextCollapsed;
+    const [hoveredRoute, setHoveredRoute] = useState<string | null>(null);
 
     return (
         <TooltipProvider delayDuration={0}>
-            <div className="flex flex-col h-full">
-                <nav className="space-y-1.5">
+            <div className="flex flex-col h-full" onMouseLeave={() => setHoveredRoute(null)}>
+                <nav className="flex-1 space-y-1.5 px-2">
                     {routes.map((route) => {
                         const isActive = route.active(pathname);
+                        const isHovered = hoveredRoute === route.href;
+
                         const content = (
-                            <Link key={route.href} href={route.href} onClick={onNavigate} className="block group">
-                                <div
-                                    className={cn(
-                                        "flex items-center rounded-md transition-all duration-300 relative overflow-hidden",
-                                        isCollapsed ? "justify-center p-2.5" : "gap-3 px-4 py-2.5",
-                                        isActive
-                                            ? "bg-gradient-to-r from-indigo-500/15 to-indigo-500/5 text-white shadow-[0_4px_20px_-4px_rgba(99,102,241,0.2)]"
-                                            : "text-slate-400 hover:text-slate-100 hover:bg-slate-800/40"
+                            <Link
+                                key={route.href}
+                                href={route.href}
+                                onClick={onNavigate}
+                                onMouseEnter={() => setHoveredRoute(route.href)}
+                                className="block relative h-11 no-underline outline-none group"
+                            >
+                                <div className="absolute inset-x-0 h-full flex items-center">
+                                    {/* Glass Hover Highlight */}
+                                    <AnimatePresence>
+                                        {isHovered && !isActive && (
+                                            <motion.div
+                                                layoutId="hover-capsule"
+                                                className="absolute inset-x-0 inset-y-[2px] bg-white/[0.03] border border-white/[0.05] rounded-lg z-0"
+                                                initial={{ opacity: 0 }}
+                                                animate={{ opacity: 1 }}
+                                                exit={{ opacity: 0 }}
+                                                transition={{ duration: 0.15 }}
+                                            />
+                                        )}
+                                    </AnimatePresence>
+
+                                    {/* Dynamic Active Pill */}
+                                    {isActive && (
+                                        <motion.div
+                                            layoutId="active-pill"
+                                            className="absolute inset-x-0 inset-y-[2px] bg-indigo-500/10 border border-indigo-500/20 rounded-lg z-0 shadow-[0_0_15px_-3px_rgba(99,102,241,0.2)]"
+                                            transition={{
+                                                type: "spring",
+                                                stiffness: 400,
+                                                damping: 30
+                                            }}
+                                        />
                                     )}
-                                >
-                                    {/* Active Indicator */}
+
+
                                     <div className={cn(
-                                        "absolute left-0 top-0 bottom-0 w-1 bg-indigo-500 transition-all duration-300",
-                                        isActive ? "opacity-100" : "opacity-0 group-hover:opacity-30"
-                                    )} />
+                                        "relative z-10 flex items-center w-full transition-all duration-300",
+                                        isCollapsed ? "justify-center" : "gap-3 px-3",
+                                        isActive ? "text-indigo-400" : isHovered ? "text-slate-100" : "text-slate-400"
+                                    )}>
+                                        <route.icon className={cn(
+                                            "w-5 h-5 shrink-0 transition-transform duration-300",
+                                            isActive ? "scale-100" : isHovered ? "scale-110" : "scale-100"
+                                        )} />
 
-                                    <route.icon className={cn(
-                                        "w-5 h-5 transition-transform duration-300 shrink-0",
-                                        isActive ? "text-indigo-400 scale-100" : "text-slate-500 group-hover:scale-110 group-hover:text-slate-300"
-                                    )} />
+                                        {!isCollapsed && (
+                                            <span className="text-sm font-semibold tracking-wide truncate">
+                                                {route.label}
+                                            </span>
+                                        )}
 
-                                    {!isCollapsed && (
-                                        <span className={cn(
-                                            "text-sm font-semibold tracking-wide transition-all",
-                                            isActive ? "translate-x-0" : "-translate-x-1 group-hover:translate-x-0"
-                                        )}>
-                                            {route.label}
-                                        </span>
-                                    )}
-
-                                    {isActive && !isCollapsed && (
-                                        <div className="ml-auto w-1.5 h-1.5 rounded-full bg-indigo-400 animate-pulse shadow-[0_0_8px_rgba(129,140,248,0.8)]" />
-                                    )}
+                                        {isActive && !isCollapsed && (
+                                            <motion.div
+                                                initial={{ scale: 0 }}
+                                                animate={{ scale: 1 }}
+                                                className="ml-auto w-1.5 h-1.5 rounded-full bg-indigo-400 shadow-[0_0_8px_rgba(129,140,248,0.8)]"
+                                            />
+                                        )}
+                                    </div>
                                 </div>
                             </Link>
                         );
@@ -112,40 +142,58 @@ export function SidebarNav({ onNavigate, forceFull }: SidebarNavProps) {
                     })}
                 </nav>
 
-                <div className="mt-auto pt-8">
-                    <div className={cn("px-4 mb-3", isCollapsed && "px-2")}>
-                        <div className="h-px bg-gradient-to-r from-transparent via-slate-800 to-transparent" />
-                    </div>
+                <div className="mt-auto py-4 px-2">
+                    {!isCollapsed && (
+                        <div className="px-4 mb-4">
+                            <div className="h-px bg-gradient-to-r from-transparent via-slate-800 to-transparent" />
+                        </div>
+                    )}
                     {(() => {
+                        const isActive = pathname === "/dashboard/settings";
+                        const isHovered = hoveredRoute === "/dashboard/settings";
                         const settingsContent = (
-                            <Link href="/dashboard/settings" onClick={onNavigate} className="block group">
-                                <div
-                                    className={cn(
-                                        "flex items-center rounded-md transition-all duration-300 relative overflow-hidden",
-                                        isCollapsed ? "justify-center p-2.5" : "gap-3 px-4 py-2.5",
-                                        pathname === "/dashboard/settings"
-                                            ? "bg-gradient-to-r from-indigo-500/15 to-indigo-500/5 text-white shadow-[0_4px_20px_-4px_rgba(99,102,241,0.2)]"
-                                            : "text-slate-400 hover:text-slate-100 hover:bg-slate-800/40"
+                            <Link
+                                href="/dashboard/settings"
+                                onClick={onNavigate}
+                                onMouseEnter={() => setHoveredRoute("/dashboard/settings")}
+                                className="block relative h-11 no-underline outline-none group"
+                            >
+                                <div className="absolute inset-x-0 h-full flex items-center">
+                                    <AnimatePresence>
+                                        {isHovered && !isActive && (
+                                            <motion.div
+                                                layoutId="hover-capsule"
+                                                className="absolute inset-x-0 inset-y-[2px] bg-white/[0.03] border border-white/[0.05] rounded-lg z-0"
+                                                transition={{ duration: 0.15 }}
+                                            />
+                                        )}
+                                    </AnimatePresence>
+
+                                    {isActive && (
+                                        <motion.div
+                                            layoutId="active-pill"
+                                            className="absolute inset-x-0 inset-y-[2px] bg-indigo-500/10 border border-indigo-500/20 rounded-lg z-0"
+                                            transition={{ type: "spring", stiffness: 400, damping: 30 }}
+                                        />
                                     )}
-                                >
+
+
                                     <div className={cn(
-                                        "absolute left-0 top-0 bottom-0 w-1 bg-indigo-500 transition-all duration-300",
-                                        pathname === "/dashboard/settings" ? "opacity-100" : "opacity-0 group-hover:opacity-30"
-                                    )} />
+                                        "relative z-10 flex items-center w-full transition-all duration-300",
+                                        isCollapsed ? "justify-center" : "gap-3 px-3",
+                                        isActive ? "text-indigo-400" : isHovered ? "text-slate-100" : "text-slate-400"
+                                    )}>
+                                        <Settings className={cn(
+                                            "w-5 h-5 shrink-0 transition-all duration-300",
+                                            isActive ? "text-indigo-400 rotate-0" : isHovered ? "text-slate-100 rotate-45" : "text-slate-400 rotate-0"
+                                        )} />
 
-                                    <Settings className={cn(
-                                        "w-5 h-5 transition-transform duration-300 shrink-0",
-                                        pathname === "/dashboard/settings" ? "text-indigo-400 scale-100" : "text-slate-500 group-hover:scale-110 group-hover:text-slate-300"
-                                    )} />
-
-                                    {!isCollapsed && (
-                                        <span className={cn(
-                                            "text-sm font-semibold tracking-wide transition-all",
-                                            pathname === "/dashboard/settings" ? "translate-x-0" : "-translate-x-1 group-hover:translate-x-0"
-                                        )}>
-                                            Settings
-                                        </span>
-                                    )}
+                                        {!isCollapsed && (
+                                            <span className="text-sm font-semibold tracking-wide truncate">
+                                                Settings
+                                            </span>
+                                        )}
+                                    </div>
                                 </div>
                             </Link>
                         );
