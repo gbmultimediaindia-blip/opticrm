@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Plus, Trash2, Edit, MoreHorizontal, Box, Tag, Layers, Search, Package2, ChevronLeft, ChevronRight, X } from "lucide-react";
@@ -20,11 +21,18 @@ interface ProductListProps {
 }
 
 export function ProductList({ data }: ProductListProps) {
+    const searchParams = useSearchParams();
     const [sheetOpen, setSheetOpen] = useState(false);
     const [deleteOpen, setDeleteOpen] = useState(false);
     const [selectedProduct, setSelectedProduct] = useState<any>(null);
-    const [searchQuery, setSearchQuery] = useState("");
+    const [searchQuery, setSearchQuery] = useState(searchParams.get("search") || "");
     const [currentPage, setCurrentPage] = useState(1);
+
+    useEffect(() => {
+        const search = searchParams.get("search");
+        if (search) setSearchQuery(search);
+    }, [searchParams]);
+
     const ITEMS_PER_PAGE = 10;
 
     const filteredData = data.filter(product =>

@@ -17,6 +17,7 @@ interface DashboardSidebarProps {
         email: string;
         image?: string | null;
     };
+    store: any;
 }
 
 import { useSidebar } from "./sidebar-context";
@@ -28,7 +29,7 @@ import {
     TooltipTrigger,
 } from "@/components/ui/tooltip";
 
-export function DashboardSidebar({ user }: DashboardSidebarProps) {
+export function DashboardSidebar({ user, store }: DashboardSidebarProps) {
     const { isCollapsed } = useSidebar();
     const [customerSheetOpen, setCustomerSheetOpen] = useState(false);
     const [invoiceDialogOpen, setInvoiceDialogOpen] = useState(false);
@@ -111,16 +112,19 @@ export function DashboardSidebar({ user }: DashboardSidebarProps) {
                 <CustomerSheet
                     open={customerSheetOpen}
                     onOpenChange={setCustomerSheetOpen}
+                    store={store}
                 />
                 <InvoiceDialog
                     open={invoiceDialogOpen}
                     onOpenChange={setInvoiceDialogOpen}
                     customers={customers}
+                    store={store}
                 />
                 <PrescriptionDialog
                     open={prescriptionDialogOpen}
                     onOpenChange={setPrescriptionDialogOpen}
                     customers={customers}
+                    store={store}
                 />
             </>
         </TooltipProvider>

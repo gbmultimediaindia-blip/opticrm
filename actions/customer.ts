@@ -19,6 +19,7 @@ export async function createCustomer(formData: {
     address?: string;
     gender?: string;
     dateOfBirth?: Date;
+    anniversaryDate?: Date;
     prescription?: {
         rightSphere?: string;
         rightCylinder?: string;

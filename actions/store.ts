@@ -195,6 +195,35 @@ export async function updateStore(formData: {
     revalidatePath("/dashboard");
 }
 
+export async function updateStoreSettings(id: string, customerSettings: any) {
+    const session = await auth.api.getSession({
+        headers: await headers(),
+    });
+
+    if (!session) {
+        throw new Error("Unauthorized");
+    }
+
+    // Verify ownership
+    const userStore = await db.query.store.findFirst({
+        where: eq(store.id, id),
+    });
+
+    if (!userStore || userStore.ownerId !== session.user.id) {
+        throw new Error("Unauthorized");
+    }
+
+    await db.update(store)
+        .set({
+            customerSettings,
+            updatedAt: new Date(),
+        })
+        .where(eq(store.id, id));
+
+    revalidatePath("/dashboard/settings");
+    revalidatePath("/dashboard");
+}
+
 export async function deleteStore(storeId: string) {
     const session = await auth.api.getSession({
         headers: await headers(),

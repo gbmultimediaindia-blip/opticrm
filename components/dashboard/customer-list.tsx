@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useState, useEffect } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Plus, Edit2, Trash2, MoreHorizontal, Eye, History, User, Users, Mail, Phone, Calendar, Maximize2, ChevronLeft, ChevronRight, Search, Glasses, X } from "lucide-react";
@@ -26,14 +26,22 @@ import { cn } from "@/lib/utils";
 
 interface CustomerListProps {
     customers: any[];
+    store: any;
 }
 
-export function CustomerList({ customers }: CustomerListProps) {
+export function CustomerList({ customers, store }: CustomerListProps) {
     const router = useRouter();
+    const searchParams = useSearchParams();
     const [sheetOpen, setSheetOpen] = useState(false);
     const [selectedCustomer, setSelectedCustomer] = useState<any>(null);
-    const [searchQuery, setSearchQuery] = useState("");
+    const [searchQuery, setSearchQuery] = useState(searchParams.get("search") || "");
     const [currentPage, setCurrentPage] = useState(1);
+
+    useEffect(() => {
+        const search = searchParams.get("search");
+        if (search) setSearchQuery(search);
+    }, [searchParams]);
+
     const itemsPerPage = 10;
 
     const filteredCustomers = customers.filter((customer) => {
@@ -150,7 +158,7 @@ export function CustomerList({ customers }: CustomerListProps) {
                         <TableHeader className="bg-slate-50/50 dark:bg-slate-800/50 border-b border-slate-200 dark:border-slate-800">
                             <TableRow className="hover:bg-transparent">
                                 <TableHead className="w-[200px] text-xs font-semibold text-slate-500 py-3 px-4">Customer</TableHead>
-                                <TableHead className="text-xs font-semibold text-slate-500 py-3 px-4">Contact Info</TableHead>
+                                <TableHead className="text-xs font-semibold text-slate-500 py-3 px-4">Phone</TableHead>
                                 <TableHead className="w-[180px] text-xs font-semibold text-slate-500 py-3 px-4 bg-slate-50/30 dark:bg-slate-900/10">Latest Prescription</TableHead>
                                 <TableHead className="text-xs font-semibold text-slate-500 py-3 px-4">Prescriptions</TableHead>
                                 <TableHead className="text-xs font-semibold text-slate-500 py-3 px-4">Invoices</TableHead>
@@ -214,16 +222,10 @@ export function CustomerList({ customers }: CustomerListProps) {
                                                     </div>
                                                 </div>
                                             </TableCell>
-                                            <TableCell className="py-3">
-                                                <div className="flex flex-col gap-0.5">
-                                                    <div className="flex items-center gap-1.5 text-xs text-slate-500">
-                                                        <Mail className="w-3 h-3 text-slate-400" />
-                                                        <span className="truncate max-w-[120px]">{customer.email || "-"}</span>
-                                                    </div>
-                                                    <div className="flex items-center gap-1.5 text-xs text-slate-500">
-                                                        <Phone className="w-3 h-3 text-slate-400" />
-                                                        <span className="font-medium text-slate-700 dark:text-slate-200">{customer.phone}</span>
-                                                    </div>
+                                            <TableCell className="py-3 px-4">
+                                                <div className="flex items-center gap-1.5 text-xs text-slate-500">
+                                                    <Phone className="w-3 h-3 text-slate-400" />
+                                                    <span className="font-medium text-slate-700 dark:text-slate-200">{customer.phone}</span>
                                                 </div>
                                             </TableCell>
                                             <TableCell className="py-4 px-4 bg-slate-50/20 dark:bg-slate-900/5">
@@ -554,6 +556,7 @@ export function CustomerList({ customers }: CustomerListProps) {
                 onOpenChange={setSheetOpen}
                 customer={selectedCustomer}
                 onSuccess={() => router.refresh()}
+                store={store}
             />
 
             {activeCustomer && (
@@ -576,6 +579,7 @@ export function CustomerList({ customers }: CustomerListProps) {
                         prescription={activeCustomer.prescriptions?.[0]}
                         customer={activeCustomer}
                         onSuccess={() => router.refresh()}
+                        store={store}
                     />
                     <PrescriptionDialog
                         open={prescriptionDialogOpen}
@@ -583,6 +587,7 @@ export function CustomerList({ customers }: CustomerListProps) {
                         customerId={activeCustomer.id}
                         customerName={activeCustomer.name}
                         onSuccess={() => router.refresh()}
+                        store={store}
                     />
                     <DeleteCustomerDialog
                         open={deleteDialogOpen}
@@ -595,6 +600,7 @@ export function CustomerList({ customers }: CustomerListProps) {
                         onOpenChange={setInvoiceDialogOpen}
                         customers={customers}
                         initialCustomerId={activeCustomer.id}
+                        store={store}
                     />
                 </>
             )}

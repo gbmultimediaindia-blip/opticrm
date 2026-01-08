@@ -1,4 +1,4 @@
-import { pgTable, text, timestamp, boolean, uuid, index } from "drizzle-orm/pg-core";
+import { pgTable, text, timestamp, boolean, uuid, index, jsonb } from "drizzle-orm/pg-core";
 
 export const users = pgTable("users", {
     id: text("id").primaryKey(),
@@ -55,6 +55,13 @@ export const store = pgTable("stores", {
     phone: text("phone").notNull(),
     gstNumber: text("gst_number"),
     ownerId: text("owner_id").notNull().references(() => users.id),
+    customerSettings: jsonb("customer_settings").notNull().default({
+        showEmail: true,
+        showAddress: true,
+        showGender: true,
+        showDob: true,
+        showAnniversary: true,
+    }),
     createdAt: timestamp("created_at").notNull().defaultNow(),
     updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
@@ -76,10 +83,15 @@ export const customer = pgTable("customers", {
     address: text("address"),
     gender: text("gender"),
     dateOfBirth: timestamp("date_of_birth"),
+    anniversaryDate: timestamp("anniversary_date"),
     storeId: uuid("store_id").notNull().references(() => store.id, { onDelete: "cascade" }),
     createdAt: timestamp("created_at").notNull().defaultNow(),
     updatedAt: timestamp("updated_at").notNull().defaultNow(),
-});
+}, (table) => [
+    index("customer_name_idx").on(table.name),
+    index("customer_phone_idx").on(table.phone),
+    index("customer_store_id_idx").on(table.storeId),
+]);
 
 export const prescription = pgTable("prescriptions", {
     id: uuid("id").primaryKey().defaultRandom(),
@@ -121,7 +133,12 @@ export const invoice = pgTable("invoices", {
     notes: text("notes"),
     createdAt: timestamp("created_at").notNull().defaultNow(),
     updatedAt: timestamp("updated_at").notNull().defaultNow(),
-});
+}, (table) => [
+    index("invoice_customer_id_idx").on(table.customerId),
+    index("invoice_store_id_idx").on(table.storeId),
+    index("invoice_status_idx").on(table.status),
+    index("invoice_created_at_idx").on(table.createdAt),
+]);
 
 export const product = pgTable("products", {
     id: uuid("id").primaryKey().defaultRandom(),

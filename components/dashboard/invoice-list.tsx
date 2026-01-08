@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useState, useEffect } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Plus, Trash2, Receipt, User, Calendar, IndianRupee, MoreHorizontal, FileText, ChevronLeft, ChevronRight, Printer, Search, Edit, CheckCircle, Truck, Package, ChevronDown, Clock, X } from "lucide-react";
@@ -23,16 +23,24 @@ import { cn } from "@/lib/utils";
 interface InvoiceListProps {
     invoices: any[];
     customers: any[];
+    store: any;
 }
 
-export function InvoiceList({ invoices: initialInvoices, customers }: InvoiceListProps) {
+export function InvoiceList({ invoices: initialInvoices, customers, store }: InvoiceListProps) {
     const router = useRouter();
+    const searchParams = useSearchParams();
     const [open, setOpen] = useState(false);
     const [detailDialogOpen, setDetailDialogOpen] = useState(false);
     const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
     const [activeInvoice, setActiveInvoice] = useState<any>(null);
-    const [searchQuery, setSearchQuery] = useState("");
+    const [searchQuery, setSearchQuery] = useState(searchParams.get("search") || "");
     const [currentPage, setCurrentPage] = useState(1);
+
+    useEffect(() => {
+        const search = searchParams.get("search");
+        if (search) setSearchQuery(search);
+    }, [searchParams]);
+
     const itemsPerPage = 10;
 
     const filteredInvoices = initialInvoices.filter(inv =>
@@ -513,6 +521,7 @@ export function InvoiceList({ invoices: initialInvoices, customers }: InvoiceLis
                 onOpenChange={setOpen}
                 customers={customers}
                 invoiceToEdit={activeInvoice}
+                store={store}
             />
 
             <InvoiceDetailDialog

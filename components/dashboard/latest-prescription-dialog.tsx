@@ -13,9 +13,10 @@ interface LatestPrescriptionDialogProps {
     prescription: any;
     customer: any;
     onSuccess?: () => void;
+    store?: any;
 }
 
-export function LatestPrescriptionDialog({ open, onOpenChange, prescription, customer, onSuccess }: LatestPrescriptionDialogProps) {
+export function LatestPrescriptionDialog({ open, onOpenChange, prescription, customer, onSuccess, store }: LatestPrescriptionDialogProps) {
     const [showEditDialog, setShowEditDialog] = useState(false);
     if (!customer) return null;
 
@@ -156,6 +157,7 @@ export function LatestPrescriptionDialog({ open, onOpenChange, prescription, cus
                     if (onSuccess) onSuccess();
                     onOpenChange(false);
                 }}
+                store={store}
             />
         </Sheet>
     );

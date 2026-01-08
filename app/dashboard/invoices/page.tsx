@@ -7,6 +7,7 @@ import { eq } from "drizzle-orm";
 import { InvoiceList } from "@/components/dashboard/invoice-list";
 import { getInvoices } from "@/actions/invoice";
 import { getStore } from "@/actions/store";
+import { Suspense } from "react";
 
 export default async function InvoicesPage() {
     const session = await auth.api.getSession({
@@ -29,5 +30,9 @@ export default async function InvoicesPage() {
         orderBy: (customer, { asc }) => [asc(customer.name)],
     });
 
-    return <InvoiceList invoices={invoices} customers={customers} />;
+    return (
+        <Suspense fallback={<div>Loading...</div>}>
+            <InvoiceList invoices={invoices} customers={customers} store={store} />
+        </Suspense>
+    );
 }

@@ -29,6 +29,7 @@ interface InvoiceDialogProps {
     customers: any[];
     initialCustomerId?: string;
     invoiceToEdit?: any;
+    store?: any;
 }
 
 interface SelectedProduct {
@@ -39,7 +40,7 @@ interface SelectedProduct {
     stock: string;
 }
 
-export function InvoiceDialog({ open, onOpenChange, customers, initialCustomerId, invoiceToEdit }: InvoiceDialogProps) {
+export function InvoiceDialog({ open, onOpenChange, customers, initialCustomerId, invoiceToEdit, store }: InvoiceDialogProps) {
     const router = useRouter();
     const [loading, setLoading] = useState(false);
     const [showSuccessDialog, setShowSuccessDialog] = useState(false);
@@ -755,6 +756,7 @@ export function InvoiceDialog({ open, onOpenChange, customers, initialCustomerId
                 open={showAddCustomerSheet}
                 onOpenChange={setShowAddCustomerSheet}
                 onSuccess={handleCustomerCreated}
+                store={store}
             />
 
             <AlertDialog open={showSuccessDialog} onOpenChange={setShowSuccessDialog}>

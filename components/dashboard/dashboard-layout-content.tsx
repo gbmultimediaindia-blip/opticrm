@@ -6,6 +6,7 @@ import { DashboardSidebar } from "./sidebar";
 import { MobileNav } from "./mobile-nav";
 import { StoreSwitcher } from "./store-switcher";
 import { SidebarToggle } from "./sidebar-toggle";
+import { GlobalSearch } from "./global-search";
 
 interface DashboardLayoutContentProps {
     children: React.ReactNode;
@@ -24,7 +25,7 @@ export function DashboardLayoutContent({
 
     return (
         <div className="flex">
-            <DashboardSidebar user={user} />
+            <DashboardSidebar user={user} store={store} />
 
             <div
                 className={cn(
@@ -48,6 +49,9 @@ export function DashboardLayoutContent({
                             activeStore={store}
                             isAdmin={true}
                         />
+                    </div>
+                    <div className="flex items-center gap-4">
+                        <GlobalSearch />
                     </div>
                 </header>
                 <main className="p-6">

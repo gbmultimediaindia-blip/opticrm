@@ -17,11 +17,12 @@ import {
     AlertDialogTitle,
     AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "sonner";
-import { updateStore, deleteStore } from "@/actions/store";
+import { updateStore, deleteStore, updateStoreSettings } from "@/actions/store";
 import { useRouter } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
-import { Store, Users, Lock, KeyRound, Trash2, AlertTriangle } from "lucide-react";
+import { Store, Users, Lock, KeyRound, Trash2, AlertTriangle, UserCog, Mail, MapPin, User as UserIcon, Calendar } from "lucide-react";
 import { MembersTab } from "./members-tab";
 
 interface SettingsViewProps {
@@ -105,6 +106,34 @@ export function SettingsView({ store, user }: SettingsViewProps) {
         }
     };
 
+    const [customerSettings, setCustomerSettings] = useState(store.customerSettings || {
+        showEmail: true,
+        showAddress: true,
+        showGender: true,
+        showDob: true,
+        showAnniversary: true,
+    });
+
+    const handleCustomerSettingsUpdate = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setLoading(true);
+        try {
+            await updateStoreSettings(store.id, customerSettings);
+            toast.success("Customer field settings updated");
+        } catch (error: any) {
+            toast.error(error.message);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const toggleField = (field: string) => {
+        setCustomerSettings((prev: any) => ({
+            ...prev,
+            [field]: !prev[field]
+        }));
+    };
+
     const [activeTab, setActiveTab] = useState("store");
 
     return (
@@ -118,6 +147,14 @@ export function SettingsView({ store, user }: SettingsViewProps) {
                     >
                         <Store className="w-4 h-4 mr-2" />
                         Store Settings
+                    </Button>
+                    <Button
+                        variant="ghost"
+                        onClick={() => setActiveTab("customers")}
+                        className={`justify-start ${activeTab === "customers" ? "bg-slate-100 dark:bg-slate-800" : ""}`}
+                    >
+                        <UserCog className="w-4 h-4 mr-2" />
+                        Customer Fields
                     </Button>
                     <Button
                         variant="ghost"
@@ -226,6 +263,60 @@ export function SettingsView({ store, user }: SettingsViewProps) {
                                 </CardFooter>
                             </Card>
                         </div>
+                    </div>
+                )}
+
+                {activeTab === "customers" && (
+                    <div className="space-y-6">
+                        <div>
+                            <h3 className="text-lg font-medium">Customer Fields</h3>
+                            <p className="text-sm text-muted-foreground">
+                                Configure which fields are visible during customer creation.
+                            </p>
+                        </div>
+                        <div className="h-px bg-slate-200 dark:bg-slate-800" />
+                        <Card className="border-slate-200 dark:border-slate-800 shadow-sm">
+                            <form onSubmit={handleCustomerSettingsUpdate}>
+                                <CardContent className="space-y-0 p-0">
+                                    <div className="divide-y divide-slate-100 dark:divide-slate-800">
+                                        {[
+                                            { id: "showEmail", label: "Email Address", icon: Mail, description: "Collect customer email for digital invoices" },
+                                            { id: "showAddress", label: "Residential Address", icon: MapPin, description: "Store address details for delivery" },
+                                            { id: "showGender", label: "Gender", icon: UserIcon, description: "Used for demographic reporting" },
+                                            { id: "showDob", label: "Date of Birth", icon: Calendar, description: "Birthday reminders and age tracking" },
+                                            { id: "showAnniversary", label: "Anniversary Date", icon: Calendar, description: "Marriage anniversary for relationship building" }
+                                        ].map((field) => (
+                                            <div key={field.id} className="flex items-center justify-between p-4 px-6 hover:bg-slate-50/50 dark:hover:bg-slate-900/50 transition-colors">
+                                                <div className="flex items-start gap-4">
+                                                    <div className={`mt-0.5 p-2 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-500`}>
+                                                        <field.icon className="w-4 h-4" />
+                                                    </div>
+                                                    <div className="space-y-1">
+                                                        <label htmlFor={field.id} className="text-sm font-bold text-slate-900 dark:text-slate-100 cursor-pointer">
+                                                            {field.label}
+                                                        </label>
+                                                        <p className="text-xs text-slate-500 font-medium leading-relaxed">
+                                                            {field.description}
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                                <Checkbox
+                                                    id={field.id}
+                                                    checked={customerSettings[field.id]}
+                                                    onCheckedChange={() => toggleField(field.id)}
+                                                    className="data-[state=checked]:bg-indigo-600 data-[state=checked]:border-indigo-600"
+                                                />
+                                            </div>
+                                        ))}
+                                    </div>
+                                </CardContent>
+                                <CardFooter className="border-t bg-slate-50/50 dark:bg-slate-900/50 p-4">
+                                    <Button type="submit" disabled={loading} className="show-loader ml-auto bg-indigo-600 hover:bg-indigo-700 text-white shadow-lg shadow-indigo-200 dark:shadow-none">
+                                        {loading ? "Saving..." : "Save Preferences"}
+                                    </Button>
+                                </CardFooter>
+                            </form>
+                        </Card>
                     </div>
                 )}
 

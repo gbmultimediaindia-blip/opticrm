@@ -36,6 +36,7 @@ interface FormData {
     address: string;
     gender: string;
     dateOfBirth: Date | undefined;
+    anniversaryDate: Date | undefined;
     prescription: Prescription;
 }
 
@@ -44,12 +45,16 @@ interface CustomerSheetProps {
     onOpenChange: (open: boolean) => void;
     customer?: any;
     onSuccess?: (customer: any) => void;
+    store?: any;
+    title?: string;
+    description?: string;
 }
 
-export function CustomerSheet({ open, onOpenChange, customer, onSuccess }: CustomerSheetProps) {
+export function CustomerSheet({ open, onOpenChange, customer, onSuccess, store, title, description }: CustomerSheetProps) {
     const [loading, setLoading] = useState(false);
     const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
     const [dobInput, setDobInput] = useState("");
+    const [anniversaryInput, setAnniversaryInput] = useState("");
     const [formData, setFormData] = useState<FormData>({
         name: "",
         email: "",
@@ -57,6 +62,7 @@ export function CustomerSheet({ open, onOpenChange, customer, onSuccess }: Custo
         address: "",
         gender: "",
         dateOfBirth: undefined,
+        anniversaryDate: undefined,
         prescription: {
             rightSphere: "",
             rightCylinder: "",
@@ -89,6 +95,7 @@ export function CustomerSheet({ open, onOpenChange, customer, onSuccess }: Custo
                     address: customer.address || "",
                     gender: customer.gender || "",
                     dateOfBirth: customer.dateOfBirth ? new Date(customer.dateOfBirth) : undefined,
+                    anniversaryDate: customer.anniversaryDate ? new Date(customer.anniversaryDate) : undefined,
                     prescription: {
                         id: latestPrescription?.id,
                         rightSphere: latestPrescription?.rightSphere || "",
@@ -104,6 +111,7 @@ export function CustomerSheet({ open, onOpenChange, customer, onSuccess }: Custo
                     },
                 });
                 setDobInput(customer.dateOfBirth ? format(new Date(customer.dateOfBirth), "dd/MM/yyyy") : "");
+                setAnniversaryInput(customer.anniversaryDate ? format(new Date(customer.anniversaryDate), "dd/MM/yyyy") : "");
             } else {
                 setFormData({
                     name: "",
@@ -112,6 +120,7 @@ export function CustomerSheet({ open, onOpenChange, customer, onSuccess }: Custo
                     address: "",
                     gender: "",
                     dateOfBirth: undefined,
+                    anniversaryDate: undefined,
                     prescription: {
                         rightSphere: "",
                         rightCylinder: "",
@@ -126,6 +135,7 @@ export function CustomerSheet({ open, onOpenChange, customer, onSuccess }: Custo
                     },
                 });
                 setDobInput("");
+                setAnniversaryInput("");
             }
         }
     }, [open, customer]);
@@ -154,6 +164,30 @@ export function CustomerSheet({ open, onOpenChange, customer, onSuccess }: Custo
         setDobInput(date ? format(date, "dd/MM/yyyy") : "");
     };
 
+    const handleAnniversaryInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const value = e.target.value;
+        setAnniversaryInput(value);
+        if (value.length === 10) {
+            const parts = value.split("/");
+            if (parts.length === 3) {
+                const day = parseInt(parts[0], 10);
+                const month = parseInt(parts[1], 10) - 1;
+                const year = parseInt(parts[2], 10);
+                const date = new Date(year, month, day);
+                if (!isNaN(date.getTime())) {
+                    setFormData(prev => ({ ...prev, anniversaryDate: date }));
+                }
+            }
+        } else if (value === "") {
+            setFormData(prev => ({ ...prev, anniversaryDate: undefined }));
+        }
+    };
+
+    const handleAnniversaryCalendarSelect = (date: Date | undefined) => {
+        setFormData(prev => ({ ...prev, anniversaryDate: date }));
+        setAnniversaryInput(date ? format(date, "dd/MM/yyyy") : "");
+    };
+
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
         setLoading(true);
@@ -162,6 +196,7 @@ export function CustomerSheet({ open, onOpenChange, customer, onSuccess }: Custo
             const submissionData = {
                 ...formData,
                 dateOfBirth: formData.dateOfBirth,
+                anniversaryDate: formData.anniversaryDate,
                 gender: formData.gender || undefined,
             };
 
@@ -228,10 +263,10 @@ export function CustomerSheet({ open, onOpenChange, customer, onSuccess }: Custo
                             </div>
                             <div className="space-y-0.5">
                                 <SheetTitle className="text-lg font-bold text-slate-900 dark:text-white leading-none">
-                                    {customer ? "Edit Customer" : "Add Customer"}
+                                    {title || (customer ? "Edit Customer" : "Add Customer")}
                                 </SheetTitle>
                                 <SheetDescription className="text-xs text-slate-500 font-medium">
-                                    {customer ? `Updating information for ${customer.name}` : "Register a new customer."}
+                                    {description || (customer ? `Updating information for ${customer.name}` : "Register a new customer.")}
                                 </SheetDescription>
                             </div>
                         </div>
@@ -265,50 +300,100 @@ export function CustomerSheet({ open, onOpenChange, customer, onSuccess }: Custo
                                 </div>
                             </div>
 
-                            <div className="space-y-2">
-                                <Label className="text-[10px] font-black text-slate-400 uppercase">Email Address (Optional)</Label>
-                                <Input
-                                    type="email"
-                                    value={formData.email}
-                                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                                    placeholder="customer@example.com"
-                                    className="text-sm"
-                                />
-                            </div>
+                            {(store?.customerSettings?.showEmail !== false) && (
+                                <div className="space-y-2">
+                                    <Label className="text-[10px] font-black text-slate-400 uppercase">Email Address (Optional)</Label>
+                                    <Input
+                                        type="email"
+                                        value={formData.email}
+                                        onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                                        placeholder="customer@example.com"
+                                        className="text-sm"
+                                    />
+                                </div>
+                            )}
 
-                            <div className="space-y-2">
-                                <Label className="text-[10px] font-black text-slate-400 uppercase">Address (Optional)</Label>
-                                <Input
-                                    value={formData.address}
-                                    onChange={(e) => setFormData({ ...formData, address: e.target.value })}
-                                    placeholder="Local area or full address..."
-                                    className="text-sm"
-                                />
-                            </div>
+                            {(store?.customerSettings?.showAddress !== false) && (
+                                <div className="space-y-2">
+                                    <Label className="text-[10px] font-black text-slate-400 uppercase">Address (Optional)</Label>
+                                    <Input
+                                        value={formData.address}
+                                        onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+                                        placeholder="Local area or full address..."
+                                        className="text-sm"
+                                    />
+                                </div>
+                            )}
 
                             <div className="grid grid-cols-2 gap-4">
+                                {(store?.customerSettings?.showGender !== false) && (
+                                    <div className="space-y-2">
+                                        <Label className="text-[10px] font-black text-slate-400 uppercase">Gender (Optional)</Label>
+                                        <Select
+                                            value={formData.gender}
+                                            onValueChange={(v) => setFormData({ ...formData, gender: v })}
+                                        >
+                                            <SelectTrigger className="border-slate-200 dark:border-slate-800 focus:ring-2 focus:ring-indigo-500">
+                                                <SelectValue placeholder="Select gender" />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                <SelectItem value="male">Male</SelectItem>
+                                                <SelectItem value="female">Female</SelectItem>
+                                                <SelectItem value="other">Other</SelectItem>
+                                            </SelectContent>
+                                        </Select>
+                                    </div>
+                                )}
+                                {(store?.customerSettings?.showDob !== false) && (
+                                    <div className="space-y-2">
+                                        <Label className="text-[10px] font-black text-slate-400 uppercase">Date of Birth (Optional)</Label>
+                                        <div className="relative group">
+                                            <Input
+                                                value={dobInput}
+                                                onChange={handleDobInputChange}
+                                                placeholder="DD/MM/YYYY"
+                                                className="text-sm pl-10 pr-12 bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 focus:ring-indigo-500 transition-all"
+                                            />
+                                            <CalendarIcon className="w-4 h-4 absolute left-3.5 top-3.5 text-slate-400 pointer-events-none" />
+
+                                            <div className="absolute right-1 top-1">
+                                                <Popover modal={false}>
+                                                    <PopoverTrigger asChild>
+                                                        <Button
+                                                            type="button"
+                                                            variant="ghost"
+                                                            size="icon"
+                                                            className="h-9 w-9 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400 hover:text-indigo-600 transition-colors"
+                                                        >
+                                                            <CalendarIcon className="w-4 h-4" />
+                                                        </Button>
+                                                    </PopoverTrigger>
+                                                    <PopoverContent className="w-auto p-0 rounded-lg border-slate-200 dark:border-slate-800 shadow-2xl" align="end">
+                                                        <Calendar
+                                                            mode="single"
+                                                            selected={formData.dateOfBirth}
+                                                            onSelect={handleCalendarSelect}
+                                                            captionLayout="dropdown"
+                                                            fromYear={1920}
+                                                            toYear={new Date().getFullYear()}
+                                                            initialFocus
+                                                            className="rounded-lg border-none"
+                                                        />
+                                                    </PopoverContent>
+                                                </Popover>
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+
+                            {(store?.customerSettings?.showAnniversary !== false) && (
                                 <div className="space-y-2">
-                                    <Label className="text-[10px] font-black text-slate-400 uppercase">Gender (Optional)</Label>
-                                    <Select
-                                        value={formData.gender}
-                                        onValueChange={(v) => setFormData({ ...formData, gender: v })}
-                                    >
-                                        <SelectTrigger className="border-slate-200 dark:border-slate-800 focus:ring-2 focus:ring-indigo-500">
-                                            <SelectValue placeholder="Select gender" />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            <SelectItem value="male">Male</SelectItem>
-                                            <SelectItem value="female">Female</SelectItem>
-                                            <SelectItem value="other">Other</SelectItem>
-                                        </SelectContent>
-                                    </Select>
-                                </div>
-                                <div className="space-y-2">
-                                    <Label className="text-[10px] font-black text-slate-400 uppercase">Date of Birth (Optional)</Label>
+                                    <Label className="text-[10px] font-black text-slate-400 uppercase">Anniversary Date (Optional)</Label>
                                     <div className="relative group">
                                         <Input
-                                            value={dobInput}
-                                            onChange={handleDobInputChange}
+                                            value={anniversaryInput}
+                                            onChange={handleAnniversaryInputChange}
                                             placeholder="DD/MM/YYYY"
                                             className="text-sm pl-10 pr-12 bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 focus:ring-indigo-500 transition-all"
                                         />
@@ -329,8 +414,8 @@ export function CustomerSheet({ open, onOpenChange, customer, onSuccess }: Custo
                                                 <PopoverContent className="w-auto p-0 rounded-lg border-slate-200 dark:border-slate-800 shadow-2xl" align="end">
                                                     <Calendar
                                                         mode="single"
-                                                        selected={formData.dateOfBirth}
-                                                        onSelect={handleCalendarSelect}
+                                                        selected={formData.anniversaryDate}
+                                                        onSelect={handleAnniversaryCalendarSelect}
                                                         captionLayout="dropdown"
                                                         fromYear={1920}
                                                         toYear={new Date().getFullYear()}
@@ -342,7 +427,7 @@ export function CustomerSheet({ open, onOpenChange, customer, onSuccess }: Custo
                                         </div>
                                     </div>
                                 </div>
-                            </div>
+                            )}
                         </div>
 
                         <div className="pt-6 border-t border-slate-100 dark:border-slate-800 space-y-4">

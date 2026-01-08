@@ -6,6 +6,7 @@ import { customer as customerTable, store as storeTable } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { CustomerList } from "@/components/dashboard/customer-list";
 import { getStore } from "@/actions/store";
+import { Suspense } from "react";
 
 export default async function CustomersPage() {
     const session = await auth.api.getSession({
@@ -33,5 +34,9 @@ export default async function CustomersPage() {
         orderBy: (customer, { desc }) => [desc(customer.createdAt)],
     });
 
-    return <CustomerList customers={customers} />;
+    return (
+        <Suspense fallback={<div>Loading...</div>}>
+            <CustomerList customers={customers} store={store} />
+        </Suspense>
+    );
 }
