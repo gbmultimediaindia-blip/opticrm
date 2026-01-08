@@ -69,12 +69,12 @@ export function SidebarNav({ onNavigate, forceFull }: SidebarNavProps) {
                                 className="block relative h-11 no-underline outline-none group"
                             >
                                 <div className="absolute inset-x-0 h-full flex items-center">
-                                    {/* Glass Hover Highlight */}
+                                    {/* Slate Hover Highlight */}
                                     <AnimatePresence>
                                         {isHovered && !isActive && (
                                             <motion.div
                                                 layoutId="hover-capsule"
-                                                className="absolute inset-x-0 inset-y-[2px] bg-white/[0.03] border border-white/[0.05] rounded-lg z-0"
+                                                className="absolute inset-x-0 inset-y-[2px] bg-slate-800/40 border border-slate-700/30 rounded-lg z-0"
                                                 initial={{ opacity: 0 }}
                                                 animate={{ opacity: 1 }}
                                                 exit={{ opacity: 0 }}
@@ -83,11 +83,11 @@ export function SidebarNav({ onNavigate, forceFull }: SidebarNavProps) {
                                         )}
                                     </AnimatePresence>
 
-                                    {/* Dynamic Active Pill */}
+                                    {/* Slate Active Pill */}
                                     {isActive && (
                                         <motion.div
                                             layoutId="active-pill"
-                                            className="absolute inset-x-0 inset-y-[2px] bg-indigo-500/10 border border-indigo-500/20 rounded-lg z-0 shadow-[0_0_15px_-3px_rgba(99,102,241,0.2)]"
+                                            className="absolute inset-x-0 inset-y-[2px] bg-slate-800 border border-slate-700 rounded-lg z-0 shadow-sm"
                                             transition={{
                                                 type: "spring",
                                                 stiffness: 400,
@@ -96,15 +96,14 @@ export function SidebarNav({ onNavigate, forceFull }: SidebarNavProps) {
                                         />
                                     )}
 
-
                                     <div className={cn(
                                         "relative z-10 flex items-center w-full transition-all duration-300",
                                         isCollapsed ? "justify-center" : "gap-3 px-3",
-                                        isActive ? "text-indigo-400" : isHovered ? "text-slate-100" : "text-slate-400"
+                                        isActive ? "text-white" : isHovered ? "text-slate-100" : "text-slate-400"
                                     )}>
                                         <route.icon className={cn(
-                                            "w-5 h-5 shrink-0 transition-transform duration-300",
-                                            isActive ? "scale-100" : isHovered ? "scale-110" : "scale-100"
+                                            "w-5 h-5 shrink-0 transition-all duration-300",
+                                            isActive ? "text-indigo-400" : isHovered ? "text-slate-300 scale-110" : "text-slate-500"
                                         )} />
 
                                         {!isCollapsed && (
@@ -114,11 +113,7 @@ export function SidebarNav({ onNavigate, forceFull }: SidebarNavProps) {
                                         )}
 
                                         {isActive && !isCollapsed && (
-                                            <motion.div
-                                                initial={{ scale: 0 }}
-                                                animate={{ scale: 1 }}
-                                                className="ml-auto w-1.5 h-1.5 rounded-full bg-indigo-400 shadow-[0_0_8px_rgba(129,140,248,0.8)]"
-                                            />
+                                            <div className="ml-auto w-1.5 h-1.5 rounded-full bg-indigo-500 shadow-[0_0_8px_rgba(99,102,241,0.6)]" />
                                         )}
                                     </div>
                                 </div>
@@ -145,7 +140,7 @@ export function SidebarNav({ onNavigate, forceFull }: SidebarNavProps) {
                 <div className="mt-auto py-4 px-2">
                     {!isCollapsed && (
                         <div className="px-4 mb-4">
-                            <div className="h-px bg-gradient-to-r from-transparent via-slate-800 to-transparent" />
+                            <div className="h-px bg-slate-900" />
                         </div>
                     )}
                     {(() => {
@@ -163,7 +158,7 @@ export function SidebarNav({ onNavigate, forceFull }: SidebarNavProps) {
                                         {isHovered && !isActive && (
                                             <motion.div
                                                 layoutId="hover-capsule"
-                                                className="absolute inset-x-0 inset-y-[2px] bg-white/[0.03] border border-white/[0.05] rounded-lg z-0"
+                                                className="absolute inset-x-0 inset-y-[2px] bg-slate-800/40 border border-slate-700/30 rounded-lg z-0"
                                                 transition={{ duration: 0.15 }}
                                             />
                                         )}
@@ -172,20 +167,19 @@ export function SidebarNav({ onNavigate, forceFull }: SidebarNavProps) {
                                     {isActive && (
                                         <motion.div
                                             layoutId="active-pill"
-                                            className="absolute inset-x-0 inset-y-[2px] bg-indigo-500/10 border border-indigo-500/20 rounded-lg z-0"
+                                            className="absolute inset-x-0 inset-y-[2px] bg-slate-800 border border-slate-700 rounded-lg z-0"
                                             transition={{ type: "spring", stiffness: 400, damping: 30 }}
                                         />
                                     )}
 
-
                                     <div className={cn(
                                         "relative z-10 flex items-center w-full transition-all duration-300",
                                         isCollapsed ? "justify-center" : "gap-3 px-3",
-                                        isActive ? "text-indigo-400" : isHovered ? "text-slate-100" : "text-slate-400"
+                                        isActive ? "text-white" : isHovered ? "text-slate-100" : "text-slate-400"
                                     )}>
                                         <Settings className={cn(
                                             "w-5 h-5 shrink-0 transition-all duration-300",
-                                            isActive ? "text-indigo-400 rotate-0" : isHovered ? "text-slate-100 rotate-45" : "text-slate-400 rotate-0"
+                                            isActive ? "text-indigo-400 rotate-0" : isHovered ? "text-slate-300 rotate-45" : "text-slate-500"
                                         )} />
 
                                         {!isCollapsed && (
