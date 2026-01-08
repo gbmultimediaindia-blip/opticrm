@@ -220,7 +220,7 @@ export function PrescriptionHistoryDialog({ open, onOpenChange, customerId, cust
 
                 <div className="h-14 px-6 flex items-center bg-white dark:bg-slate-950 border-t border-slate-200 dark:border-slate-800 shrink-0">
                     <SheetClose asChild>
-                        <Button variant="ghost" className="w-full h-11 font-semibold text-slate-500">Close</Button>
+                        <Button variant="ghost" className="w-full h-10 font-semibold text-slate-500">Close</Button>
                     </SheetClose>
                 </div>
             </SheetContent>
@@ -262,7 +262,7 @@ export function PrescriptionHistoryDialog({ open, onOpenChange, customerId, cust
                             variant="ghost"
                             onClick={() => setShowDeleteConfirm(false)}
                             disabled={loading}
-                            className="flex-1 h-11 font-semibold text-slate-600 dark:text-slate-400"
+                            className="flex-1 h-10 font-semibold text-slate-600 dark:text-slate-400"
                         >
                             Cancel
                         </Button>
@@ -270,7 +270,7 @@ export function PrescriptionHistoryDialog({ open, onOpenChange, customerId, cust
                             variant="destructive"
                             onClick={handleConfirmDelete}
                             disabled={loading}
-                            className="flex-1 h-11 font-bold bg-red-600 hover:bg-red-700 shadow-lg shadow-red-200 dark:shadow-none gap-2"
+                            className="flex-1 h-10 font-bold bg-red-600 hover:bg-red-700 shadow-lg shadow-red-200 dark:shadow-none gap-2"
                         >
                             {loading ? "Deleting..." : <><Trash2 className="w-4 h-4" /> Delete Record</>}
                         </Button>

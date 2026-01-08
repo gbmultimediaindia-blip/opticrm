@@ -250,7 +250,6 @@ export function CustomerSheet({ open, onOpenChange, customer, onSuccess }: Custo
                                         value={formData.name}
                                         onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                                         placeholder="e.g. Rahul Sharma"
-                                        className="h-11 rounded-xl"
                                         required
                                     />
                                 </div>
@@ -260,7 +259,7 @@ export function CustomerSheet({ open, onOpenChange, customer, onSuccess }: Custo
                                         value={formData.phone}
                                         onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                                         placeholder="10-digit mobile"
-                                        className="h-11 rounded-xl text-sm"
+                                        className="text-sm"
                                         required
                                     />
                                 </div>
@@ -273,7 +272,7 @@ export function CustomerSheet({ open, onOpenChange, customer, onSuccess }: Custo
                                     value={formData.email}
                                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                                     placeholder="customer@example.com"
-                                    className="h-11 rounded-xl text-sm"
+                                    className="text-sm"
                                 />
                             </div>
 
@@ -283,7 +282,7 @@ export function CustomerSheet({ open, onOpenChange, customer, onSuccess }: Custo
                                     value={formData.address}
                                     onChange={(e) => setFormData({ ...formData, address: e.target.value })}
                                     placeholder="Local area or full address..."
-                                    className="h-11 rounded-xl text-sm"
+                                    className="text-sm"
                                 />
                             </div>
 
@@ -294,7 +293,7 @@ export function CustomerSheet({ open, onOpenChange, customer, onSuccess }: Custo
                                         value={formData.gender}
                                         onValueChange={(v) => setFormData({ ...formData, gender: v })}
                                     >
-                                        <SelectTrigger className="!h-11 rounded-xl border-slate-200 dark:border-slate-800 focus:ring-2 focus:ring-indigo-500">
+                                        <SelectTrigger className="border-slate-200 dark:border-slate-800 focus:ring-2 focus:ring-indigo-500">
                                             <SelectValue placeholder="Select gender" />
                                         </SelectTrigger>
                                         <SelectContent>
@@ -311,7 +310,7 @@ export function CustomerSheet({ open, onOpenChange, customer, onSuccess }: Custo
                                             value={dobInput}
                                             onChange={handleDobInputChange}
                                             placeholder="DD/MM/YYYY"
-                                            className="h-11 rounded-xl text-sm pl-10 pr-12 bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 focus:ring-indigo-500 transition-all"
+                                            className="text-sm pl-10 pr-12 bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 focus:ring-indigo-500 transition-all"
                                         />
                                         <CalendarIcon className="w-4 h-4 absolute left-3.5 top-3.5 text-slate-400 pointer-events-none" />
 
@@ -327,7 +326,7 @@ export function CustomerSheet({ open, onOpenChange, customer, onSuccess }: Custo
                                                         <CalendarIcon className="w-4 h-4" />
                                                     </Button>
                                                 </PopoverTrigger>
-                                                <PopoverContent className="w-auto p-0 rounded-2xl border-slate-200 dark:border-slate-800 shadow-2xl" align="end">
+                                                <PopoverContent className="w-auto p-0 rounded-lg border-slate-200 dark:border-slate-800 shadow-2xl" align="end">
                                                     <Calendar
                                                         mode="single"
                                                         selected={formData.dateOfBirth}
@@ -336,7 +335,7 @@ export function CustomerSheet({ open, onOpenChange, customer, onSuccess }: Custo
                                                         fromYear={1920}
                                                         toYear={new Date().getFullYear()}
                                                         initialFocus
-                                                        className="rounded-2xl border-none"
+                                                        className="rounded-lg border-none"
                                                     />
                                                 </PopoverContent>
                                             </Popover>
@@ -403,7 +402,7 @@ export function CustomerSheet({ open, onOpenChange, customer, onSuccess }: Custo
                                             placeholder="0.00"
                                             value={formData.prescription.pd}
                                             onChange={(e) => setFormData(p => ({ ...p, prescription: { ...p.prescription, pd: e.target.value } }))}
-                                            className="h-11 rounded-xl font-bold tabular-nums"
+                                            className="font-bold tabular-nums"
                                         />
                                     </div>
                                     <div className="col-span-2 space-y-1.5">
@@ -412,7 +411,7 @@ export function CustomerSheet({ open, onOpenChange, customer, onSuccess }: Custo
                                             placeholder="Clinical remarks..."
                                             value={formData.prescription.notes}
                                             onChange={(e) => setFormData(p => ({ ...p, prescription: { ...p.prescription, notes: e.target.value } }))}
-                                            className="h-11 rounded-xl text-xs"
+                                            className="text-xs"
                                         />
                                     </div>
                                 </div>
@@ -423,14 +422,14 @@ export function CustomerSheet({ open, onOpenChange, customer, onSuccess }: Custo
                     <div className="h-16 px-6 flex items-center bg-slate-50/50 dark:bg-slate-900/50 border-t border-slate-100 dark:border-slate-800 shrink-0">
                         <SheetFooter className="mt-0 flex-row w-full justify-end gap-3 items-center">
                             <SheetClose asChild>
-                                <Button type="button" variant="ghost" className="h-11 flex-1 font-semibold text-slate-500">
+                                <Button type="button" variant="ghost" className="flex-1 font-semibold text-slate-500">
                                     Cancel
                                 </Button>
                             </SheetClose>
                             <Button
                                 type="submit"
                                 form="customer-form"
-                                className="h-11 flex-1 bg-indigo-600 hover:bg-indigo-700 text-white font-bold shadow-lg shadow-indigo-100 dark:shadow-none text-sm"
+                                className="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white font-bold shadow-lg shadow-indigo-100 dark:shadow-none text-sm"
                                 disabled={loading}
                             >
                                 {loading ? "Saving..." : customer ? "Save Changes" : "Create Customer"}
@@ -468,7 +467,7 @@ export function CustomerSheet({ open, onOpenChange, customer, onSuccess }: Custo
                             variant="ghost"
                             onClick={() => setShowDeleteConfirm(false)}
                             disabled={loading}
-                            className="flex-1 h-11 font-semibold text-slate-600 dark:text-slate-400"
+                            className="flex-1 h-10 font-semibold text-slate-600 dark:text-slate-400"
                         >
                             Cancel
                         </Button>
@@ -476,7 +475,7 @@ export function CustomerSheet({ open, onOpenChange, customer, onSuccess }: Custo
                             variant="destructive"
                             onClick={handleConfirmDelete}
                             disabled={loading}
-                            className="flex-1 h-11 font-bold bg-red-600 hover:bg-red-700 shadow-lg shadow-red-200 dark:shadow-none gap-2"
+                            className="flex-1 h-10 font-bold bg-red-600 hover:bg-red-700 shadow-lg shadow-red-200 dark:shadow-none gap-2"
                         >
                             {loading ? "Deleting..." : <><Trash2 className="w-4 h-4" /> Delete Record</>}
                         </Button>
@@ -496,7 +495,7 @@ function MetricInput({ label, value, onChange, placeholder }: { label: string; v
                 placeholder={placeholder}
                 value={value}
                 onChange={(e) => onChange(e.target.value)}
-                className="h-11 rounded-xl font-bold text-slate-900 dark:text-white bg-slate-50/50 dark:bg-slate-900/50 border-slate-200 dark:border-slate-800 focus:ring-2 focus:ring-indigo-500 transition-all text-sm"
+                className="font-bold text-slate-900 dark:text-white bg-slate-50/50 dark:bg-slate-900/50 border-slate-200 dark:border-slate-800 focus:ring-2 focus:ring-indigo-500 transition-all text-sm"
             />
         </div>
     );

@@ -61,7 +61,7 @@ export function InvoiceHistoryDialog({ open, onOpenChange, customerId, customerN
                             <p className="text-slate-500 font-medium anim-pulse">Loading invoices...</p>
                         </div>
                     ) : history.length === 0 ? (
-                        <div className="h-64 flex flex-col items-center justify-center text-center gap-4 border-2 border-dashed border-slate-100 dark:border-slate-800 rounded-2xl">
+                        <div className="h-64 flex flex-col items-center justify-center text-center gap-4 border-2 border-dashed border-slate-100 dark:border-slate-800 rounded-lg">
                             <div className="w-16 h-16 rounded-full bg-slate-50 dark:bg-slate-900 flex items-center justify-center text-slate-300">
                                 <Receipt className="w-8 h-8" />
                             </div>
@@ -71,7 +71,7 @@ export function InvoiceHistoryDialog({ open, onOpenChange, customerId, customerN
                             </div>
                         </div>
                     ) : (
-                        <div className="rounded-xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-sm">
+                        <div className="rounded-lg border border-slate-200 dark:border-slate-800 overflow-hidden shadow-sm">
                             <Table>
                                 <TableHeader className="bg-slate-50 dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800">
                                     <TableRow className="hover:bg-transparent">
@@ -174,7 +174,7 @@ export function InvoiceHistoryDialog({ open, onOpenChange, customerId, customerN
                 <div className="h-16 px-6 flex items-center bg-slate-50/50 dark:bg-slate-900/50 border-t border-slate-100 dark:border-slate-800 shrink-0">
                     <SheetFooter className="mt-0 w-full">
                         <SheetClose asChild>
-                            <Button variant="outline" className="w-full font-bold text-xs h-11">Close</Button>
+                            <Button variant="outline" className="w-full font-bold text-xs h-10">Close</Button>
                         </SheetClose>
                     </SheetFooter>
                 </div>

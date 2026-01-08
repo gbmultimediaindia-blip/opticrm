@@ -120,7 +120,7 @@ export function InvoicePrint({ invoice, store }: InvoicePrintProps) {
                         {invoice.notes && (
                             <tr>
                                 <td colSpan={5} className="py-6">
-                                    <div className="bg-slate-50/80 rounded-xl p-4 border border-slate-100/50">
+                                    <div className="bg-slate-50/80 rounded-lg p-4 border border-slate-100/50">
                                         <h5 className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1.5 flex items-center gap-2">
                                             <Info className="w-3 h-3 text-slate-300" /> Administrative / Sale Notes
                                         </h5>
@@ -170,7 +170,7 @@ export function InvoicePrint({ invoice, store }: InvoicePrintProps) {
                     </div>
 
                     <div className="h-px bg-slate-200 my-4" />
-                    <div className="flex justify-between items-center bg-slate-900 text-white p-4 rounded-xl shadow-lg shadow-slate-200">
+                    <div className="flex justify-between items-center bg-slate-900 text-white p-4 rounded-lg shadow-lg shadow-slate-200">
                         <span className="text-[10px] font-black uppercase tracking-[0.2em] opacity-60">Balance Due</span>
                         <span className="text-xl font-mono font-black tracking-tight underline underline-offset-4">₹{invoice.dueAmount}</span>
                     </div>

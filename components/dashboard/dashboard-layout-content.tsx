@@ -37,7 +37,7 @@ export function DashboardLayoutContent({
                         <MobileNav user={user} />
                         <SidebarToggle />
                         <div className="flex items-center gap-2 ml-1">
-                            <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white shadow-lg shadow-indigo-500/20">
+                            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white shadow-lg shadow-indigo-500/20">
                                 <span className="font-black text-lg leading-none">O</span>
                             </div>
                             <span className="text-xl font-bold tracking-tight text-slate-900 dark:text-white hidden sm:block">OptiCRM</span>

@@ -99,7 +99,7 @@ export function ProductList({ data }: ProductListProps) {
                 </div>
             </div>
 
-            <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
+            <div className="bg-white dark:bg-slate-900 rounded-lg border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
                 {/* Desktop View Table */}
                 <div className="hidden lg:block overflow-x-auto">
                     <Table>
@@ -119,7 +119,7 @@ export function ProductList({ data }: ProductListProps) {
                                 <TableRow>
                                     <TableCell colSpan={7} className="h-64 text-center">
                                         <div className="flex flex-col items-center gap-3">
-                                            <div className="w-16 h-16 rounded-2xl bg-slate-50 dark:bg-slate-800/50 flex items-center justify-center text-slate-300">
+                                            <div className="w-16 h-16 rounded-lg bg-slate-50 dark:bg-slate-800/50 flex items-center justify-center text-slate-300">
                                                 {searchQuery ? <Search className="w-8 h-8" /> : <Box className="w-8 h-8" />}
                                             </div>
                                             <div className="max-w-sm px-6">

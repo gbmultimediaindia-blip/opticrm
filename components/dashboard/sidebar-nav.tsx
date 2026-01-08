@@ -66,7 +66,7 @@ export function SidebarNav({ onNavigate, forceFull }: SidebarNavProps) {
                                 href={route.href}
                                 onClick={onNavigate}
                                 onMouseEnter={() => setHoveredRoute(route.href)}
-                                className="block relative h-11 no-underline outline-none group"
+                                className="block relative h-10 no-underline outline-none group"
                             >
                                 <div className="absolute inset-x-0 h-full flex items-center">
                                     {/* Slate Hover Highlight */}
@@ -151,7 +151,7 @@ export function SidebarNav({ onNavigate, forceFull }: SidebarNavProps) {
                                 href="/dashboard/settings"
                                 onClick={onNavigate}
                                 onMouseEnter={() => setHoveredRoute("/dashboard/settings")}
-                                className="block relative h-11 no-underline outline-none group"
+                                className="block relative h-10 no-underline outline-none group"
                             >
                                 <div className="absolute inset-x-0 h-full flex items-center">
                                     <AnimatePresence>

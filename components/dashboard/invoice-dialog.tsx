@@ -359,7 +359,7 @@ export function InvoiceDialog({ open, onOpenChange, customers, initialCustomerId
                                                         setShowResults(true);
                                                     }}
                                                     onFocus={() => setShowResults(true)}
-                                                    className="pl-9 pr-8 h-11 rounded-xl"
+                                                    className="pl-9 pr-8 h-10 rounded-lg"
                                                 />
                                                 {searchQuery && (
                                                     <button
@@ -375,7 +375,7 @@ export function InvoiceDialog({ open, onOpenChange, customers, initialCustomerId
                                                 )}
 
                                                 {showResults && searchQuery && (
-                                                    <div className="absolute top-full left-0 right-0 mt-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl shadow-2xl z-50 overflow-hidden max-h-[300px] overflow-y-auto">
+                                                    <div className="absolute top-full left-0 right-0 mt-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg shadow-2xl z-50 overflow-hidden max-h-[300px] overflow-y-auto">
                                                         {filteredCustomers.length > 0 ? (
                                                             <div className="p-1">
                                                                 {filteredCustomers.map((c) => (
@@ -408,14 +408,14 @@ export function InvoiceDialog({ open, onOpenChange, customers, initialCustomerId
                                             <Button
                                                 type="button"
                                                 onClick={() => setShowAddCustomerSheet(true)}
-                                                className="h-11 w-11 rounded-xl bg-slate-100 text-slate-600 hover:bg-indigo-50 hover:text-indigo-600 dark:bg-slate-800 dark:text-slate-400 dark:hover:bg-indigo-900/20"
+                                                className="h-10 w-11 rounded-lg bg-slate-100 text-slate-600 hover:bg-indigo-50 hover:text-indigo-600 dark:bg-slate-800 dark:text-slate-400 dark:hover:bg-indigo-900/20"
                                                 size="icon"
                                             >
                                                 <UserPlus className="w-5 h-5" />
                                             </Button>
                                         </div>
                                     ) : (
-                                        <div className="flex items-center justify-between p-3 rounded-xl border-2 border-indigo-100 dark:border-indigo-900/30 bg-indigo-50/20 dark:bg-indigo-900/10">
+                                        <div className="flex items-center justify-between p-3 rounded-lg border-2 border-indigo-100 dark:border-indigo-900/30 bg-indigo-50/20 dark:bg-indigo-900/10">
                                             <div className="flex items-center gap-3">
                                                 <div className="w-10 h-10 rounded-lg bg-indigo-600 flex items-center justify-center text-white shadow-md">
                                                     <User className="w-5 h-5" />
@@ -456,11 +456,11 @@ export function InvoiceDialog({ open, onOpenChange, customers, initialCustomerId
                                             placeholder="Search products by name, brand or category..."
                                             value={productSearchQuery}
                                             onChange={(e) => setProductSearchQuery(e.target.value)}
-                                            className="pl-9 h-11 rounded-xl bg-slate-50 dark:bg-slate-900 border-transparent focus:bg-white dark:focus:bg-slate-950 transition-all"
+                                            className="pl-9 h-10 rounded-lg bg-slate-50 dark:bg-slate-900 border-transparent focus:bg-white dark:focus:bg-slate-950 transition-all"
                                         />
 
                                         {productSearchResults.length > 0 && (
-                                            <div className="absolute top-full left-0 right-0 mt-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl shadow-2xl z-50 overflow-hidden max-h-[300px] overflow-y-auto animate-in fade-in slide-in-from-top-2">
+                                            <div className="absolute top-full left-0 right-0 mt-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg shadow-2xl z-50 overflow-hidden max-h-[300px] overflow-y-auto animate-in fade-in slide-in-from-top-2">
                                                 <div className="p-1">
                                                     {productSearchResults.map((p) => (
                                                         <button
@@ -494,7 +494,7 @@ export function InvoiceDialog({ open, onOpenChange, customers, initialCustomerId
                                         {selectedProducts.length > 0 ? (
                                             <div className="space-y-2">
                                                 {selectedProducts.map((item) => (
-                                                    <div key={item.id} className="flex items-center gap-3 p-3 rounded-xl border border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900/50 shadow-sm animate-in fade-in slide-in-from-left-2 transition-all hover:border-slate-200 dark:hover:border-slate-700">
+                                                    <div key={item.id} className="flex items-center gap-3 p-3 rounded-lg border border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900/50 shadow-sm animate-in fade-in slide-in-from-left-2 transition-all hover:border-slate-200 dark:hover:border-slate-700">
                                                         <div className="w-10 h-10 rounded-lg bg-orange-50 dark:bg-orange-900/20 flex items-center justify-center text-orange-600 dark:text-orange-400 shrink-0">
                                                             <PackageSearch className="w-5 h-5" />
                                                         </div>
@@ -534,7 +534,7 @@ export function InvoiceDialog({ open, onOpenChange, customers, initialCustomerId
                                                 ))}
                                             </div>
                                         ) : (
-                                            <div className="flex flex-col items-center justify-center py-12 border-2 border-dashed border-slate-100 dark:border-slate-800 rounded-2xl bg-slate-50/30 dark:bg-slate-900/20 px-8 text-center animate-in zoom-in-95 duration-300">
+                                            <div className="flex flex-col items-center justify-center py-12 border-2 border-dashed border-slate-100 dark:border-slate-800 rounded-lg bg-slate-50/30 dark:bg-slate-900/20 px-8 text-center animate-in zoom-in-95 duration-300">
                                                 <div className="w-12 h-12 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-300 mb-3">
                                                     <ShoppingBag className="w-6 h-6" />
                                                 </div>
@@ -561,13 +561,13 @@ export function InvoiceDialog({ open, onOpenChange, customers, initialCustomerId
                                             <Input
                                                 value={invoiceData.subtotal}
                                                 readOnly
-                                                className="h-11 pl-8 font-mono font-bold text-lg text-slate-900 dark:text-white bg-slate-50/50 dark:bg-slate-900/50"
+                                                className="h-10 pl-8 font-mono font-bold text-lg text-slate-900 dark:text-white bg-slate-50/50 dark:bg-slate-900/50"
                                             />
                                         </div>
                                     </div>
 
                                     {/* Tax Settings */}
-                                    <div className="col-span-2 space-y-3 p-4 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-800">
+                                    <div className="col-span-2 space-y-3 p-4 rounded-lg bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-800">
                                         <div className="flex items-center justify-between">
                                             <Label className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Tax Settings</Label>
                                             <div className="flex gap-1.5 p-1 bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700">
@@ -598,7 +598,7 @@ export function InvoiceDialog({ open, onOpenChange, customers, initialCustomerId
                                                             type="number"
                                                             value={invoiceData.taxRate}
                                                             onChange={(e) => setInvoiceData({ ...invoiceData, taxRate: e.target.value })}
-                                                            className="h-9 pr-8 font-mono font-bold text-xs"
+                                                            className="pr-8 font-mono font-bold text-xs"
                                                         />
                                                         <div className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs font-bold">%</div>
                                                     </div>
@@ -610,7 +610,7 @@ export function InvoiceDialog({ open, onOpenChange, customers, initialCustomerId
                                                         <Input
                                                             value={invoiceData.taxAmount}
                                                             readOnly
-                                                            className="h-9 pl-6 font-mono font-bold text-xs bg-slate-50/50 dark:bg-slate-900/50 border-dashed"
+                                                            className="pl-6 font-mono font-bold text-xs bg-slate-50/50 dark:bg-slate-900/50 border-dashed"
                                                         />
                                                     </div>
                                                 </div>
@@ -619,7 +619,7 @@ export function InvoiceDialog({ open, onOpenChange, customers, initialCustomerId
                                     </div>
 
                                     {/* Discount Settings */}
-                                    <div className="col-span-2 space-y-3 p-4 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-800">
+                                    <div className="col-span-2 space-y-3 p-4 rounded-lg bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-800">
                                         <div className="flex items-center justify-between">
                                             <Label className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Discount</Label>
                                             <div className="flex gap-1.5 p-1 bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700">
@@ -648,7 +648,7 @@ export function InvoiceDialog({ open, onOpenChange, customers, initialCustomerId
                                                         type="number"
                                                         value={invoiceData.discountValue}
                                                         onChange={(e) => setInvoiceData({ ...invoiceData, discountValue: e.target.value })}
-                                                        className="h-9 pr-8 font-mono font-bold text-xs"
+                                                        className="pr-8 font-mono font-bold text-xs"
                                                     />
                                                     <div className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs font-bold">
                                                         {invoiceData.discountType === "percentage" ? "%" : "₹"}
@@ -662,7 +662,7 @@ export function InvoiceDialog({ open, onOpenChange, customers, initialCustomerId
                                                     <Input
                                                         value={invoiceData.discountAmount}
                                                         readOnly
-                                                        className="h-9 pl-6 font-mono font-bold text-xs bg-slate-50/50 dark:bg-slate-900/50 border-dashed text-red-500"
+                                                        className="pl-6 font-mono font-bold text-xs bg-slate-50/50 dark:bg-slate-900/50 border-dashed text-red-500"
                                                     />
                                                 </div>
                                             </div>
@@ -678,7 +678,7 @@ export function InvoiceDialog({ open, onOpenChange, customers, initialCustomerId
                                                 type="number"
                                                 value={invoiceData.totalAmount}
                                                 onChange={(e) => handleTotalChange(e.target.value)}
-                                                className="h-11 pl-8 font-mono font-bold text-lg bg-indigo-50/50 dark:bg-indigo-900/10 border-indigo-100 dark:border-indigo-900/30 text-indigo-600 focus:ring-indigo-500"
+                                                className="pl-8 font-mono font-bold text-lg bg-indigo-50/50 dark:bg-indigo-900/10 border-indigo-100 dark:border-indigo-900/30 text-indigo-600 focus:ring-indigo-500"
                                                 required
                                             />
                                         </div>
@@ -694,7 +694,7 @@ export function InvoiceDialog({ open, onOpenChange, customers, initialCustomerId
                                                 placeholder="0.00"
                                                 value={invoiceData.advanceAmount}
                                                 onChange={(e) => setInvoiceData({ ...invoiceData, advanceAmount: e.target.value })}
-                                                className="h-11 pl-8 font-mono font-bold text-lg border-emerald-100 dark:border-emerald-900/30 bg-emerald-50/20"
+                                                className="pl-8 font-mono font-bold text-lg border-emerald-100 dark:border-emerald-900/30 bg-emerald-50/20"
                                             />
                                         </div>
                                     </div>
@@ -707,7 +707,7 @@ export function InvoiceDialog({ open, onOpenChange, customers, initialCustomerId
                                             <Input
                                                 value={invoiceData.dueAmount}
                                                 readOnly
-                                                className="h-11 pl-8 font-mono font-bold text-lg bg-red-50/50 dark:bg-red-900/10 border-red-100 dark:border-red-900/30 text-red-600"
+                                                className="pl-8 font-mono font-bold text-lg bg-red-50/50 dark:bg-red-900/10 border-red-100 dark:border-red-900/30 text-red-600"
                                             />
                                         </div>
                                     </div>
@@ -721,7 +721,7 @@ export function InvoiceDialog({ open, onOpenChange, customers, initialCustomerId
                                             placeholder="Frame/lens specifics or discount info..."
                                             value={invoiceData.notes}
                                             onChange={(e) => setInvoiceData({ ...invoiceData, notes: e.target.value })}
-                                            className="h-11 text-[11px] border-slate-200 dark:border-slate-800"
+                                            className="text-[11px] border-slate-200 dark:border-slate-800"
                                         />
                                     </div>
                                 </div>
@@ -733,14 +733,14 @@ export function InvoiceDialog({ open, onOpenChange, customers, initialCustomerId
                     <div className="h-16 px-6 flex items-center bg-slate-50/50 dark:bg-slate-900/50 border-t border-slate-100 dark:border-slate-800 shrink-0">
                         <SheetFooter className="mt-0 flex-row w-full justify-end gap-3 items-center">
                             <SheetClose asChild>
-                                <Button type="button" variant="ghost" className="h-11 flex-1 font-semibold text-slate-500">
+                                <Button type="button" variant="ghost" className="h-10 flex-1 font-semibold text-slate-500">
                                     Cancel
                                 </Button>
                             </SheetClose>
                             <Button
                                 type="submit"
                                 form="invoice-form"
-                                className="h-11 flex-1 bg-indigo-600 hover:bg-indigo-700 text-white font-bold shadow-lg shadow-indigo-100 dark:shadow-none text-sm"
+                                className="h-10 flex-1 bg-indigo-600 hover:bg-indigo-700 text-white font-bold shadow-lg shadow-indigo-100 dark:shadow-none text-sm"
                                 disabled={loading}
                             >
                                 {loading ? "Processing..." : (invoiceToEdit ? "Update Invoice" : "Finalize Invoice")}
@@ -776,12 +776,12 @@ export function InvoiceDialog({ open, onOpenChange, customers, initialCustomerId
                                 if (newInvoiceId) window.open(`/print/invoices/${newInvoiceId}`, '_blank');
                                 setShowSuccessDialog(false);
                             }}
-                            className="bg-indigo-600 hover:bg-indigo-700 text-white h-11 w-full font-bold"
+                            className="bg-indigo-600 hover:bg-indigo-700 text-white h-10 w-full font-bold"
                         >
                             <Printer className="w-4 h-4 mr-2" />
                             Print Invoice Now
                         </AlertDialogAction>
-                        <AlertDialogCancel className="h-11 w-full font-semibold border-slate-200 dark:border-slate-800">
+                        <AlertDialogCancel className="h-10 w-full font-semibold border-slate-200 dark:border-slate-800">
                             Close & Continue
                         </AlertDialogCancel>
                     </AlertDialogFooter>

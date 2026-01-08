@@ -54,7 +54,7 @@ export function InvoiceDetailDialog({ invoice, open, onOpenChange, onDelete }: I
                         <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
                             <User className="w-3.5 h-3.5 text-indigo-400" /> Customer Information
                         </h3>
-                        <div className="space-y-3 bg-slate-50 dark:bg-slate-900/50 p-4 rounded-xl border border-slate-100 dark:border-slate-800">
+                        <div className="space-y-3 bg-slate-50 dark:bg-slate-900/50 p-4 rounded-lg border border-slate-100 dark:border-slate-800">
                             <div className="flex flex-col">
                                 <span className="text-xs text-slate-400 font-medium">Full Name</span>
                                 <span className="font-bold text-slate-900 dark:text-white capitalize text-sm">{invoice.customer?.name}</span>
@@ -83,7 +83,7 @@ export function InvoiceDetailDialog({ invoice, open, onOpenChange, onDelete }: I
                         <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
                             <IndianRupee className="w-3.5 h-3.5 text-emerald-500" /> Payment Summary
                         </h3>
-                        <div className="space-y-3 bg-slate-50 dark:bg-slate-900/50 p-4 rounded-xl border border-slate-100 dark:border-slate-800">
+                        <div className="space-y-3 bg-slate-50 dark:bg-slate-900/50 p-4 rounded-lg border border-slate-100 dark:border-slate-800">
                             <div className="flex items-center justify-between py-1 border-b border-slate-200/50 dark:border-slate-800/50">
                                 <span className="text-xs text-slate-500">Subtotal</span>
                                 <span className="font-mono font-bold text-slate-900 dark:text-white text-sm">₹{invoice.subtotal}</span>
@@ -125,7 +125,7 @@ export function InvoiceDetailDialog({ invoice, open, onOpenChange, onDelete }: I
                             <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
                                 <Receipt className="w-3.5 h-3.5 text-orange-500" /> Itemized Billing
                             </h3>
-                            <div className="bg-slate-50 dark:bg-slate-900/50 rounded-xl border border-slate-100 dark:border-slate-800 overflow-hidden">
+                            <div className="bg-slate-50 dark:bg-slate-900/50 rounded-lg border border-slate-100 dark:border-slate-800 overflow-hidden">
                                 <div className="p-3 border-b border-slate-100 dark:border-slate-800 bg-slate-100/30 dark:bg-slate-800/30 flex items-center justify-between">
                                     <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Description</span>
                                     <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest text-right">Total</span>
@@ -157,7 +157,7 @@ export function InvoiceDetailDialog({ invoice, open, onOpenChange, onDelete }: I
                             <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
                                 <Clock className="w-3.5 h-3.5 text-slate-400" /> Timeline Details
                             </h3>
-                            <div className="flex items-center gap-3 bg-slate-50 dark:bg-slate-900/50 p-3 rounded-xl border border-slate-100 dark:border-slate-800">
+                            <div className="flex items-center gap-3 bg-slate-50 dark:bg-slate-900/50 p-3 rounded-lg border border-slate-100 dark:border-slate-800">
                                 <div className="w-8 h-8 rounded-lg bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-400">
                                     <Calendar className="w-4 h-4" />
                                 </div>
@@ -172,7 +172,7 @@ export function InvoiceDetailDialog({ invoice, open, onOpenChange, onDelete }: I
                                 <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
                                     <AlertCircle className="w-3.5 h-3.5 text-slate-400" /> Notes & Remarks
                                 </h3>
-                                <div className="p-4 rounded-xl bg-amber-50/30 dark:bg-amber-900/10 border border-amber-100/50 dark:border-amber-800/30 text-sm text-slate-600 dark:text-slate-400 italic">
+                                <div className="p-4 rounded-lg bg-amber-50/30 dark:bg-amber-900/10 border border-amber-100/50 dark:border-amber-800/30 text-sm text-slate-600 dark:text-slate-400 italic">
                                     "{invoice.notes}"
                                 </div>
                             </div>
@@ -193,14 +193,14 @@ export function InvoiceDetailDialog({ invoice, open, onOpenChange, onDelete }: I
                             <SheetClose asChild>
                                 <Button
                                     variant="outline"
-                                    className="font-bold text-xs flex-1 sm:flex-none h-11"
+                                    className="font-bold text-xs flex-1 sm:flex-none h-10"
                                 >
                                     Close
                                 </Button>
                             </SheetClose>
                             <Button
                                 onClick={() => window.open(`/print/invoices/${invoice.id}`, '_blank')}
-                                className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs gap-2 shadow-lg shadow-indigo-100 dark:shadow-none px-6 flex-1 sm:flex-none h-11"
+                                className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs gap-2 shadow-lg shadow-indigo-100 dark:shadow-none px-6 flex-1 sm:flex-none h-10"
                             >
                                 <Printer className="w-4 h-4" /> Print
                             </Button>

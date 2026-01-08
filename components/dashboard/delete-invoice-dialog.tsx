@@ -55,14 +55,14 @@ export function DeleteInvoiceDialog({ open, onOpenChange, invoiceId, invoiceNumb
                         <Button
                             variant="ghost"
                             onClick={() => onOpenChange(false)}
-                            className="flex-1 h-11 font-semibold text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800"
+                            className="flex-1 h-10 font-semibold text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800"
                             disabled={loading}
                         >
                             Keep Invoice
                         </Button>
                         <Button
                             onClick={handleDelete}
-                            className="flex-1 h-11 bg-red-600 hover:bg-red-700 text-white font-bold gap-2 shadow-lg shadow-red-100 dark:shadow-none"
+                            className="flex-1 h-10 bg-red-600 hover:bg-red-700 text-white font-bold gap-2 shadow-lg shadow-red-100 dark:shadow-none"
                             disabled={loading}
                         >
                             {loading ? (

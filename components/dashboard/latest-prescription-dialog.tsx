@@ -37,7 +37,7 @@ export function LatestPrescriptionDialog({ open, onOpenChange, prescription, cus
 
                 <div className="flex-1 overflow-y-auto p-6 space-y-6 bg-white dark:bg-slate-950">
                     {/* Customer Info Section */}
-                    <div className="p-4 rounded-xl border border-slate-100 dark:border-slate-800 bg-slate-50/30 dark:bg-slate-900/10 space-y-3">
+                    <div className="p-4 rounded-lg border border-slate-100 dark:border-slate-800 bg-slate-50/30 dark:bg-slate-900/10 space-y-3">
                         <div className="flex items-center gap-4">
                             <div className="flex-1 space-y-1">
                                 <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Mobile Number</span>
@@ -59,7 +59,7 @@ export function LatestPrescriptionDialog({ open, onOpenChange, prescription, cus
                     </div>
 
                     {!prescription ? (
-                        <div className="py-12 flex flex-col items-center text-center space-y-4 border-2 border-dashed border-slate-100 dark:border-slate-800 rounded-2xl">
+                        <div className="py-12 flex flex-col items-center text-center space-y-4 border-2 border-dashed border-slate-100 dark:border-slate-800 rounded-lg">
                             <div className="w-12 h-12 rounded-full bg-slate-50 dark:bg-slate-900 flex items-center justify-center text-slate-300">
                                 <Calendar className="w-6 h-6" />
                             </div>
@@ -123,13 +123,13 @@ export function LatestPrescriptionDialog({ open, onOpenChange, prescription, cus
                 <div className="h-16 px-6 flex items-center border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 shrink-0">
                     <SheetFooter className="mt-0 flex-row w-full justify-end gap-3 items-center">
                         <SheetClose asChild>
-                            <Button variant="ghost" className="h-11 flex-1 font-semibold text-slate-500">
+                            <Button variant="ghost" className="h-10 flex-1 font-semibold text-slate-500">
                                 Dismiss
                             </Button>
                         </SheetClose>
                         <Button
                             onClick={() => setShowEditDialog(true)}
-                            className="h-11 flex-1 bg-indigo-600 hover:bg-indigo-700 text-white font-bold shadow-lg shadow-indigo-100 dark:shadow-none text-sm gap-2"
+                            className="h-10 flex-1 bg-indigo-600 hover:bg-indigo-700 text-white font-bold shadow-lg shadow-indigo-100 dark:shadow-none text-sm gap-2"
                         >
                             {prescription ? (
                                 <>

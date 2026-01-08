@@ -147,7 +147,7 @@ export function PrescriptionDialog({
                             <select
                                 value={selectedCustomerId}
                                 onChange={(e) => setSelectedCustomerId(e.target.value)}
-                                className="w-full h-11 px-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 focus:ring-2 focus:ring-indigo-500 transition-all text-sm outline-none font-medium"
+                                className="w-full h-10 px-4 rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 focus:ring-2 focus:ring-indigo-500 transition-all text-sm outline-none font-medium"
                                 required={!initialCustomerId}
                             >
                                 <option value="">Select customer...</option>
@@ -198,7 +198,7 @@ export function PrescriptionDialog({
                                     placeholder="0.00"
                                     value={formData.pd}
                                     onChange={(e) => setFormData({ ...formData, pd: e.target.value })}
-                                    className="h-11 rounded-xl font-bold tabular-nums"
+                                    className="font-bold tabular-nums"
                                 />
                             </div>
                             <div className="col-span-2 space-y-1.5">
@@ -207,7 +207,7 @@ export function PrescriptionDialog({
                                     placeholder="Clinical remarks..."
                                     value={formData.notes}
                                     onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
-                                    className="h-11 rounded-xl text-xs"
+                                    className="text-xs"
                                 />
                             </div>
                         </div>
@@ -217,14 +217,14 @@ export function PrescriptionDialog({
                 <div className="h-14 px-6 flex items-center justify-end border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 shrink-0">
                     <SheetFooter className="mt-0 flex-row w-full justify-end gap-2 items-center">
                         <SheetClose asChild>
-                            <Button type="button" variant="ghost" className="h-11 flex-1 font-semibold text-slate-500">
+                            <Button type="button" variant="ghost" className="flex-1 font-semibold text-slate-500">
                                 Cancel
                             </Button>
                         </SheetClose>
                         <Button
                             type="submit"
                             form="rx-form"
-                            className="h-11 flex-1 bg-indigo-600 hover:bg-indigo-700 text-white font-bold shadow-lg shadow-indigo-100 dark:shadow-none text-sm"
+                            className="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white font-bold shadow-lg shadow-indigo-100 dark:shadow-none text-sm"
                             disabled={loading}
                         >
                             {loading
@@ -246,7 +246,7 @@ function MetricInput({ label, value, onChange, placeholder }: { label: string; v
                 placeholder={placeholder}
                 value={value}
                 onChange={(e) => onChange(e.target.value)}
-                className="h-10 rounded-xl font-bold text-slate-900 dark:text-white bg-slate-50/50 dark:bg-slate-900/50 border-slate-200 dark:border-slate-800 focus:ring-2 focus:ring-indigo-500 transition-all text-xs"
+                className="font-bold text-slate-900 dark:text-white bg-slate-50/50 dark:bg-slate-900/50 border-slate-200 dark:border-slate-800 focus:ring-2 focus:ring-indigo-500 transition-all text-xs"
             />
         </div>
     );

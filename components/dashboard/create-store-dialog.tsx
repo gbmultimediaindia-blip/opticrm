@@ -76,7 +76,7 @@ export function CreateStoreDialog({ open, onOpenChange }: CreateStoreDialogProps
                         </div>
                     </div>
                     <DialogFooter>
-                        <Button type="submit" disabled={loading} className="w-full bg-indigo-600 hover:bg-indigo-700 text-white h-11 font-bold">
+                        <Button type="submit" disabled={loading} className="w-full bg-indigo-600 hover:bg-indigo-700 text-white h-10 font-bold">
                             {loading ? "Creating..." : "Create Store"}
                         </Button>
                     </DialogFooter>

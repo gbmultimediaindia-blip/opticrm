@@ -99,7 +99,7 @@ export function ProductSheet({ open, onOpenChange, productToEdit }: ProductSheet
 
     return (
         <Sheet open={open} onOpenChange={onOpenChange}>
-            <SheetContent className="w-full sm:max-w-xl border-l border-slate-200 dark:border-slate-800 p-0 flex flex-col overflow-hidden [&_[data-slot=sheet-close]]:hidden">
+            <SheetContent className="w-full sm:max-w-xl border-l border-slate-200 dark:border-slate-800 p-0 flex flex-col overflow-hidden [&_[data-slot=sheet-close]]:hidden bg-white dark:bg-slate-950">
                 {/* Header Section */}
                 <div className="h-16 px-6 flex items-center bg-slate-50/50 dark:bg-slate-900/50 border-b border-slate-100 dark:border-slate-800 shrink-0">
                     <div className="flex items-center gap-3">
@@ -131,7 +131,6 @@ export function ProductSheet({ open, onOpenChange, productToEdit }: ProductSheet
                                 value={formData.name}
                                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                                 placeholder="e.g. Ray-Ban Aviator Classic"
-                                className="h-11 rounded-xl"
                                 required
                             />
                         </div>
@@ -143,7 +142,7 @@ export function ProductSheet({ open, onOpenChange, productToEdit }: ProductSheet
                                     value={formData.category}
                                     onValueChange={(v) => setFormData({ ...formData, category: v })}
                                 >
-                                    <SelectTrigger className="!h-11 rounded-xl border-slate-200 dark:border-slate-800 focus:ring-2 focus:ring-indigo-500">
+                                    <SelectTrigger className="border-slate-200 dark:border-slate-800 focus:ring-2 focus:ring-indigo-500">
                                         <SelectValue placeholder="Select category" />
                                     </SelectTrigger>
                                     <SelectContent>
@@ -165,7 +164,7 @@ export function ProductSheet({ open, onOpenChange, productToEdit }: ProductSheet
                                         value={formData.brand}
                                         onChange={(e) => setFormData({ ...formData, brand: e.target.value })}
                                         placeholder="e.g. Ray-Ban"
-                                        className="h-11 rounded-xl pl-9"
+                                        className="pl-9"
                                     />
                                     <Tag className="w-3.5 h-3.5 absolute left-3.5 top-3.5 text-slate-400" />
                                 </div>
@@ -179,7 +178,7 @@ export function ProductSheet({ open, onOpenChange, productToEdit }: ProductSheet
                             <BadgeIndianRupee className="w-3.5 h-3.5 text-indigo-400" /> Financials & Stock
                         </h3>
 
-                        <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-800 space-y-6">
+                        <div className="p-4 rounded-lg bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-800 space-y-6">
                             <div className="grid grid-cols-2 gap-4">
                                 <div className="space-y-2">
                                     <Label className="text-[10px] font-black text-slate-400 uppercase flex items-center gap-1.5">
@@ -192,7 +191,7 @@ export function ProductSheet({ open, onOpenChange, productToEdit }: ProductSheet
                                             value={formData.costPrice}
                                             onChange={(e) => setFormData({ ...formData, costPrice: e.target.value })}
                                             placeholder="0.00"
-                                            className="h-11 rounded-xl pl-9 font-mono font-bold"
+                                            className="pl-9 font-mono font-bold"
                                             required
                                         />
                                         <span className="absolute left-3.5 top-3 text-slate-400 font-bold text-sm">₹</span>
@@ -210,7 +209,7 @@ export function ProductSheet({ open, onOpenChange, productToEdit }: ProductSheet
                                             value={formData.sellingPrice}
                                             onChange={(e) => setFormData({ ...formData, sellingPrice: e.target.value })}
                                             placeholder="0.00"
-                                            className="h-11 rounded-xl pl-9 font-mono font-bold text-indigo-600 dark:text-indigo-400"
+                                            className="pl-9 font-mono font-bold text-indigo-600 dark:text-indigo-400"
                                             required
                                         />
                                         <span className="absolute left-3.5 top-3 text-indigo-400 font-bold text-sm">₹</span>
@@ -228,7 +227,7 @@ export function ProductSheet({ open, onOpenChange, productToEdit }: ProductSheet
                                             value={formData.stock}
                                             onChange={(e) => setFormData({ ...formData, stock: e.target.value })}
                                             placeholder="0"
-                                            className="h-11 rounded-xl pl-9 font-bold"
+                                            className="pl-9 font-bold"
                                             required
                                         />
                                         <Boxes className="w-3.5 h-3.5 absolute left-3.5 top-3.5 text-slate-400" />
@@ -243,14 +242,14 @@ export function ProductSheet({ open, onOpenChange, productToEdit }: ProductSheet
                 <div className="h-16 px-6 flex items-center bg-slate-50/50 dark:bg-slate-900/50 border-t border-slate-100 dark:border-slate-800 shrink-0">
                     <SheetFooter className="mt-0 flex-row w-full justify-end gap-3 items-center">
                         <SheetClose asChild>
-                            <Button type="button" variant="ghost" className="h-11 flex-1 font-semibold text-slate-500">
+                            <Button type="button" variant="ghost" className="flex-1 font-semibold text-slate-500">
                                 Cancel
                             </Button>
                         </SheetClose>
                         <Button
                             type="submit"
                             form="product-form"
-                            className="h-11 flex-1 bg-indigo-600 hover:bg-indigo-700 text-white font-bold shadow-lg shadow-indigo-100 dark:shadow-none text-sm"
+                            className="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white font-bold shadow-lg shadow-indigo-100 dark:shadow-none text-sm"
                             disabled={loading}
                         >
                             {loading ? "Saving..." : productToEdit ? "Save Changes" : "Add Product"}

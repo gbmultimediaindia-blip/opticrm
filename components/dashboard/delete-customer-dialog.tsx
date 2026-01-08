@@ -59,7 +59,7 @@ export function DeleteCustomerDialog({ open, onOpenChange, customerId, customerN
                         variant="ghost"
                         onClick={() => onOpenChange(false)}
                         disabled={loading}
-                        className="flex-1 h-11 font-semibold text-slate-600 dark:text-slate-400"
+                        className="flex-1 h-10 font-semibold text-slate-600 dark:text-slate-400"
                     >
                         Cancel
                     </Button>
@@ -67,7 +67,7 @@ export function DeleteCustomerDialog({ open, onOpenChange, customerId, customerN
                         variant="destructive"
                         onClick={handleDelete}
                         disabled={loading}
-                        className="flex-1 h-11 font-bold bg-red-600 hover:bg-red-700 shadow-lg shadow-red-200 dark:shadow-none gap-2"
+                        className="flex-1 h-10 font-bold bg-red-600 hover:bg-red-700 shadow-lg shadow-red-200 dark:shadow-none gap-2"
                     >
                         {loading ? "Deleting..." : <><Trash2 className="w-4 h-4" /> Delete Customer</>}
                     </Button>

@@ -131,7 +131,7 @@ export function DateRangePicker({
                         id="date"
                         variant={"outline"}
                         className={cn(
-                            "w-full sm:w-auto p-1 h-auto rounded-xl border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm transition-all group",
+                            "w-full sm:w-auto p-1 h-auto rounded-lg border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm transition-all group",
                             !date && "text-muted-foreground"
                         )}
                     >
@@ -173,7 +173,7 @@ export function DateRangePicker({
                     </Button>
                 </PopoverTrigger>
                 <PopoverContent
-                    className="w-auto p-0 rounded-xl overflow-hidden shadow-xl border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row"
+                    className="w-auto p-0 rounded-lg overflow-hidden shadow-xl border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row"
                     align={isMobile ? "center" : "end"}
                 >
                     <div className="border-b sm:border-b-0 sm:border-r border-slate-200 dark:border-slate-800 p-2 bg-slate-50/50 dark:bg-slate-900/50 min-w-[140px] flex flex-row sm:flex-col gap-1 overflow-x-auto sm:overflow-x-visible">

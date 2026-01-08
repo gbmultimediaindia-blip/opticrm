@@ -132,7 +132,7 @@ export default async function DashboardPage({
             </div>
 
             <div className="mt-8">
-                <Card className="border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden rounded-2xl">
+                <Card className="border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden rounded-lg">
                     <CardHeader className="bg-slate-50/50 dark:bg-slate-900/50 border-b border-slate-200 dark:border-slate-800 py-4 px-6">
                         <div className="flex items-center justify-between">
                             <CardTitle className="text-lg font-black tracking-tight">Store Profile</CardTitle>

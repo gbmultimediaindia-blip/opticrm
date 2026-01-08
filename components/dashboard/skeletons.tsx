@@ -9,7 +9,7 @@ export function TableSkeleton() {
                 <Skeleton className="h-10 w-[120px]" />
             </div>
 
-            <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 overflow-hidden shadow-sm">
+            <div className="rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 overflow-hidden shadow-sm">
                 <div className="p-4 bg-slate-50/50 dark:bg-slate-900/50 border-b border-slate-200 dark:border-slate-800 flex gap-4">
                     <Skeleton className="h-10 w-full" />
                 </div>
@@ -81,7 +81,7 @@ export function SettingsSkeleton() {
                 </div>
 
                 <div className="space-y-6">
-                    <div className="border rounded-xl p-6 space-y-6 bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800">
+                    <div className="border rounded-lg p-6 space-y-6 bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800">
                         <div className="space-y-2">
                             <Skeleton className="h-6 w-[150px]" />
                             <Skeleton className="h-4 w-[300px]" />

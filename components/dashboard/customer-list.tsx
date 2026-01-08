@@ -126,7 +126,7 @@ export function CustomerList({ customers }: CustomerListProps) {
                                 setSearchQuery(e.target.value);
                                 setCurrentPage(1);
                             }}
-                            className="pl-10 pr-8 h-10 rounded-lg border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 focus-visible:ring-indigo-500/20 focus-visible:border-indigo-500 transition-all text-sm font-medium"
+                            className="pl-10 pr-8 border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 focus-visible:ring-indigo-500/20 focus-visible:border-indigo-500 transition-all text-sm font-medium"
                         />
                         {searchQuery && (
                             <button
@@ -137,13 +137,13 @@ export function CustomerList({ customers }: CustomerListProps) {
                             </button>
                         )}
                     </div>
-                    <Button onClick={handleCreate} className="w-full sm:w-auto bg-indigo-600 hover:bg-indigo-700 h-10 px-5 rounded-lg gap-2 font-bold shadow-sm transition-all hover:scale-[1.02] active:scale-[0.98] text-sm text-white">
+                    <Button onClick={handleCreate} className="w-full sm:w-auto bg-indigo-600 hover:bg-indigo-700 px-5 gap-2 font-bold shadow-sm transition-all hover:scale-[1.02] active:scale-[0.98] text-sm text-white">
                         <Plus className="w-4 h-4" /> Add Customer
                     </Button>
                 </div>
             </div>
 
-            <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
+            <div className="bg-white dark:bg-slate-900 rounded-lg border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
                 {/* Desktop View Table */}
                 <div className="hidden lg:block overflow-x-auto">
                     <Table>
@@ -162,7 +162,7 @@ export function CustomerList({ customers }: CustomerListProps) {
                                 <TableRow>
                                     <TableCell colSpan={6} className="h-64 text-center">
                                         <div className="flex flex-col items-center gap-3">
-                                            <div className="w-16 h-16 rounded-2xl bg-slate-50 dark:bg-slate-800/50 flex items-center justify-center text-slate-300">
+                                            <div className="w-16 h-16 rounded-lg bg-slate-50 dark:bg-slate-800/50 flex items-center justify-center text-slate-300">
                                                 {searchQuery ? <Search className="w-8 h-8" /> : <User className="w-8 h-8" />}
                                             </div>
                                             <div className="max-w-sm px-6">
@@ -350,7 +350,7 @@ export function CustomerList({ customers }: CustomerListProps) {
                                                                 <MoreHorizontal className="w-4 h-4 text-slate-500" />
                                                             </Button>
                                                         </DropdownMenuTrigger>
-                                                        <DropdownMenuContent align="end" className="w-48 p-1.5 rounded-xl border-slate-200 dark:border-slate-800 shadow-2xl">
+                                                        <DropdownMenuContent align="end" className="w-48 p-1.5 rounded-lg border-slate-200 dark:border-slate-800 shadow-2xl">
                                                             <DropdownMenuItem
                                                                 onClick={(e) => {
                                                                     e.stopPropagation();
@@ -399,7 +399,7 @@ export function CustomerList({ customers }: CustomerListProps) {
                     {paginatedCustomers.length === 0 ? (
                         <div className="py-12 px-6 text-center">
                             <div className="flex flex-col items-center gap-3">
-                                <div className="w-16 h-16 rounded-2xl bg-slate-50 dark:bg-slate-800/50 flex items-center justify-center text-slate-300">
+                                <div className="w-16 h-16 rounded-lg bg-slate-50 dark:bg-slate-800/50 flex items-center justify-center text-slate-300">
                                     {searchQuery ? <Search className="w-8 h-8" /> : <User className="w-8 h-8" />}
                                 </div>
                                 <p className="text-slate-900 dark:text-white font-bold text-sm">
@@ -422,7 +422,7 @@ export function CustomerList({ customers }: CustomerListProps) {
                                 <div key={customer.id} className="p-4 space-y-4">
                                     <div className="flex items-start justify-between">
                                         <div className="flex items-center gap-3">
-                                            <div className="w-10 h-10 rounded-xl bg-indigo-50 dark:bg-indigo-900/20 flex items-center justify-center text-indigo-600 dark:text-indigo-400 font-bold border border-indigo-100 dark:border-indigo-800/50 shadow-sm">
+                                            <div className="w-10 h-10 rounded-lg bg-indigo-50 dark:bg-indigo-900/20 flex items-center justify-center text-indigo-600 dark:text-indigo-400 font-bold border border-indigo-100 dark:border-indigo-800/50 shadow-sm">
                                                 {getInitials(customer.name)}
                                             </div>
                                             <div>

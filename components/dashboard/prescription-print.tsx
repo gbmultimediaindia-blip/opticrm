@@ -60,7 +60,7 @@ export function PrescriptionPrint({ prescription, store }: PrescriptionPrintProp
             </div>
 
             {/* Prescription Details Table */}
-            <div className="mb-12 border border-slate-200 rounded-xl overflow-hidden">
+            <div className="mb-12 border border-slate-200 rounded-lg overflow-hidden">
                 <table className="w-full text-center">
                     <thead className="bg-slate-50 border-b border-slate-200">
                         <tr>
@@ -102,14 +102,14 @@ export function PrescriptionPrint({ prescription, store }: PrescriptionPrintProp
 
             {/* Additional Info Grid */}
             <div className="grid grid-cols-2 gap-8 mb-12">
-                <div className="bg-slate-50 p-6 rounded-xl border border-slate-100">
+                <div className="bg-slate-50 p-6 rounded-lg border border-slate-100">
                     <div className="flex items-center gap-2 mb-3">
                         <Ruler className="w-4 h-4 text-slate-400" />
                         <h5 className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Pupillary Distance (PD)</h5>
                     </div>
                     <p className="text-2xl font-mono font-black text-slate-900 tracking-tight">{prescription.pd} <span className="text-sm font-bold text-slate-400">mm</span></p>
                 </div>
-                <div className="bg-slate-50 p-6 rounded-xl border border-slate-100">
+                <div className="bg-slate-50 p-6 rounded-lg border border-slate-100">
                     <div className="flex items-center gap-2 mb-3">
                         <Info className="w-4 h-4 text-slate-400" />
                         <h5 className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Clinical Notes</h5>
