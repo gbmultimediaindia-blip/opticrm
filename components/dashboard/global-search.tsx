@@ -80,10 +80,12 @@ export function GlobalSearch() {
         <>
             <button
                 onClick={() => setOpen(true)}
-                className="flex items-center gap-2 px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/50 hover:bg-white dark:hover:bg-slate-900 transition-all text-slate-500 hover:text-indigo-600 group"
+                className="flex items-center justify-between gap-2 px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/50 hover:bg-white dark:hover:bg-slate-900 transition-all text-slate-500 hover:text-indigo-600 group lg:w-64"
             >
-                <Search className="w-4 h-4 group-hover:scale-110 transition-transform" />
-                <span className="text-xs font-semibold hidden lg:inline-block">Search store...</span>
+                <div className="flex items-center gap-2">
+                    <Search className="w-4 h-4 group-hover:scale-110 transition-transform" />
+                    <span className="text-xs font-semibold hidden lg:inline-block">Search store...</span>
+                </div>
                 <kbd className="hidden sm:flex h-5 select-none items-center gap-1 rounded border border-slate-200 dark:border-slate-800 bg-slate-100 dark:bg-slate-800 px-1.5 font-mono text-[10px] font-medium text-slate-400 opacity-100 ml-2">
                     <span className="text-xs">{isMac ? "⌘" : "Ctrl"}</span>K
                 </kbd>
