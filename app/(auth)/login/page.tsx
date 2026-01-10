@@ -42,7 +42,7 @@ export default function LoginPage() {
       <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-10 pointer-events-none"></div>
       <Card className="w-full max-w-md border-slate-200 bg-white/80 backdrop-blur-xl text-slate-900 shadow-xl">
         <CardHeader className="space-y-1">
-          <CardTitle className="text-3xl font-bold tracking-tight text-slate-900 text-center">Welcome back</CardTitle>
+          <CardTitle className="text-3xl font-bold tracking-tight text-slate-900 text-center">Welcome</CardTitle>
           <CardDescription className="text-slate-500 text-center">
             Enter your credentials to access your store
           </CardDescription>
